@@ -15,7 +15,7 @@ import { Publication } from 'src/schemas/publication.schema'
 import { PublicationService } from './publication.service'
 import { ConflictException, NotFoundException } from '@nestjs/common'
 
-@Controller('publications')
+@Controller('publication')
 export class PublicationController {
   constructor(private readonly publicationService: PublicationService) {}
 
