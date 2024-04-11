@@ -1,14 +1,20 @@
 import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
-import { AppService } from './app.service'
 import { UserModule } from './modules/user/user.module'
 import { CategoryModule } from './modules/category/category.module'
 import { PostModule } from './modules/post/post.module'
-import { CommentsModule } from './modules/comments/comments.module'
+import { CommentModule } from './modules/comment/comment.module'
 
 @Module({
-  imports: [UserModule, CategoryModule, PostModule, CommentsModule],
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost/learn-horizon-backend'),
+    UserModule,
+    CategoryModule,
+    PostModule,
+    CommentModule
+  ],
   controllers: [],
-  providers: [AppService]
+  providers: []
 })
 export class AppModule {}
