@@ -1,31 +1,30 @@
 import {
   IsArray,
   IsEnum,
-  IsNotEmpty,
   IsOptional,
   IsString,
   Min,
   IsDate
 } from 'class-validator'
 
-export class CreatePostDto {
-  @IsNotEmpty()
+export class UpdatePublicationDto {
+  @IsOptional()
   @IsString()
   title: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   photo: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   subtitle: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   markdownContent: string
 
@@ -50,10 +49,10 @@ export class CreatePostDto {
   @Min(0)
   dislikes: number
 
-  @IsNotEmpty()
+  @IsOptional()
   author: string // Esto debería ser un ObjectId, pero los validadores de class-validator no soportan ObjectId.
 
-  @IsNotEmpty()
+  @IsOptional()
   category: string // Esto debería ser un ObjectId, pero los validadores de class-validator no soportan ObjectId.
 
   @IsOptional()

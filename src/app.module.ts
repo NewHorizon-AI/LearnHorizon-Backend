@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { UserModule } from './modules/user/user.module'
+import { UserModule } from './user/user.module'
 import { CategoryModule } from './modules/category/category.module'
-import { PostModule } from './modules/post/post.module'
+import { PublicationModule } from './modules/publication/publication.module'
 import { CommentModule } from './modules/comment/comment.module'
 
 @Module({
@@ -11,7 +11,7 @@ import { CommentModule } from './modules/comment/comment.module'
     MongooseModule.forRoot('mongodb://localhost/learn-horizon-backend'),
     UserModule,
     CategoryModule,
-    PostModule,
+    PublicationModule,
     CommentModule
   ],
   controllers: [],

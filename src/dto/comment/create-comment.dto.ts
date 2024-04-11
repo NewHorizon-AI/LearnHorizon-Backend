@@ -33,7 +33,7 @@ export class CreateCommentDto {
   replies: string[] // Esto debería ser un array de ObjectId, pero los validadores de class-validator no soportan ObjectId.
 
   @IsNotEmpty()
-  post: string // Esto debería ser un ObjectId, pero los validadores de class-validator no soportan ObjectId.
+  publication: string // Esto debería ser un ObjectId, pero los validadores de class-validator no soportan ObjectId.
 
   @IsOptional()
   @IsBoolean()

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Types } from 'mongoose'
 import { User } from './user.schema'
-import { Post } from './post.schema'
+import { Publication } from './publication.schema'
 
 @Schema()
 export class Comment extends Document {
@@ -33,9 +33,9 @@ export class Comment extends Document {
   @Prop([{ type: Types.ObjectId, ref: 'Comment' }])
   replies: Comment[]
 
-  // Propiedad de tipo referencia que almacena el post al que pertenece el comentario
-  @Prop({ type: Types.ObjectId, ref: 'Post' })
-  post: Post
+  // Propiedad de tipo referencia que almacena el publication al que pertenece el comentario
+  @Prop({ type: Types.ObjectId, ref: 'Publication' })
+  publication: Publication
 
   // Propiedad de tipo booleano que almacena si el comentario ha sido editado
   @Prop({ default: false })
