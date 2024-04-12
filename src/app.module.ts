@@ -6,6 +6,8 @@ import { CategoryModule } from './modules/category/category.module'
 import { PublicationModule } from './modules/publication/publication.module'
 import { CommentModule } from './modules/comment/comment.module'
 
+import { SeederService } from './seeder'
+
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost/learn-horizon-backend'),
@@ -15,6 +17,6 @@ import { CommentModule } from './modules/comment/comment.module'
     CommentModule
   ],
   controllers: [],
-  providers: []
+  providers: [SeederService]
 })
 export class AppModule {}

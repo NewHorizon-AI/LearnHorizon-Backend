@@ -11,6 +11,7 @@ import { Publication, PublicationSchema } from 'src/schemas/publication.schema'
     ])
   ], // Importar el modelo de la base de datos
   controllers: [PublicationController],
-  providers: [PublicationService]
+  providers: [PublicationService],
+  exports: [MongooseModule] // Exportar el módulo de Mongoose
 })
 export class PublicationModule {}

@@ -9,6 +9,7 @@ import { Comment, CommentSchema } from 'src/schemas/comment.schema'
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }])
   ], // Importar el modelo de la base de datos
   controllers: [CommentController],
-  providers: [CommentService]
+  providers: [CommentService],
+  exports: [MongooseModule] // Exportar el módulo de Mongoose
 })
 export class CommentModule {}
