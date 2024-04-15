@@ -1,21 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
 import { faker } from '@faker-js/faker'
-
-import { User } from 'src/schemas/user.schema'
-import { Category } from 'src/schemas/category.schema'
-import { Comment } from 'src/schemas/comment.schema'
-import { Publication } from 'src/schemas/publication.schema'
+import axios from 'axios'
 
 @Injectable()
 export class SeederService {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(Category.name) private categoryModel: Model<Category>,
-    @InjectModel(Comment.name) private commentModel: Model<Comment>,
-    @InjectModel(Publication.name) private publicationModel: Model<Publication>
-  ) {}
+  private readonly API_URL = 'http://localhost:3001' // Asegúrate de usar la URL correcta de tu API
 
   // Función que retorna un elemento aleatorio de un arreglo
   private getRandomElement<T>(array: T[]): T {
@@ -26,18 +15,20 @@ export class SeederService {
     try {
       await this.seedUsers(10)
       await this.seedCategories(5)
-      await this.seedPublications(20)
-      await this.seedComments(100)
+      const categories = await axios.get(`${this.API_URL}/category`)
+      const users = await axios.get(`${this.API_URL}/user`)
+      await this.seedPublications(20, categories.data, users.data)
+      const publications = await axios.get(`${this.API_URL}/publication`)
+      await this.seedComments(100, users.data, publications.data)
     } catch (error) {
       console.error('Error seeding database:', error)
-    } finally {
-      await this.userModel.db.close()
     }
   }
 
+  // Funciones para insertar datos en la base de datos
   private async seedUsers(count: number) {
     for (let i = 0; i < count; i++) {
-      const newUser = new this.userModel({
+      const user = {
         name: faker.string.alpha(10),
         username: faker.internet.userName(),
         password: faker.internet.password(),
@@ -46,39 +37,40 @@ export class SeederService {
         biography: faker.lorem.sentence(),
         editPermissions: faker.datatype.boolean(),
         image: faker.image.avatar()
-      })
-      await newUser.save()
+      }
+      await axios.post(`${this.API_URL}/user`, user)
     }
     console.log(`Inserted ${count} users`)
   }
 
+  // Función para insertar categorías
   private async seedCategories(count: number) {
     for (let i = 0; i < count; i++) {
-      const newCategory = new this.categoryModel({
+      const category = {
         title: faker.commerce.department(),
         description: faker.commerce.productDescription()
-      })
-      await newCategory.save()
+      }
+      await axios.post(`${this.API_URL}/category`, category)
     }
     console.log(`Inserted ${count} categories`)
   }
 
-  // Función que crea publicaciones de forma aleatoria
-  private async seedPublications(count: number) {
-    const users = await this.userModel.find()
-    const categories = await this.categoryModel.find()
-
+  // Función para insertar publicaciones
+  private async seedPublications(
+    count: number,
+    categories: any[],
+    users: any[]
+  ) {
     if (users.length === 0 || categories.length === 0) {
       throw new Error(
         'No se pueden crear publicaciones sin usuarios o categorías'
       )
     }
-
     for (let i = 0; i < count; i++) {
-      const randomUser = this.getRandomElement(users)
-      const randomCategory = this.getRandomElement(categories)
+      const randomUser = this.getRandomElement(users) // Obtiene un usuario aleatorio
+      const randomCategory = this.getRandomElement(categories) // Obtiene una categoría aleatoria
 
-      const newPublication = new this.publicationModel({
+      const publication = {
         title: faker.lorem.sentence(),
         photo: faker.image.url(),
         subtitle: faker.lorem.sentence(),
@@ -91,40 +83,41 @@ export class SeederService {
         author: randomUser._id,
         category: randomCategory._id,
         status: this.getRandomElement(['published', 'review', 'draft'])
-      })
-
-      await newPublication.save()
+      }
+      try {
+        await axios.post(`${this.API_URL}/publication`, publication)
+        console.log(`Inserted publication: ${i + 1}`)
+      } catch (error) {
+        console.error(
+          `Error inserting publication ${i + 1}:`,
+          error.response ? error.response.data : error
+        )
+      }
     }
-    console.log(`Inserted ${count} publications`)
   }
 
-  // Función que crea comentarios de forma aleatoria
-  private async seedComments(count: number) {
-    const users = await this.userModel.find()
-    const publications = await this.publicationModel.find()
-
-    if (users.length === 0 || publications.length === 0) {
-      throw new Error(
-        'No se pueden crear comentarios sin usuarios o publicaciones'
-      )
-    }
-
+  private async seedComments(count: number, users: any[], publications: any[]) {
     for (let i = 0; i < count; i++) {
       const randomUser = this.getRandomElement(users)
       const randomPublication = this.getRandomElement(publications)
-
-      const newComment = new this.commentModel({
+      const comment = {
         user: randomUser._id,
         comment: faker.lorem.sentences(),
         likes: faker.number.int({ max: 100 }),
         dislikes: faker.number.int({ max: 100 }),
-        commentDate: faker.date.recent(),
+        commentDate: new Date().toISOString(), // Fecha en formato ISO
         publication: randomPublication._id,
-        replies: [], // Se podría complicar agregando respuestas anidadas
         edited: faker.datatype.boolean()
-      })
-
-      await newComment.save()
+      }
+      try {
+        await axios.post(`${this.API_URL}/comment`, comment)
+        console.log(`Inserted comment: ${i + 1}`)
+      } catch (error) {
+        console.error(
+          `Error inserting comment ${i + 1}:`,
+          error.response ? error.response.data : error
+        )
+      }
     }
     console.log(`Inserted ${count} comments`)
   }

@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
   Min,
-  IsDate
+  IsDateString
 } from 'class-validator'
 
 export class CreateCommentDto {
@@ -25,7 +25,7 @@ export class CreateCommentDto {
   dislikes: number
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   commentDate: Date
 
   @IsOptional()

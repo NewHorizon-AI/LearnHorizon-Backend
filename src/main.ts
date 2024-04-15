@@ -2,16 +2,15 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'
 
-// import { SeederService } from './seeder'
+import { SeederService } from './seeder'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   app.useGlobalPipes(new ValidationPipe()) // Validar los datos que llegan al servidor
-
-  // const seeder = app.get(SeederService)
-  // await seeder.seedDatabase()
-
+  const seeder = app.get(SeederService)
   await app.listen(3001)
+
+  await seeder.seedDatabase()
 }
 bootstrap()
