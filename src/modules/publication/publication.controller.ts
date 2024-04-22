@@ -15,9 +15,13 @@ import { Publication } from 'src/schemas/publication.schema'
 import { PublicationService } from './publication.service'
 import { ConflictException, NotFoundException } from '@nestjs/common'
 
+// Import de CategoryService
+import { CategoryService } from 'src/modules/category/category.service'
+
 @Controller('publication')
 export class PublicationController {
   constructor(private readonly publicationService: PublicationService) {}
+  private readonly categoryService: CategoryService
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -25,8 +29,14 @@ export class PublicationController {
     @Body() createPublicationDto: CreatePublicationDto
   ): Promise<Publication> {
     try {
-      return await this.publicationService.create(createPublicationDto)
+      const publication =
+        await this.publicationService.create(createPublicationDto)
+      await this.categoryService.incrementPublicationCount(
+        createPublicationDto.category
+      )
+      return publication
     } catch (error) {
+      // console.log(createPublicationDto)
       throw new ConflictException('Publication already exists')
     }
   }
@@ -43,6 +53,15 @@ export class PublicationController {
       throw new NotFoundException('Publication not found')
     }
     return publication
+  }
+
+  @Get('category/:id')
+  async findAllByCategoryId(@Param('id') id: string): Promise<Publication[]> {
+    const publications = await this.publicationService.findAllByCategoryId(id)
+    if (!publications) {
+      throw new NotFoundException('Publication not found')
+    }
+    return publications
   }
 
   @Put(':id')
@@ -64,6 +83,9 @@ export class PublicationController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string): Promise<void> {
     const publication = await this.publicationService.delete(id)
+    await this.categoryService.decrementPublicationCount(
+      publication.category.toString()
+    )
     if (!publication) {
       throw new NotFoundException('Publication not found')
     }

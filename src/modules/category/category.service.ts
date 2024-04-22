@@ -36,4 +36,22 @@ export class CategoryService {
   async delete(id: string): Promise<Category> {
     return this.categoryModel.findByIdAndDelete(id).exec()
   }
+
+  // Hay un error donde no se esta respetando la atomicidad de la operacion
+
+  async incrementPublicationCount(categoryId: string): Promise<Category> {
+    return this.categoryModel.findByIdAndUpdate(
+      categoryId,
+      { $inc: { publicationCount: 1 } },
+      { new: true }
+    )
+  }
+
+  async decrementPublicationCount(categoryId: string): Promise<Category> {
+    return this.categoryModel.findByIdAndUpdate(
+      categoryId,
+      { $inc: { publicationCount: -1 } },
+      { new: true }
+    )
+  }
 }

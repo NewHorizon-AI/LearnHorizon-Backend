@@ -47,12 +47,12 @@ export class Publication extends Document {
   dislikes: number
 
   // Propiedad de tipo referencia que almacena el autor del publication
-  @Prop({ type: Types.ObjectId, unique: true, ref: 'User' })
-  author: User
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  author: User[]
 
   // Propiedad de tipo referencia que almacena la categoría del publication
   @Prop({ type: Types.ObjectId, ref: 'Category' })
-  category: Category
+  category: Category[]
 
   // Propiedad de tipo enumeración que representa el estado del publication
   @Prop({ enum: ['published', 'review', 'draft'], default: 'draft' })

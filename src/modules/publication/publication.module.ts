@@ -4,14 +4,17 @@ import { PublicationService } from './publication.service'
 import { MongooseModule } from '@nestjs/mongoose'
 import { Publication, PublicationSchema } from 'src/schemas/publication.schema'
 
+import { CategoryModule } from 'src/modules/category/category.module'
+import { CategoryService } from 'src/modules/category/category.service'
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Publication.name, schema: PublicationSchema }
-    ])
+    ]),
+    CategoryModule
   ], // Importar el modelo de la base de datos
   controllers: [PublicationController],
-  providers: [PublicationService],
+  providers: [PublicationService, CategoryService],
   exports: [MongooseModule] // Exportar el módulo de Mongoose
 })
 export class PublicationModule {}

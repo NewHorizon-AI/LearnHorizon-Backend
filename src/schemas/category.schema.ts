@@ -11,6 +11,10 @@ export class Category extends Document {
   @Prop({ required: true })
   description: string
 
+  // Propiedad de tipo number que almacena la cantidad de publicaciones de la categoría
+  @Prop({ default: 0 })
+  publicationCount: number
+
   //   @Prop()
   //   icon: string
 }
