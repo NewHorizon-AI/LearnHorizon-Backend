@@ -22,6 +22,8 @@ import { FindParamsDto } from 'src/dto/publication/queries/findParams.dto'
 // Import de CategoryService
 import { CategoryService } from 'src/modules/category/category.service'
 
+import { PublicationCard } from 'src/interface/IBackend'
+
 @Controller('publications')
 export class PublicationController {
   constructor(private readonly publicationService: PublicationService) {}
@@ -71,7 +73,7 @@ export class PublicationController {
   @Get('search')
   async findPaginatedAndOrdered(
     @Query() params: FindParamsDto
-  ): Promise<Publication[]> {
+  ): Promise<PublicationCard[]> {
     return this.publicationService.findPaginatedAndOrdered(
       params.page,
       params.pageSize,

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, Query } from 'mongoose'
 import { CreatePublicationDto } from 'src/dto/publication/create-publication.dto'
 import { UpdatePublicationDto } from 'src/dto/publication/update-publication.dto'
 import { Publication } from 'src/schemas/publication.schema'
+
+import { PublicationCard } from 'src/interface/IBackend'
 
 @Injectable()
 export class PublicationService {
@@ -43,26 +45,26 @@ export class PublicationService {
     page: number,
     pageSize: number,
     order: 'ascendant' | 'descendant'
-  ): Promise<Publication[]> {
-    let query = this.publicationModel.find()
+  ): Promise<PublicationCard[]> {
+    let query: Query<PublicationCard[], PublicationCard> =
+      this.publicationModel.find()
 
-    if (order === 'descendant') {
-      query = query.sort({ publicationDate: -1 }) // Ordenar por fecha de publicación descendente
-    } else if (order === 'ascendant') {
-      query = query.sort({ publicationDate: 1 }) // Ordenar por fecha de publicación ascendente
-    }
+    // Ordenamiento basado en el parámetro
+    query = query.sort({ publicationDate: order === 'descendant' ? -1 : 1 })
 
-    // Seleccionar solo los campos necesarios
-    query = query.select(
-      '_id title photo description author views publicationDate'
-    )
+    // Seleccionar y poblar campos necesarios
+    query = query
+      .select('_id title photo description views publicationDate')
+      .populate('author', 'name image') // Asegúrate de que el path y select estén correctamente definidos
 
-    return await query
+    // Paginar los resultados
+    const results = (await query
       .skip(page * pageSize)
       .limit(pageSize)
-      .exec() // Ejecutar la consulta
-  }
+      .exec()) as any as PublicationCard[] // Aserción de tipo para forzar el tipo correcto
 
+    return results
+  }
   // Meodo para actualizar publicaciones
 
   async update(
