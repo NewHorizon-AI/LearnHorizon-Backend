@@ -6,19 +6,23 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Query,
   Post,
   Put
 } from '@nestjs/common'
-import { CreatePublicationDto } from 'src/dto/publication/create-publication.dto'
-import { UpdatePublicationDto } from 'src/dto/publication/update-publication.dto'
 import { Publication } from 'src/schemas/publication.schema'
 import { PublicationService } from './publication.service'
 import { ConflictException, NotFoundException } from '@nestjs/common'
 
+// Importacion de los Data Transfer Objects (DTO)
+import { CreatePublicationDto } from 'src/dto/publication/create-publication.dto'
+import { UpdatePublicationDto } from 'src/dto/publication/update-publication.dto'
+import { FindParamsDto } from 'src/dto/publication/queries/findParams.dto'
+
 // Import de CategoryService
 import { CategoryService } from 'src/modules/category/category.service'
 
-@Controller('publication')
+@Controller('publications')
 export class PublicationController {
   constructor(private readonly publicationService: PublicationService) {}
   private readonly categoryService: CategoryService
@@ -46,7 +50,7 @@ export class PublicationController {
     return this.publicationService.findAll()
   }
 
-  @Get(':id')
+  @Get('publication/:id')
   async findOne(@Param('id') id: string): Promise<Publication> {
     const publication = await this.publicationService.findOne(id)
     if (!publication) {
@@ -62,6 +66,17 @@ export class PublicationController {
       throw new NotFoundException('Publication not found')
     }
     return publications
+  }
+
+  @Get('search')
+  async findPaginatedAndOrdered(
+    @Query() params: FindParamsDto
+  ): Promise<Publication[]> {
+    return this.publicationService.findPaginatedAndOrdered(
+      params.page,
+      params.pageSize,
+      params.order
+    )
   }
 
   @Put(':id')

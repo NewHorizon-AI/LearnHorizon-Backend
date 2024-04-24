@@ -38,6 +38,31 @@ export class PublicationService {
     return this.publicationModel.find({ id }).exec()
   }
 
+  // Metodo para obtener publicaciones con paginación
+  async findPaginatedAndOrdered(
+    page: number,
+    pageSize: number,
+    order: 'ascendant' | 'descendant'
+  ): Promise<Publication[]> {
+    let query = this.publicationModel.find()
+
+    if (order === 'descendant') {
+      query = query.sort({ publicationDate: -1 }) // Ordenar por fecha de publicación descendente
+    } else if (order === 'ascendant') {
+      query = query.sort({ publicationDate: 1 }) // Ordenar por fecha de publicación ascendente
+    }
+
+    // Seleccionar solo los campos necesarios
+    query = query.select(
+      '_id title photo description author views publicationDate'
+    )
+
+    return await query
+      .skip(page * pageSize)
+      .limit(pageSize)
+      .exec() // Ejecutar la consulta
+  }
+
   // Meodo para actualizar publicaciones
 
   async update(

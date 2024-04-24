@@ -15,7 +15,7 @@ import { Category } from 'src/schemas/category.schema'
 import { CategoryService } from './category.service'
 import { ConflictException, NotFoundException } from '@nestjs/common'
 
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
