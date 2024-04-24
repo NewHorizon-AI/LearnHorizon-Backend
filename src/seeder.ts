@@ -15,10 +15,10 @@ export class SeederService {
     try {
       await this.seedUsers(10)
       await this.seedCategories(5)
-      const categories = await axios.get(`${this.API_URL}/category`)
-      const users = await axios.get(`${this.API_URL}/user`)
+      const categories = await axios.get(`${this.API_URL}/categories`)
+      const users = await axios.get(`${this.API_URL}/users`)
       await this.seedPublications(20, categories.data, users.data)
-      const publications = await axios.get(`${this.API_URL}/publication`)
+      const publications = await axios.get(`${this.API_URL}/publications`)
       await this.seedComments(100, users.data, publications.data)
     } catch (error) {
       console.error('Error seeding database:', error)
@@ -38,7 +38,7 @@ export class SeederService {
         editPermissions: faker.datatype.boolean(),
         image: faker.image.avatar()
       }
-      await axios.post(`${this.API_URL}/user`, user)
+      await axios.post(`${this.API_URL}/users`, user)
     }
     console.log(`Inserted ${count} users`)
   }
@@ -50,7 +50,7 @@ export class SeederService {
         title: faker.commerce.department(),
         description: faker.commerce.productDescription()
       }
-      await axios.post(`${this.API_URL}/category`, category)
+      await axios.post(`${this.API_URL}/categories`, category)
     }
     console.log(`Inserted ${count} categories`)
   }
@@ -85,7 +85,7 @@ export class SeederService {
         status: this.getRandomElement(['published', 'review', 'draft'])
       }
       try {
-        await axios.post(`${this.API_URL}/publication`, publication)
+        await axios.post(`${this.API_URL}/publications`, publication)
         console.log(`Inserted publication: ${i + 1}`)
       } catch (error) {
         console.error(
@@ -110,7 +110,7 @@ export class SeederService {
         edited: faker.datatype.boolean()
       }
       try {
-        await axios.post(`${this.API_URL}/comment`, comment)
+        await axios.post(`${this.API_URL}/comments`, comment)
         console.log(`Inserted comment: ${i + 1}`)
       } catch (error) {
         console.error(
