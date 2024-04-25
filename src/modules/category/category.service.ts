@@ -37,21 +37,41 @@ export class CategoryService {
     return this.categoryModel.findByIdAndDelete(id).exec()
   }
 
-  // Hay un error donde no se esta respetando la atomicidad de la operacion
-
-  async incrementPublicationCount(categoryId: string): Promise<Category> {
-    return this.categoryModel.findByIdAndUpdate(
-      categoryId,
-      { $inc: { publicationCount: 1 } },
-      { new: true }
-    )
+  // Metodo para incrementar el contador de publicaciones de una categoría
+  async incrementPublicationCount(ids: string[]): Promise<void> {
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          this.categoryModel.findByIdAndUpdate(
+            id,
+            {
+              $inc: { publicationCount: 1 }
+            },
+            { new: true }
+          )
+        )
+      )
+    } catch (error) {
+      throw new Error('Error incrementing publication count')
+    }
   }
 
-  async decrementPublicationCount(categoryId: string): Promise<Category> {
-    return this.categoryModel.findByIdAndUpdate(
-      categoryId,
-      { $inc: { publicationCount: -1 } },
-      { new: true }
-    )
+  // Metodo para decrementar el contador de publicaciones de una categoría
+  async decrementPublicationCount(ids: string[]): Promise<void> {
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          this.categoryModel.findByIdAndUpdate(
+            id,
+            {
+              $inc: { publicationCount: -1 }
+            },
+            { new: true }
+          )
+        )
+      )
+    } catch (error) {
+      throw new Error('Error incrementing publication count')
+    }
   }
 }

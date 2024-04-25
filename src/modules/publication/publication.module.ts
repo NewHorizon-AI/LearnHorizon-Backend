@@ -4,8 +4,8 @@ import { PublicationService } from './publication.service'
 import { MongooseModule } from '@nestjs/mongoose'
 import { Publication, PublicationSchema } from 'src/schemas/publication.schema'
 
-import { CategoryModule } from 'src/modules/category/category.module'
 import { CategoryService } from 'src/modules/category/category.service'
+import { CategoryModule } from 'src/modules/category/category.module'
 @Module({
   imports: [
     MongooseModule.forFeature([

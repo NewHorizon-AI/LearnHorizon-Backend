@@ -10,6 +10,6 @@ import { Category, CategorySchema } from 'src/schemas/category.schema'
   ], // Importar el modelo de la base de datos
   controllers: [CategoryController],
   providers: [CategoryService],
-  exports: [MongooseModule] // Exportar el módulo de Mongoose
+  exports: [MongooseModule, CategoryService] // Exportar el módulo de Mongoose
 })
 export class CategoryModule {}

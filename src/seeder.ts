@@ -67,8 +67,15 @@ export class SeederService {
       )
     }
     for (let i = 0; i < count; i++) {
-      const randomUser = this.getRandomElement(users) // Obtiene un usuario aleatorio
-      const randomCategory = this.getRandomElement(categories) // Obtiene una categoría aleatoria
+      // Obtiene varios usuarios y categorías aleatorios
+      const randomUsers = Array.from(
+        { length: faker.number.int({ min: 1, max: 3 }) },
+        () => this.getRandomElement(users)
+      )
+      const randomCategories = Array.from(
+        { length: faker.number.int({ min: 1, max: 3 }) },
+        () => this.getRandomElement(categories)
+      )
 
       const publication = {
         title: faker.lorem.sentence(),
@@ -80,8 +87,8 @@ export class SeederService {
         views: faker.number.int({ max: 1000 }),
         likes: faker.number.int({ max: 1000 }),
         dislikes: faker.number.int({ max: 1000 }),
-        author: randomUser._id,
-        category: randomCategory._id,
+        author: randomUsers.map((user) => user._id), // Ahora es un array de IDs de usuario
+        category: randomCategories.map((category) => category._id), // Ahora es un array de IDs de categoría
         status: this.getRandomElement(['published', 'review', 'draft'])
       }
       try {

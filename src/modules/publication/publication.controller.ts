@@ -12,64 +12,46 @@ import {
 } from '@nestjs/common'
 import { Publication } from 'src/schemas/publication.schema'
 import { PublicationService } from './publication.service'
-import { ConflictException, NotFoundException } from '@nestjs/common'
 
 // Importacion de los Data Transfer Objects (DTO)
 import { CreatePublicationDto } from 'src/dto/publication/create-publication.dto'
 import { UpdatePublicationDto } from 'src/dto/publication/update-publication.dto'
 import { FindParamsDto } from 'src/dto/publication/queries/findParams.dto'
 
-// Import de CategoryService
-import { CategoryService } from 'src/modules/category/category.service'
-
 import { PublicationCard } from 'src/interface/IBackend'
 
 @Controller('publications')
 export class PublicationController {
   constructor(private readonly publicationService: PublicationService) {}
-  private readonly categoryService: CategoryService
 
+  // Metodo para crear una publicación
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createPublicationDto: CreatePublicationDto
   ): Promise<Publication> {
-    try {
-      const publication =
-        await this.publicationService.create(createPublicationDto)
-      await this.categoryService.incrementPublicationCount(
-        createPublicationDto.category
-      )
-      return publication
-    } catch (error) {
-      // console.log(createPublicationDto)
-      throw new ConflictException('Publication already exists')
-    }
+    return await this.publicationService.create(createPublicationDto)
   }
 
+  // Metodo para obtener todas las publicaciones
   @Get()
   async findAll(): Promise<Publication[]> {
     return this.publicationService.findAll()
   }
 
+  // Metodo para obtener una publicación por id
   @Get('publication/:id')
   async findOne(@Param('id') id: string): Promise<Publication> {
-    const publication = await this.publicationService.findOne(id)
-    if (!publication) {
-      throw new NotFoundException('Publication not found')
-    }
-    return publication
+    return await this.publicationService.findOne(id)
   }
 
+  // Metodo para obtener todas las publicaciones por id de categoría
   @Get('category/:id')
   async findAllByCategoryId(@Param('id') id: string): Promise<Publication[]> {
-    const publications = await this.publicationService.findAllByCategoryId(id)
-    if (!publications) {
-      throw new NotFoundException('Publication not found')
-    }
-    return publications
+    return await this.publicationService.findAllByCategoryId(id)
   }
 
+  // Metodo para obtener publicaciones con paginación
   @Get('search')
   async findPaginatedAndOrdered(
     @Query() params: FindParamsDto
@@ -81,30 +63,19 @@ export class PublicationController {
     )
   }
 
+  // Metodo para actualizar una publicación
   @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updatePublicationDto: UpdatePublicationDto
   ): Promise<Publication> {
-    const publication = await this.publicationService.update(
-      id,
-      updatePublicationDto
-    )
-    if (!publication) {
-      throw new NotFoundException('Publication not found')
-    }
-    return publication
+    return await this.publicationService.update(id, updatePublicationDto)
   }
 
+  // Metodo para eliminar una publicación
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string): Promise<void> {
-    const publication = await this.publicationService.delete(id)
-    await this.categoryService.decrementPublicationCount(
-      publication.category.toString()
-    )
-    if (!publication) {
-      throw new NotFoundException('Publication not found')
-    }
+    await this.publicationService.delete(id)
   }
 }
