@@ -18,7 +18,8 @@ import { CreatePublicationDto } from 'src/dto/publication/create-publication.dto
 import { UpdatePublicationDto } from 'src/dto/publication/update-publication.dto'
 import { FindParamsDto } from 'src/dto/publication/queries/findParams.dto'
 
-import { PublicationCard } from 'src/interface/IBackend'
+// Importacion de las interfaces para las respuestas
+import { IContentModel } from 'src/interfaces/responses/content.model.interface'
 
 @Controller('publications')
 export class PublicationController {
@@ -55,12 +56,8 @@ export class PublicationController {
   @Get('search')
   async findPaginatedAndOrdered(
     @Query() params: FindParamsDto
-  ): Promise<PublicationCard[]> {
-    return this.publicationService.findPaginatedAndOrdered(
-      params.page,
-      params.pageSize,
-      params.order
-    )
+  ): Promise<IContentModel[]> {
+    return this.publicationService.findPaginatedAndOrdered(params)
   }
 
   // Metodo para actualizar una publicación

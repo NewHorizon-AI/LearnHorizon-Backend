@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model, Query } from 'mongoose'
+import { Model } from 'mongoose'
 
 // Importacion de los Data Transfer Objects (DTO)
 import { CreatePublicationDto } from 'src/dto/publication/create-publication.dto'
 import { UpdatePublicationDto } from 'src/dto/publication/update-publication.dto'
-import { ContentCardDto } from 'src/dto/publication/responses/content-publication.dto'
+import { FindParamsDto } from 'src/dto/publication/queries/findParams.dto'
 
 // Importacion del modelo de la base de datos
 import { Publication } from 'src/schemas/publication.schema'
@@ -14,6 +14,9 @@ import { Publication } from 'src/schemas/publication.schema'
 
 // Import de CategoryService
 import { CategoryService } from 'src/modules/category/category.service'
+
+// Importacion de las interfaces para las respuestas
+import { IContentModel } from 'src/interfaces/responses/content.model.interface'
 
 @Injectable()
 export class PublicationService {
@@ -66,31 +69,31 @@ export class PublicationService {
   }
 
   // Metodo para obtener publicaciones con paginación
+  // http://localhost:3001/publications/search?page=0&pageSize=5&order=descendant
   async findPaginatedAndOrdered(
-    page: number,
-    pageSize: number,
-    order: 'ascendant' | 'descendant'
-  ): Promise<ContentCardDto[]> {
+    params: FindParamsDto
+  ): Promise<IContentModel[]> {
+    const { page, pageSize, order } = params
     try {
-      let query: Query<ContentCardDto[], ContentCardDto> =
-        this.publicationModel.find()
+      const sortOrder = order === 'descendant' ? -1 : 1
+      const skipAmount = page * pageSize
 
-      // Ordenamiento basado en el parámetro
-      query = query.sort({ publicationDate: order === 'descendant' ? -1 : 1 })
-
-      // Seleccionar y poblar campos necesarios
-      query = query
+      const results = (await this.publicationModel
+        .find()
+        .sort({ publicationDate: sortOrder })
         .select('_id title photo description views publicationDate')
-        .populate('author', 'name image') // Asegúrate de que el path y select estén correctamente definidos
-
-      // Paginar los resultados
-      const results = (await query
-        .skip(page * pageSize)
+        .populate('author', 'name image')
+        .populate('category', 'title')
+        .skip(skipAmount)
         .limit(pageSize)
-        .exec()) as any as ContentCardDto[] // Aserción de tipo para forzar el tipo correcto
+        .exec()) as IContentModel[]
 
       return results
     } catch (error) {
+      console.error(
+        `Failed to fetch paginated publications on page ${page} with size ${pageSize}`,
+        error
+      )
       throw new Error(
         `Error finding paginated and ordered publications: ${error.message}`
       )
