@@ -9,10 +9,6 @@ export class Comment extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user: User
 
-  // // Propiedad de tipo cadena que almacena la imagen en el comentario
-  // @Prop({ required: true })
-  // image: string
-
   // Propiedad de tipo cadena que almacena el comentario
   @Prop({ required: true })
   comment: string

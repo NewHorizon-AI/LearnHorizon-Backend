@@ -20,6 +20,7 @@ import { FindParamsDto } from 'src/dto/publication/queries/findParams.dto'
 
 // Importacion de las interfaces para las respuestas
 import { IContentModel } from 'src/interfaces/responses/content.model.interface'
+import { IArticlePublication } from 'src/interfaces/responses/article.model.interface.'
 
 @Controller('publications')
 export class PublicationController {
@@ -58,6 +59,14 @@ export class PublicationController {
     @Query() params: FindParamsDto
   ): Promise<IContentModel[]> {
     return this.publicationService.findPaginatedAndOrdered(params)
+  }
+
+  // Metodo para obtener la informcion necesaria para la vista de un articulo
+  @Get('model/:id')
+  async findPublicationModel(
+    @Param('id') id: string
+  ): Promise<IArticlePublication> {
+    return this.publicationService.findPublicationModel(id)
   }
 
   // Metodo para actualizar una publicación

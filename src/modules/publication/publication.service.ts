@@ -17,6 +17,7 @@ import { CategoryService } from 'src/modules/category/category.service'
 
 // Importacion de las interfaces para las respuestas
 import { IContentModel } from 'src/interfaces/responses/content.model.interface'
+import { IArticlePublication } from 'src/interfaces/responses/article.model.interface.'
 
 @Injectable()
 export class PublicationService {
@@ -97,6 +98,28 @@ export class PublicationService {
       throw new Error(
         `Error finding paginated and ordered publications: ${error.message}`
       )
+    }
+  }
+
+  // Metodo para obtener la informacion necesaria para la vista de un articulo
+  async findPublicationModel(id: string): Promise<IArticlePublication> {
+    try {
+      const results = (await this.publicationModel
+        .findById(id)
+        .select(
+          '_id title photo subtitle description markdownContent tags publicationDate views likes dislikes'
+        )
+        .populate('author', 'name image followers')
+        .populate('category', 'title publicationCount')
+        .populate(
+          'comments',
+          'user comment likes dislikes commentDate replies edited'
+        )
+        .exec()) as IArticlePublication
+
+      return results
+    } catch (error) {
+      throw new Error(`Publication not found: ${error.message}`)
     }
   }
 
