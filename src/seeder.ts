@@ -6,7 +6,12 @@ import axios from 'axios'
 export class SeederService {
   private readonly API_URL = 'http://localhost:3001' // Asegúrate de usar la URL correcta de tu API
 
-  // Función que retorna un elemento aleatorio de un arreglo
+  // Función que retorna un número especificado de elementos aleatorios únicos de un arreglo
+  private getRandomUniqueElements<T>(array: T[], numElements: number): T[] {
+    const shuffled = [...array].sort(() => 0.5 - Math.random())
+    return shuffled.slice(0, numElements)
+  }
+
   private getRandomElement<T>(array: T[]): T {
     return array[Math.floor(Math.random() * array.length)]
   }
@@ -55,7 +60,6 @@ export class SeederService {
     console.log(`Inserted ${count} categories`)
   }
 
-  // Función para insertar publicaciones
   private async seedPublications(
     count: number,
     categories: any[],
@@ -66,15 +70,16 @@ export class SeederService {
         'No se pueden crear publicaciones sin usuarios o categorías'
       )
     }
+
     for (let i = 0; i < count; i++) {
-      // Obtiene varios usuarios y categorías aleatorios
-      const randomUsers = Array.from(
-        { length: faker.number.int({ min: 1, max: 3 }) },
-        () => this.getRandomElement(users)
-      )
-      const randomCategories = Array.from(
-        { length: faker.number.int({ min: 1, max: 3 }) },
-        () => this.getRandomElement(categories)
+      const numAuthors = faker.number.int({ min: 1, max: 3 })
+      const numCategories = faker.number.int({ min: 1, max: 3 })
+
+      // Obtiene varios usuarios y categorías aleatorios sin repetir
+      const randomUsers = this.getRandomUniqueElements(users, numAuthors)
+      const randomCategories = this.getRandomUniqueElements(
+        categories,
+        numCategories
       )
 
       const publication = {
@@ -87,10 +92,11 @@ export class SeederService {
         views: faker.number.int({ max: 1000 }),
         likes: faker.number.int({ max: 1000 }),
         dislikes: faker.number.int({ max: 1000 }),
-        author: randomUsers.map((user) => user._id), // Ahora es un array de IDs de usuario
-        category: randomCategories.map((category) => category._id), // Ahora es un array de IDs de categoría
+        author: randomUsers.map((user) => user._id), // Ahora es un array de IDs de usuario únicos
+        category: randomCategories.map((category) => category._id), // Ahora es un array de IDs de categoría únicos
         status: this.getRandomElement(['published', 'review', 'draft'])
       }
+
       try {
         await axios.post(`${this.API_URL}/publications`, publication)
         console.log(`Inserted publication: ${i + 1}`)

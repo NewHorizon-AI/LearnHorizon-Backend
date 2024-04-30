@@ -109,14 +109,17 @@ export class PublicationService {
         .select(
           '_id title photo subtitle description markdownContent tags publicationDate views likes dislikes'
         )
-        .populate('author', 'name image followers')
-        .populate('category', 'title publicationCount')
+        .populate({path: 'author',
+          select: 'author', 'name image followers'
+        }) // poblar múltiples autores
+        .populate('category', 'title publicationCount') // poblar múltiples categorías
         .populate(
           'comments',
           'user comment likes dislikes commentDate replies edited'
         )
         .exec()) as IArticlePublication
 
+      console.log(JSON.stringify(results, null, 2))
       return results
     } catch (error) {
       throw new Error(`Publication not found: ${error.message}`)
