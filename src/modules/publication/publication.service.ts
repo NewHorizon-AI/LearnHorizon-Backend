@@ -104,20 +104,31 @@ export class PublicationService {
   // Metodo para obtener la informacion necesaria para la vista de un articulo
   async findPublicationModel(id: string): Promise<IArticlePublication> {
     try {
-      const results = (await this.publicationModel
+      const results = await this.publicationModel
         .findById(id)
         .select(
           '_id title photo subtitle description markdownContent tags publicationDate views likes dislikes'
         )
-        .populate({path: 'author',
-          select: 'author', 'name image followers'
-        }) // poblar múltiples autores
-        .populate('category', 'title publicationCount') // poblar múltiples categorías
-        .populate(
-          'comments',
-          'user comment likes dislikes commentDate replies edited'
-        )
-        .exec()) as IArticlePublication
+        .populate({
+          path: 'author',
+          model: 'User',
+          select: 'image name followers'
+        })
+        .populate({
+          path: 'category',
+          model: 'Category',
+          select: 'title publicationCount'
+        })
+        .populate({
+          path: 'comments',
+          model: 'Comment',
+          select: 'user comment likes dislikes commentDate replies edited'
+        })
+        .exec()
+
+      if (!results) {
+        throw new Error('Publication not found')
+      }
 
       console.log(JSON.stringify(results, null, 2))
       return results
