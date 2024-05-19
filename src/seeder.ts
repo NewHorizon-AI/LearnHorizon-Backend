@@ -4,7 +4,7 @@ import axios from 'axios'
 
 @Injectable()
 export class SeederService {
-  private readonly API_URL = 'http://localhost:3001' // Asegúrate de usar la URL correcta de tu API
+  private readonly API_URL = 'http://localhost:3001'
 
   // Función que retorna un número especificado de elementos aleatorios únicos de un arreglo
   private getRandomUniqueElements<T>(array: T[], numElements: number): T[] {
