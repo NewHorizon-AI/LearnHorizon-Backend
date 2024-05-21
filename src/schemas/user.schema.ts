@@ -1,42 +1,67 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
+import { ApiProperty } from '@nestjs/swagger'
 
 @Schema()
 export class User extends Document {
-  // Propiedad de tipo cadena que almacena la foto de perfil del usuario
   @Prop({ required: false })
+  @ApiProperty({
+    description: 'Foto de perfil del usuario',
+    example: 'https://example.com/profile.jpg'
+  })
   image?: string
 
-  // Propiedad de tipo cadena que almacena el nombre del usuario
   @Prop({ required: true })
+  @ApiProperty({ description: 'Nombre del usuario', example: 'John Doe' })
   name: string
 
-  // Propiedad de tipo cadena que almacena el nombre unico de usuario
   @Prop({ required: true, unique: true })
+  @ApiProperty({ description: 'Nombre único de usuario', example: 'john_doe' })
   username: string
 
-  // Propiedad de tipo cadena que almacena la contraseña del usuario
   @Prop({ required: true })
+  @ApiProperty({
+    description: 'Contraseña del usuario',
+    example: 'securepassword123'
+  })
   password: string
 
-  // Propiedad de tipo cadena que almacena los seguidres del usuario
   @Prop({ default: 0 })
+  @ApiProperty({
+    description: 'Cantidad de seguidores del usuario',
+    example: 100,
+    default: 0
+  })
   followers: number
 
-  // Propiedad de tipo booleano que almacena si el usuario tiene permisos de edición
   @Prop({ default: false })
+  @ApiProperty({
+    description: 'Permisos de edición del usuario',
+    example: false,
+    default: false
+  })
   editPermissions: boolean
 
-  // Propiedad de tipo cadena que almacena la biografía del usuario
   @Prop()
+  @ApiProperty({
+    description: 'Biografía del usuario',
+    example: 'Desarrollador de software con 10 años de experiencia.'
+  })
   biography: string
 
-  // Propiedad de tipo fecha que almacena la fecha de creación del usuario
   @Prop({ type: Date, default: Date.now })
+  @ApiProperty({
+    description: 'Fecha de creación del usuario',
+    example: '2024-05-20T18:25:43.511Z',
+    default: new Date()
+  })
   creationDate: Date
 
-  // Propiedad de tipo cadena que almacena el correo electrónico del usuario
   @Prop({ required: true, unique: true })
+  @ApiProperty({
+    description: 'Correo electrónico del usuario',
+    example: 'john.doe@example.com'
+  })
   email: string
 }
 
