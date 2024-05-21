@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 // Importacion de los Data Transfer Objects (DTO)
-import { CreatePublicationDto } from 'src/dto/publication/create-publication.dto'
-import { UpdatePublicationDto } from 'src/dto/publication/update-publication.dto'
-import { FindParamsDto } from 'src/dto/publication/queries/findParams.dto'
+import { CreatePublicationDto } from 'src/modules/publication/dto/create-publication.dto'
+import { UpdatePublicationDto } from 'src/modules/publication/dto/update-publication.dto'
+import { FindParamsDto } from 'src/modules/publication/dto/query-parameters/find-params.dto'
 
 // Importacion del modelo de la base de datos
 import { Publication } from 'src/schemas/publication.schema'
@@ -16,8 +16,8 @@ import { Publication } from 'src/schemas/publication.schema'
 import { CategoryService } from 'src/modules/category/category.service'
 
 // Importacion de las interfaces para las respuestas
-import { IContentModel } from 'src/interfaces/responses/content.model.interface'
-import { IArticlePublication } from 'src/interfaces/responses/article.model.interface.'
+import { PublicationResponse } from 'src/interfaces/responses/content-model.model'
+import { ArticlePublication } from 'src/interfaces/responses/article-publication.model'
 
 @Injectable()
 export class PublicationService {
@@ -73,23 +73,34 @@ export class PublicationService {
   // http://localhost:3001/publications/search?page=0&pageSize=5&order=descendant
   async findPaginatedAndOrdered(
     params: FindParamsDto
-  ): Promise<IContentModel[]> {
+  ): Promise<PublicationResponse[]> {
     const { page, pageSize, order } = params
     try {
       const sortOrder = order === 'descendant' ? -1 : 1
       const skipAmount = page * pageSize
 
-      const results = (await this.publicationModel
+      const results = await this.publicationModel
         .find()
         .sort({ publicationDate: sortOrder })
-        .select('_id title photo description views publicationDate')
+        .select(
+          '_id title photo description views publicationDate author category'
+        )
         .populate('author', 'name image')
         .populate('category', 'title')
         .skip(skipAmount)
         .limit(pageSize)
-        .exec()) as IContentModel[]
+        .exec()
 
-      return results
+      return results.map((result) => {
+        // Convertir el documento de Mongoose a un objeto JavaScript simple
+        const resultObject = result.toObject()
+
+        // Crear una instancia de PublicationResponse y asignar las propiedades
+        const contentModel = new PublicationResponse()
+        Object.assign(contentModel, resultObject)
+
+        return contentModel
+      })
     } catch (error) {
       console.error(
         `Failed to fetch paginated publications on page ${page} with size ${pageSize}`,
@@ -102,9 +113,9 @@ export class PublicationService {
   }
 
   // Metodo para obtener la informacion necesaria para la vista de un articulo
-  async findPublicationModel(id: string): Promise<IArticlePublication> {
+  async findPublicationModel(id: string): Promise<ArticlePublication> {
     try {
-      const results = await this.publicationModel
+      const result = await this.publicationModel
         .findById(id)
         .select(
           '_id title photo subtitle description markdownContent tags publicationDate views likes dislikes'
@@ -119,19 +130,20 @@ export class PublicationService {
           model: 'Category',
           select: 'title publicationCount'
         })
-        .populate({
-          path: 'comments',
-          model: 'Comment',
-          select: 'user comment likes dislikes commentDate replies edited'
-        })
         .exec()
 
-      if (!results) {
+      if (!result) {
         throw new Error('Publication not found')
       }
 
-      console.log(JSON.stringify(results, null, 2))
-      return results
+      // Convertir el documento de Mongoose a un objeto JavaScript simple
+      const resultObject = result.toObject()
+
+      // Crear una instancia de ArticlePublication y asignar las propiedades
+      const publication = new ArticlePublication()
+      Object.assign(publication, resultObject)
+
+      return publication
     } catch (error) {
       throw new Error(`Publication not found: ${error.message}`)
     }
@@ -154,15 +166,22 @@ export class PublicationService {
   // Metodo para eliminar publicaciones
   async delete(id: string): Promise<Publication> {
     try {
+      // Encuentra la publicación por su ID
       const publication = await this.publicationModel.findById(id).exec()
 
       if (!publication) {
         throw new Error('Publication not found')
       }
 
-      const categoryIds = publication.category.map((category) => category._id)
+      // Extrae los IDs de las categorías asociadas a la publicación
+      const categoryIds = publication.category.map((category: any) =>
+        category._id.toString()
+      )
+
+      // Decrementa el contador de publicaciones en las categorías
       await this.categoryService.decrementPublicationCount(categoryIds)
 
+      // Elimina la publicación y retorna el documento eliminado
       return await this.publicationModel.findByIdAndDelete(id).exec()
     } catch (error) {
       throw new Error(`Publication not deleted: ${error.message}`)

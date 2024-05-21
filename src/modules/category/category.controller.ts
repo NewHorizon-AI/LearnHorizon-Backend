@@ -7,20 +7,33 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put
+  Put,
+  ConflictException,
+  NotFoundException
 } from '@nestjs/common'
-import { CreateCategoryDto } from 'src/dto/category/create-category.dto'
-import { UpdateCategoryDto } from 'src/dto/category/update-category.dto'
+import { CreateCategoryDto } from 'src/modules/category/dto/create-category.dto'
+import { UpdateCategoryDto } from 'src/modules/category/dto/update-category.dto'
 import { Category } from 'src/schemas/category.schema'
 import { CategoryService } from './category.service'
-import { ConflictException, NotFoundException } from '@nestjs/common'
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
+@ApiTags('categories')
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Crear una nueva categoría' })
+  @ApiResponse({
+    status: 201,
+    description: 'La categoría ha sido creada exitosamente.',
+    type: Category
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'La categoría ya existe.'
+  })
   async create(
     @Body() createCategoryDto: CreateCategoryDto
   ): Promise<Category> {
@@ -32,11 +45,27 @@ export class CategoryController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Obtener todas las categorías' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de todas las categorías.',
+    type: [Category]
+  })
   async findAll(): Promise<Category[]> {
     return this.categoryService.findAll()
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener una categoría por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'La categoría ha sido encontrada.',
+    type: Category
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoría no encontrada.'
+  })
   async findOne(@Param('id') id: string): Promise<Category> {
     const category = await this.categoryService.findOne(id)
     if (!category) {
@@ -46,6 +75,16 @@ export class CategoryController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Actualizar una categoría' })
+  @ApiResponse({
+    status: 200,
+    description: 'La categoría ha sido actualizada exitosamente.',
+    type: Category
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoría no encontrada.'
+  })
   async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto
@@ -59,6 +98,15 @@ export class CategoryController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Eliminar una categoría' })
+  @ApiResponse({
+    status: 204,
+    description: 'La categoría ha sido eliminada exitosamente.'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoría no encontrada.'
+  })
   async delete(@Param('id') id: string): Promise<void> {
     const category = await this.categoryService.delete(id)
     if (!category) {

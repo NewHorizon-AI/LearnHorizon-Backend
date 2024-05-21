@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { CreateCommentDto } from 'src/dto/comment/create-comment.dto'
-import { UpdateCommentDto } from 'src/dto/comment/update-comment.dto'
+import { CreateCommentDto } from 'src/modules/comment/dto/create-comment.dto'
+import { UpdateCommentDto } from 'src/modules/comment/dto/update-comment.dto'
 import { Comment } from 'src/schemas/comment.schema'
 
 @Injectable()

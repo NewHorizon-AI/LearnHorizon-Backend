@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { CreateCategoryDto } from 'src/dto/category/create-category.dto'
-import { UpdateCategoryDto } from 'src/dto/category/update-category.dto'
+import { CreateCategoryDto } from 'src/modules/category/dto/create-category.dto'
+import { UpdateCategoryDto } from 'src/modules/category/dto/update-category.dto'
 import { Category } from 'src/schemas/category.schema'
 
 @Injectable()
@@ -62,17 +62,19 @@ export class CategoryService {
     try {
       await Promise.all(
         ids.map((id) =>
-          this.categoryModel.findByIdAndUpdate(
-            id,
-            {
-              $inc: { publicationCount: -1 }
-            },
-            { new: true }
-          )
+          this.categoryModel
+            .findByIdAndUpdate(
+              id,
+              {
+                $inc: { publicationCount: -1 }
+              },
+              { new: true }
+            )
+            .exec()
         )
       )
     } catch (error) {
-      throw new Error('Error incrementing publication count')
+      throw new Error('Error decrementing publication count')
     }
   }
 }
