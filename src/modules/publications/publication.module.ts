@@ -9,6 +9,7 @@ import {
 
 import { CategoryService } from 'src/modules/categories/services/category.service'
 import { CategoryModule } from 'src/modules/categories/category.module'
+
 @Module({
   imports: [
     MongooseModule.forFeature([

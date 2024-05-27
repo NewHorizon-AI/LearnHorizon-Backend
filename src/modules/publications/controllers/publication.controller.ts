@@ -8,22 +8,30 @@ import {
   Param,
   Query,
   Post,
-  Put
+  Put,
+  UploadedFile,
+  UseInterceptors
 } from '@nestjs/common'
-import { Publication } from 'src/modules/publications/schemas/publication.schema'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { Publication } from '../schemas/publication.schema'
 import { PublicationService } from '../services/publication.service'
 
 // Importacion de los Data Transfer Objects (DTO)
-import { CreatePublicationDto } from 'src/modules/publications/dto/create-publication.dto'
-import { UpdatePublicationDto } from 'src/modules/publications/dto/update-publication.dto'
-import { FindParamsDto } from 'src/modules/publications/dto/query-parameters/find-params.dto'
+import { CreatePublicationDto } from '../dto/create-publication.dto'
+import { UpdatePublicationDto } from '../dto/update-publication.dto'
+import { FindParamsDto } from '../dto/query-parameters/find-params.dto'
 
 // Importacion de las clases para las respuestas
 import { PublicationResponse } from 'src/interfaces/responses/content-model.model'
 import { ArticlePublication } from 'src/interfaces/responses/article-publication.model'
 
 // Importaciones de Swagger
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiConsumes
+} from '@nestjs/swagger'
 
 @ApiTags('publications')
 @Controller('publications')
@@ -34,15 +42,18 @@ export class PublicationController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Crear una nueva publicación' })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
   @ApiResponse({
     status: 201,
     description: 'La publicación ha sido creada exitosamente.',
     type: Publication
   })
   async create(
+    @UploadedFile() file: Express.Multer.File,
     @Body() createPublicationDto: CreatePublicationDto
   ): Promise<Publication> {
-    return await this.publicationService.create(createPublicationDto)
+    return await this.publicationService.create(createPublicationDto, file)
   }
 
   // Metodo para obtener todas las publicaciones
@@ -129,9 +140,10 @@ export class PublicationController {
   })
   async update(
     @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
     @Body() updatePublicationDto: UpdatePublicationDto
   ): Promise<Publication> {
-    return await this.publicationService.update(id, updatePublicationDto)
+    return await this.publicationService.update(id, updatePublicationDto, file)
   }
 
   // Metodo para eliminar una publicación

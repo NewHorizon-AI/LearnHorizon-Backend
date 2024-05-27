@@ -120,4 +120,45 @@ export class CreatePublicationDto {
     example: ['60d0fe4f5311236168a109cc', '60d0fe4f5311236168a109cd']
   })
   comments: string[] // Esto debería ser un array de ObjectId, pero los validadores de class-validator no soportan ObjectId.
+
+  // Campos opcionales para publicaciones de modelos 3D
+
+  @ApiProperty({
+    description: 'ID del modelo 3D asociado (opcional)',
+    type: String,
+    required: false
+  })
+  @IsOptional()
+  @IsString()
+  model3D?: string
+
+  @ApiProperty({
+    description: 'Coordenadas [x, y, z] (opcional)',
+    type: [Number],
+    required: false,
+    example: [10, 20, 30]
+  })
+  @IsArray()
+  @IsOptional()
+  coordinates?: number[]
+
+  @ApiProperty({
+    description: 'Ángulos de rotación [x, y, z] (opcional)',
+    type: [Number],
+    required: false,
+    example: [45, 30, 60]
+  })
+  @IsArray()
+  @IsOptional()
+  rotationAngles?: number[]
+
+  @ApiProperty({
+    description: 'Escala [x, y, z] (opcional)',
+    type: [Number],
+    required: false,
+    example: [1, 1, 1]
+  })
+  @IsArray()
+  @IsOptional()
+  scale?: number[]
 }

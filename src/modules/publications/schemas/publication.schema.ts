@@ -1,9 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Types } from 'mongoose'
+import { ApiProperty } from '@nestjs/swagger'
+
+// Importación de los esquemas necesarios
 import { User } from '../../users/schemas/user.schema'
 import { Category } from '../../categories/schemas/category.schema'
 import { Comment } from 'src/modules/comments/schemas/comment.schema'
-import { ApiProperty } from '@nestjs/swagger'
+import { Object3D } from 'src/modules/objects3d/schemas/object3d.schema'
 
 @Schema()
 export class Publication extends Document {
@@ -126,6 +129,15 @@ export class Publication extends Document {
     example: ['60d0fe4f5311236168a109cc', '60d0fe4f5311236168a109cd']
   })
   comments: Comment[]
+
+  // Propiedad de tipo referencia que almacena el modelo 3D asociado a la publicación
+  @Prop({ type: Types.ObjectId, ref: 'Object3D', required: false })
+  @ApiProperty({
+    description: 'ID del modelo 3D asociado',
+    type: String,
+    example: '60d0fe4f5311236168a109de'
+  })
+  model3D: Object3D
 }
 
 export const PublicationSchema = SchemaFactory.createForClass(Publication)
