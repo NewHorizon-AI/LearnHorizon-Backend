@@ -11,10 +11,10 @@ import {
   ConflictException,
   NotFoundException
 } from '@nestjs/common'
-import { CreateCommentDto } from 'src/modules/comment/dto/create-comment.dto'
-import { UpdateCommentDto } from 'src/modules/comment/dto/update-comment.dto'
-import { Comment } from 'src/schemas/comment.schema'
-import { CommentService } from './comment.service'
+import { CreateCommentDto } from 'src/modules/comments/dto/create-comment.dto'
+import { UpdateCommentDto } from 'src/modules/comments/dto/update-comment.dto'
+import { Comment } from 'src/modules/comments/schemas/comment.schema'
+import { CommentService } from 'src/modules/comments/services/comment.service'
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
 @ApiTags('comments')

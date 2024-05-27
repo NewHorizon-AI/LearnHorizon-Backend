@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Types } from 'mongoose'
-import { User } from './user.schema'
-import { Publication } from './publication.schema'
+import { User } from 'src/modules/users/schemas/user.schema'
+import { Publication } from 'src/modules/publications/schemas/publication.schema'
 import { ApiProperty } from '@nestjs/swagger'
 
 @Schema()

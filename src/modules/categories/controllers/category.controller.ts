@@ -11,10 +11,10 @@ import {
   ConflictException,
   NotFoundException
 } from '@nestjs/common'
-import { CreateCategoryDto } from 'src/modules/category/dto/create-category.dto'
-import { UpdateCategoryDto } from 'src/modules/category/dto/update-category.dto'
-import { Category } from 'src/schemas/category.schema'
-import { CategoryService } from './category.service'
+import { CreateCategoryDto } from 'src/modules/categories/dto/create-category.dto'
+import { UpdateCategoryDto } from 'src/modules/categories/dto/update-category.dto'
+import { Category } from 'src/modules/categories/schemas/category.schema'
+import { CategoryService } from '../services/category.service'
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
 @ApiTags('categories')

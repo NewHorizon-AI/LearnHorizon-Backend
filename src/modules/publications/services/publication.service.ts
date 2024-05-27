@@ -3,17 +3,17 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 // Importacion de los Data Transfer Objects (DTO)
-import { CreatePublicationDto } from 'src/modules/publication/dto/create-publication.dto'
-import { UpdatePublicationDto } from 'src/modules/publication/dto/update-publication.dto'
-import { FindParamsDto } from 'src/modules/publication/dto/query-parameters/find-params.dto'
+import { CreatePublicationDto } from 'src/modules/publications/dto/create-publication.dto'
+import { UpdatePublicationDto } from 'src/modules/publications/dto/update-publication.dto'
+import { FindParamsDto } from 'src/modules/publications/dto/query-parameters/find-params.dto'
 
 // Importacion del modelo de la base de datos
-import { Publication } from 'src/schemas/publication.schema'
+import { Publication } from 'src/modules/publications/schemas/publication.schema'
 
 // import { ConflictException, NotFoundException } from '@nestjs/common'
 
 // Import de CategoryService
-import { CategoryService } from 'src/modules/category/category.service'
+import { CategoryService } from 'src/modules/categories/services/category.service'
 
 // Importacion de las interfaces para las respuestas
 import { PublicationResponse } from 'src/interfaces/responses/content-model.model'

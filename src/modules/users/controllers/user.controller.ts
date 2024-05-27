@@ -11,10 +11,10 @@ import {
   ConflictException,
   NotFoundException
 } from '@nestjs/common'
-import { CreateUserDto } from 'src/modules/user/dto/create-user.dto'
-import { UpdateUserDto } from 'src/modules/user/dto/update-user.dto'
-import { User } from 'src/schemas/user.schema'
-import { UserService } from './user.service'
+import { CreateUserDto } from 'src/modules/users/dto/create-user.dto'
+import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto'
+import { User } from 'src/modules/users/schemas/user.schema'
+import { UserService } from '../services/user.service'
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
 @ApiTags('users')

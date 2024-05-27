@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Types } from 'mongoose'
-import { User } from './user.schema'
-import { Category } from './category.schema'
-import { Comment } from './comment.schema'
+import { User } from '../../users/schemas/user.schema'
+import { Category } from '../../categories/schemas/category.schema'
+import { Comment } from 'src/modules/comments/schemas/comment.schema'
 import { ApiProperty } from '@nestjs/swagger'
 
 @Schema()

@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common'
-import { PublicationController } from './publication.controller'
-import { PublicationService } from './publication.service'
+import { PublicationController } from './controllers/publication.controller'
+import { PublicationService } from './services/publication.service'
 import { MongooseModule } from '@nestjs/mongoose'
-import { Publication, PublicationSchema } from 'src/schemas/publication.schema'
+import {
+  Publication,
+  PublicationSchema
+} from 'src/modules/publications/schemas/publication.schema'
 
-import { CategoryService } from 'src/modules/category/category.service'
-import { CategoryModule } from 'src/modules/category/category.module'
+import { CategoryService } from 'src/modules/categories/services/category.service'
+import { CategoryModule } from 'src/modules/categories/category.module'
 @Module({
   imports: [
     MongooseModule.forFeature([

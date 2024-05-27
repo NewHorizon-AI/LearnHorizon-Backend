@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { UserModule } from './modules/user/user.module'
-import { CategoryModule } from './modules/category/category.module'
-import { PublicationModule } from './modules/publication/publication.module'
-import { CommentModule } from './modules/comment/comment.module'
+import { UserModule } from './modules/users/user.module'
+import { CategoryModule } from './modules/categories/category.module'
+import { PublicationModule } from './modules/publications/publication.module'
+import { CommentModule } from './modules/comments/comment.module'
 
 import { SeederService } from './seeder'
 
