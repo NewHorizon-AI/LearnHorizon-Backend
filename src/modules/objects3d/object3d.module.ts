@@ -8,6 +8,7 @@ import { Object3D, Object3DSchema } from './schemas/object3d.schema'
   imports: [
     MongooseModule.forFeature([{ name: Object3D.name, schema: Object3DSchema }])
   ],
-  providers: [Object3DService]
+  providers: [Object3DService],
+  exports: [Object3DService]
 })
 export class Object3dModule {}

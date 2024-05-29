@@ -9,13 +9,15 @@ import {
 
 import { CategoryService } from 'src/modules/categories/services/category.service'
 import { CategoryModule } from 'src/modules/categories/category.module'
+import { Object3dModule } from '../objects3d/object3d.module'
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Publication.name, schema: PublicationSchema }
     ]),
-    CategoryModule
+    CategoryModule,
+    Object3dModule
   ], // Importar el modelo de la base de datos
   controllers: [PublicationController],
   providers: [PublicationService, CategoryService],
