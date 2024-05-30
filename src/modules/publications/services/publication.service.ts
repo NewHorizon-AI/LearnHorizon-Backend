@@ -6,7 +6,7 @@ import { Model } from 'mongoose'
 import { CreatePublicationDto } from 'src/modules/publications/dto/create-publication.dto'
 import { UpdatePublicationDto } from 'src/modules/publications/dto/update-publication.dto'
 import { FindParamsDto } from 'src/modules/publications/dto/query-parameters/find-params.dto'
-import { CreateObject3DDto } from 'src/modules/objects3d/dto/create-object3d.dto'
+// import { CreateObject3DDto } from 'src/modules/objects3d/dto/create-object3d.dto'
 
 // Importacion del modelo de la base de datos
 import { Publication } from 'src/modules/publications/schemas/publication.schema'
@@ -17,7 +17,7 @@ import { Publication } from 'src/modules/publications/schemas/publication.schema
 import { CategoryService } from 'src/modules/categories/services/category.service'
 
 // Importación del servicio de modelos 3D
-import { Object3DService } from 'src/modules/objects3d/services/object3d.service'
+// import { Object3DService } from 'src/modules/objects3d/services/object3d.service'
 
 // Importacion de las interfaces para las respuestas
 import { PublicationResponse } from 'src/interfaces/responses/content-model.model'
@@ -30,20 +30,20 @@ export class PublicationService {
   // Inyección del modelo de la base de datos
   constructor(
     @InjectModel(Publication.name) private publicationModel: Model<Publication>,
-    private categoryService: CategoryService,
-    private object3DService: Object3DService // Inyectar el servicio de modelos 3D
+    private categoryService: CategoryService
+    // private object3DService: Object3DService // Inyectar el servicio de modelos 3D
   ) {}
 
   // Metodo para crear publicaciones y actualizar el contador de publicaciones de la categoría
   async create(
-    createPublicationDto: CreatePublicationDto,
-    createObject3DDto: CreateObject3DDto
+    createPublicationDto: CreatePublicationDto
+    // createObject3DDto: CreateObject3DDto
   ): Promise<Publication> {
     try {
       // Si hay un archivo, crear el modelo 3D y obtener su ID
-      if (createObject3DDto) {
-        const model3D = await this.object3DService.create(createObject3DDto)
-      }
+      // if (createObject3DDto) {
+      //   const model3D = await this.object3DService.create(createObject3DDto)
+      // }
 
       // Crear la publicación con la posible referencia al modelo 3D
       const createdPublication = new this.publicationModel({

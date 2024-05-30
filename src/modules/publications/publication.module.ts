@@ -10,7 +10,7 @@ import {
 import { CategoryService } from 'src/modules/categories/services/category.service'
 import { CategoryModule } from 'src/modules/categories/category.module'
 import { Object3dModule } from '../objects3d/object3d.module'
-import { Object3DService } from '../objects3d/services/object3d.service'
+// import { Object3DService } from '../objects3d/services/object3d.service'
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -20,7 +20,7 @@ import { Object3DService } from '../objects3d/services/object3d.service'
     Object3dModule
   ], // Importar el modelo de la base de datos
   controllers: [PublicationController],
-  providers: [PublicationService, CategoryService, Object3DService],
+  providers: [PublicationService, CategoryService], // , Object3DService
   exports: [MongooseModule] // Exportar el módulo de Mongoose
 })
 export class PublicationModule {}

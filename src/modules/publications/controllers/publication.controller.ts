@@ -38,7 +38,7 @@ import {
 } from '@nestjs/swagger'
 
 import { MyCustomException } from 'src/exceptions/my-custom.exception'
-import { CreateObject3DDto } from 'src/modules/objects3d/dto/create-object3d.dto'
+// import { CreateObject3DDto } from 'src/modules/objects3d/dto/create-object3d.dto'
 
 @ApiTags('publications')
 @Controller('publications')
@@ -57,13 +57,13 @@ export class PublicationController {
     type: Publication
   })
   async create(
-    @Body() createPublicationDto: CreatePublicationDto,
-    @Body() createObject3DDto: CreateObject3DDto
+    @Body() createPublicationDto: CreatePublicationDto
+    // @Body() createObject3DDto: CreateObject3DDto
   ): Promise<Publication> {
     try {
       const result = this.publicationService.create(
-        createPublicationDto,
-        createObject3DDto
+        createPublicationDto
+        // createObject3DDto
       )
       return result
     } catch (error) {
@@ -169,7 +169,7 @@ export class PublicationController {
     @UploadedFile() file: Express.Multer.File,
     @Body() updatePublicationDto: UpdatePublicationDto
   ): Promise<Publication> {
-    return await this.publicationService.update(id, updatePublicationDto, file)
+    return await this.publicationService.update(id, updatePublicationDto) // , file
   }
 
   @Delete(':id')
