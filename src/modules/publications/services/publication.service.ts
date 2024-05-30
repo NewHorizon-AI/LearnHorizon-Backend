@@ -6,6 +6,7 @@ import { Model } from 'mongoose'
 import { CreatePublicationDto } from 'src/modules/publications/dto/create-publication.dto'
 import { UpdatePublicationDto } from 'src/modules/publications/dto/update-publication.dto'
 import { FindParamsDto } from 'src/modules/publications/dto/query-parameters/find-params.dto'
+import { CreateObject3DDto } from 'src/modules/objects3d/dto/create-object3d.dto'
 
 // Importacion del modelo de la base de datos
 import { Publication } from 'src/modules/publications/schemas/publication.schema'
@@ -22,6 +23,8 @@ import { Object3DService } from 'src/modules/objects3d/services/object3d.service
 import { PublicationResponse } from 'src/interfaces/responses/content-model.model'
 import { ArticlePublication } from 'src/interfaces/responses/article-publication.model'
 
+// throw new MyCustomException('Duplicate entry');
+
 @Injectable()
 export class PublicationService {
   // Inyección del modelo de la base de datos
@@ -34,31 +37,24 @@ export class PublicationService {
   // Metodo para crear publicaciones y actualizar el contador de publicaciones de la categoría
   async create(
     createPublicationDto: CreatePublicationDto,
-    file?: Express.Multer.File
+    createObject3DDto: CreateObject3DDto
   ): Promise<Publication> {
     try {
-      let model3DId = null
-
       // Si hay un archivo, crear el modelo 3D y obtener su ID
-      if (file) {
-        const model3D = await this.object3DService.create(file, {
-          name: file.originalname,
-          coordinates: createPublicationDto.coordinates,
-          rotationAngles: createPublicationDto.rotationAngles,
-          scale: createPublicationDto.scale
-        })
-        model3DId = model3D._id
+      if (createObject3DDto) {
+        const model3D = await this.object3DService.create(createObject3DDto)
       }
 
       // Crear la publicación con la posible referencia al modelo 3D
       const createdPublication = new this.publicationModel({
-        ...createPublicationDto,
-        model3D: model3DId
+        ...createPublicationDto
       })
 
+      // Regla de negocio: Incrementar el contador de publicaciones en las categorías
       await this.categoryService.incrementPublicationCount([
         ...createPublicationDto.category
       ])
+
       return await createdPublication.save()
     } catch (error) {
       throw new Error(`Publication not created: ${error.message}`)
@@ -175,32 +171,15 @@ export class PublicationService {
   // Meodo para actualizar publicaciones
   async update(
     id: string,
-    updatePublicationDto: UpdatePublicationDto,
-    file?: Express.Multer.File
+    updatePublicationDto: UpdatePublicationDto
   ): Promise<Publication> {
     try {
-      let model3DId = null
-
-      // Si hay un archivo, crear el modelo 3D y obtener su ID
-      if (file) {
-        const model3D = await this.object3DService.create(file, {
-          name: file.originalname,
-          coordinates: updatePublicationDto.coordinates,
-          rotationAngles: updatePublicationDto.rotationAngles,
-          scale: updatePublicationDto.scale
-        })
-        model3DId = model3D._id
-      }
-
-      // Actualizar la publicación con la posible referencia al modelo 3D
-
       // Actualizar la publicación con la posible referencia al modelo 3D
       const updatedPublication = await this.publicationModel
         .findByIdAndUpdate(
           id,
           {
-            ...updatePublicationDto,
-            ...(model3DId && { model3D: model3DId })
+            ...updatePublicationDto
           },
           { new: true }
         )

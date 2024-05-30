@@ -14,9 +14,9 @@ export async function createApp() {
   app.useGlobalPipes(new ValidationPipe()) // Validar los datos que llegan al servidor
 
   const config = new DocumentBuilder()
-    .setTitle('Documentación de la API')
+    .setTitle('Documentación de la API LearnHorizon - Backend')
     .setDescription('La API de ejemplo para tu aplicación NestJS')
-    .setVersion('1.0')
+    .setVersion('0.1')
     .addTag('ejemplo')
     .build()
 

@@ -57,7 +57,7 @@ export class CreatePublicationDto {
     description: 'Etiquetas de la publicación',
     example: ['artículo', 'introducción', 'markdown']
   })
-  tags: string[]
+  tags?: string[]
 
   @IsOptional()
   @IsDate()
@@ -65,7 +65,7 @@ export class CreatePublicationDto {
     description: 'Fecha de publicación',
     example: '2024-05-20T18:25:43.511Z'
   })
-  publicationDate: Date
+  publicationDate?: Date
 
   @IsOptional()
   @Min(0)
@@ -73,7 +73,7 @@ export class CreatePublicationDto {
     description: 'Número de vistas de la publicación',
     example: 150
   })
-  views: number
+  views?: number
 
   @IsOptional()
   @Min(0)
@@ -81,7 +81,7 @@ export class CreatePublicationDto {
     description: 'Número de likes de la publicación',
     example: 20
   })
-  likes: number
+  likes?: number
 
   @IsOptional()
   @Min(0)
@@ -89,21 +89,23 @@ export class CreatePublicationDto {
     description: 'Número de dislikes de la publicación',
     example: 5
   })
-  dislikes: number
+  dislikes?: number
 
   @IsNotEmpty()
+  @IsString()
   @ApiProperty({
     description: 'ID del autor de la publicación (ObjectId)',
     example: '60d0fe4f5311236168a109ca'
   })
-  author: string // Esto debería ser un ObjectId, pero los validadores de class-validator no soportan ObjectId.
+  author: string
 
   @IsNotEmpty()
+  @IsString()
   @ApiProperty({
     description: 'ID de la categoría de la publicación (ObjectId)',
     example: '60d0fe4f5311236168a109cb'
   })
-  category: string // Esto debería ser un ObjectId, pero los validadores de class-validator no soportan ObjectId.
+  category: string
 
   @IsOptional()
   @IsEnum(['published', 'review', 'draft'])
@@ -111,54 +113,14 @@ export class CreatePublicationDto {
     description: 'Estado de la publicación',
     example: 'published'
   })
-  status: string
+  status?: string
 
   @IsOptional()
   @IsArray()
+  @IsString({ each: true })
   @ApiPropertyOptional({
     description: 'Comentarios de la publicación (array de ObjectId)',
     example: ['60d0fe4f5311236168a109cc', '60d0fe4f5311236168a109cd']
   })
-  comments: string[] // Esto debería ser un array de ObjectId, pero los validadores de class-validator no soportan ObjectId.
-
-  // Campos opcionales para publicaciones de modelos 3D
-
-  @ApiProperty({
-    description: 'ID del modelo 3D asociado (opcional)',
-    type: String,
-    required: false
-  })
-  @IsOptional()
-  @IsString()
-  model3D?: string
-
-  @ApiProperty({
-    description: 'Coordenadas [x, y, z] (opcional)',
-    type: [Number],
-    required: false,
-    example: [10, 20, 30]
-  })
-  @IsArray()
-  @IsOptional()
-  coordinates?: number[]
-
-  @ApiProperty({
-    description: 'Ángulos de rotación [x, y, z] (opcional)',
-    type: [Number],
-    required: false,
-    example: [45, 30, 60]
-  })
-  @IsArray()
-  @IsOptional()
-  rotationAngles?: number[]
-
-  @ApiProperty({
-    description: 'Escala [x, y, z] (opcional)',
-    type: [Number],
-    required: false,
-    example: [1, 1, 1]
-  })
-  @IsArray()
-  @IsOptional()
-  scale?: number[]
+  comments?: string[]
 }

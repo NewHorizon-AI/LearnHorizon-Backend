@@ -9,6 +9,7 @@ import {
   Query,
   Post,
   Put,
+  HttpException,
   UploadedFile,
   UseInterceptors
 } from '@nestjs/common'
@@ -30,33 +31,52 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiConsumes
+  ApiConsumes,
+  ApiParam,
+  ApiQuery,
+  ApiBody
 } from '@nestjs/swagger'
+
+import { MyCustomException } from 'src/exceptions/my-custom.exception'
+import { CreateObject3DDto } from 'src/modules/objects3d/dto/create-object3d.dto'
 
 @ApiTags('publications')
 @Controller('publications')
 export class PublicationController {
   constructor(private readonly publicationService: PublicationService) {}
 
-  // Metodo para crear una publicación
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Crear una nueva publicación' })
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreatePublicationDto })
   @ApiResponse({
     status: 201,
     description: 'La publicación ha sido creada exitosamente.',
     type: Publication
   })
   async create(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() createPublicationDto: CreatePublicationDto
+    @Body() createPublicationDto: CreatePublicationDto,
+    @Body() createObject3DDto: CreateObject3DDto
   ): Promise<Publication> {
-    return await this.publicationService.create(createPublicationDto, file)
+    try {
+      const result = this.publicationService.create(
+        createPublicationDto,
+        createObject3DDto
+      )
+      return result
+    } catch (error) {
+      if (error instanceof MyCustomException) {
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
   }
 
-  // Metodo para obtener todas las publicaciones
   @Get()
   @ApiOperation({ summary: 'Obtener todas las publicaciones' })
   @ApiResponse({
@@ -68,9 +88,9 @@ export class PublicationController {
     return this.publicationService.findAll()
   }
 
-  // Metodo para obtener una publicación por id
   @Get('publication/:id')
   @ApiOperation({ summary: 'Obtener una publicación por ID' })
+  @ApiParam({ name: 'id', required: true, description: 'ID de la publicación' })
   @ApiResponse({
     status: 200,
     description: 'La publicación ha sido encontrada.',
@@ -84,11 +104,11 @@ export class PublicationController {
     return await this.publicationService.findOne(id)
   }
 
-  // Metodo para obtener todas las publicaciones por id de categoría
   @Get('category/:id')
   @ApiOperation({
     summary: 'Obtener todas las publicaciones por ID de categoría'
   })
+  @ApiParam({ name: 'id', required: true, description: 'ID de la categoría' })
   @ApiResponse({
     status: 200,
     description: 'Lista de publicaciones por categoría.',
@@ -98,9 +118,13 @@ export class PublicationController {
     return await this.publicationService.findAllByCategoryId(id)
   }
 
-  // Metodo para obtener publicaciones con paginación
   @Get('search')
   @ApiOperation({ summary: 'Obtener publicaciones con paginación y ordenadas' })
+  @ApiQuery({
+    name: 'params',
+    required: false,
+    description: 'Parámetros de búsqueda y paginación'
+  })
   @ApiResponse({
     status: 200,
     description: 'Lista de publicaciones paginadas y ordenadas.',
@@ -112,9 +136,9 @@ export class PublicationController {
     return this.publicationService.findPaginatedAndOrdered(params)
   }
 
-  // Metodo para obtener la informcion necesaria para la vista de un articulo
   @Get('model/:id')
   @ApiOperation({ summary: 'Obtener el modelo de vista de una publicación' })
+  @ApiParam({ name: 'id', required: true, description: 'ID de la publicación' })
   @ApiResponse({
     status: 200,
     description: 'El modelo de vista de la publicación ha sido encontrado.',
@@ -126,9 +150,11 @@ export class PublicationController {
     return this.publicationService.findPublicationModel(id)
   }
 
-  // Metodo para actualizar una publicación
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar una publicación' })
+  @ApiParam({ name: 'id', required: true, description: 'ID de la publicación' })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiBody({ type: UpdatePublicationDto })
   @ApiResponse({
     status: 200,
     description: 'La publicación ha sido actualizada exitosamente.',
@@ -146,10 +172,10 @@ export class PublicationController {
     return await this.publicationService.update(id, updatePublicationDto, file)
   }
 
-  // Metodo para eliminar una publicación
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar una publicación' })
+  @ApiParam({ name: 'id', required: true, description: 'ID de la publicación' })
   @ApiResponse({
     status: 204,
     description: 'La publicación ha sido eliminada exitosamente.'

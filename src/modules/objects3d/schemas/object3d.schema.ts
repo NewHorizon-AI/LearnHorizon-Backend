@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document } from 'mongoose'
+import { Document, Schema as MongooseSchema } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 
 @Schema()
@@ -10,20 +10,6 @@ export class Object3D extends Document {
     example: 'Modelo de ejemplo'
   })
   name: string
-
-  @Prop({ required: true })
-  @ApiProperty({
-    description: 'Contenido del archivo 3D en formato base64',
-    example: 'data:model/gltf+json;base64,...'
-  })
-  content: string
-
-  @Prop({ required: true })
-  @ApiProperty({
-    description: 'Tamaño del archivo en bytes',
-    example: 10485760
-  })
-  size: number
 
   @Prop({ required: true, type: [Number] })
   @ApiProperty({
@@ -45,6 +31,13 @@ export class Object3D extends Document {
     example: [1, 1, 1]
   })
   scale: number[]
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'File', required: true })
+  @ApiProperty({
+    description: 'Referencia al archivo subido',
+    example: '603d2ef1b3f0a2168c6e89d1'
+  })
+  file: string
 }
 
 export const Object3DSchema = SchemaFactory.createForClass(Object3D)

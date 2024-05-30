@@ -5,6 +5,9 @@ import { Object3D } from '../schemas/object3d.schema'
 import { validateBytes } from 'gltf-validator'
 import { Express } from 'express' // Importar tipos de express
 
+// Importar el DTO para la creación de modelos 3D
+import { CreateObject3DDto } from '../dto/create-object3d.dto'
+
 @Injectable()
 export class Object3DService {
   constructor(
@@ -12,12 +15,7 @@ export class Object3DService {
   ) {}
 
   // Método para crear un nuevo modelo 3D
-  async create(
-    file: Express.Multer.File, // Usar el tipo correcto para el archivo
-    createObject3DDto: any
-  ): Promise<Object3D> {
-    const { name, coordinates, rotationAngles, scale } = createObject3DDto
-
+  async create(createObject3DDto: CreateObject3DDto): Promise<Object3D> {
     // Validar el formato del archivo GLTF
     try {
       // Convierte el buffer del archivo a un Uint8Array y valida el contenido GLTF
