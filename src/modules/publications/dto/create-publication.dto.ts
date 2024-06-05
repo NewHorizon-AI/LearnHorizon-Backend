@@ -8,6 +8,8 @@ import {
   IsDate
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Category } from 'src/modules/categories/schemas/category.schema'
+import { User } from 'src/modules/users/schemas/user.schema'
 
 export class CreatePublicationDto {
   @IsNotEmpty()
@@ -92,20 +94,22 @@ export class CreatePublicationDto {
   dislikes?: number
 
   @IsNotEmpty()
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @ApiProperty({
     description: 'ID del autor de la publicación (ObjectId)',
     example: '60d0fe4f5311236168a109ca'
   })
-  author: string
+  author: User[]
 
   @IsNotEmpty()
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @ApiProperty({
     description: 'ID de la categoría de la publicación (ObjectId)',
     example: '60d0fe4f5311236168a109cb'
   })
-  category: string
+  category: Category[]
 
   @IsOptional()
   @IsEnum(['published', 'review', 'draft'])
