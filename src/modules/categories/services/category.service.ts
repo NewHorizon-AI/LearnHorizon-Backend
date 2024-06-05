@@ -39,7 +39,7 @@ export class CategoryService {
   }
 
   // Metodo para incrementar el contador de publicaciones de una categoría
-  async incrementPublicationCount(ids: string[]): Promise<void> {
+  async incrementPublicationCount(ids: Category[]): Promise<void> {
     try {
       await Promise.all(
         ids.map((id) =>

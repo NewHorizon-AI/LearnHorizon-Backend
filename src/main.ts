@@ -11,7 +11,7 @@ async function bootstrap() {
     console.log('NestJS server listening on port 3001')
 
     // Opción para ejecutar el seeding
-    const shouldSeed = process.env.SEED_DB === 'true'
+    const shouldSeed = process.env.SEED_DB === 'True'
     if (shouldSeed) {
       await seedDatabase(app)
     }

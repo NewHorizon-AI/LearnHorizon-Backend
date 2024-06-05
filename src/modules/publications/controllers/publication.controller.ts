@@ -65,6 +65,7 @@ export class PublicationController {
         createPublicationDto
         // createObject3DDto
       )
+
       return result
     } catch (error) {
       if (error instanceof MyCustomException) {
