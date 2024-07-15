@@ -1,21 +1,24 @@
 import {
-  Body,
   Controller,
-  Delete,
-  Get,
-  Param,
   Post,
   Put,
-  HttpCode,
-  HttpStatus,
-  ConflictException,
-  NotFoundException
+  Get,
+  Delete,
+  Body,
+  Param,
+  ParseUUIDPipe,
+  HttpException,
+  HttpStatus
 } from '@nestjs/common'
-import { CreateUserDto } from 'src/modules/users/dto/create-user.dto'
-import { UpdateUserDto } from 'src/modules/users/dto/update-user.dto'
-import { User } from 'src/modules/users/schemas/user.schema'
+
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
+
+import { User } from '../schemas/user.schema'
+
 import { UserService } from '../services/user.service'
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
+
+import { CreateUserDto } from '../dto/create-user.dto'
+import { UpdateUserDto } from '../dto/update-user.dto'
 
 @ApiTags('users')
 @Controller('users')
@@ -23,92 +26,107 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
   @ApiResponse({
     status: 201,
-    description: 'El usuario ha sido creado exitosamente.',
+    description: 'El usuario ha sido creado con éxito.',
     type: User
   })
-  @ApiResponse({
-    status: 409,
-    description: 'El usuario ya existe.'
-  })
+  @ApiResponse({ status: 400, description: 'Username or email already exists' })
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     try {
-      return await this.userService.create(createUserDto)
+      return this.userService.create(createUserDto)
     } catch (error) {
-      throw new ConflictException('User already exists')
+      if (error instanceof HttpException) {
+        throw error
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
     }
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Obtener todos los usuarios' })
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualizar un usuario existente' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del usuario',
+    example: '607d2f77bcf86cd799439011'
+  })
   @ApiResponse({
     status: 200,
-    description: 'Lista de todos los usuarios.',
-    type: [User]
+    description: 'El usuario ha sido actualizado con éxito.',
+    type: User
   })
-  async findAll(): Promise<User[]> {
-    return await this.userService.findAll()
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<User> {
+    try {
+      return this.userService.update(id, updateUserDto)
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un usuario por ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del usuario',
+    example: '607d2f77bcf86cd799439011'
+  })
   @ApiResponse({
     status: 200,
     description: 'El usuario ha sido encontrado.',
     type: User
   })
-  @ApiResponse({
-    status: 404,
-    description: 'Usuario no encontrado.'
-  })
-  async findOne(@Param('id') id: string): Promise<User> {
-    const user = await this.userService.findOne(id)
-    if (!user) {
-      throw new NotFoundException('User not found')
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
+    try {
+      return await this.userService.findOne(id)
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
     }
-    return user
-  }
-
-  @Put(':id')
-  @ApiOperation({ summary: 'Actualizar un usuario' })
-  @ApiResponse({
-    status: 200,
-    description: 'El usuario ha sido actualizado exitosamente.',
-    type: User
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Usuario no encontrado.'
-  })
-  async update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto
-  ): Promise<User> {
-    const user = await this.userService.update(id, updateUserDto)
-    if (!user) {
-      throw new NotFoundException('User not found')
-    }
-    return user
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Eliminar un usuario' })
-  @ApiResponse({
-    status: 204,
-    description: 'El usuario ha sido eliminado exitosamente.'
+  @ApiOperation({ summary: 'Eliminar un usuario por ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del usuario',
+    example: '607d2f77bcf86cd799439011'
   })
   @ApiResponse({
-    status: 404,
-    description: 'Usuario no encontrado.'
+    status: 200,
+    description: 'El usuario ha sido eliminado con éxito.'
   })
-  async delete(@Param('id') id: string): Promise<void> {
-    const user = await this.userService.delete(id)
-    if (!user) {
-      throw new NotFoundException('User not found')
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    try {
+      await this.userService.delete(id)
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
     }
   }
 }

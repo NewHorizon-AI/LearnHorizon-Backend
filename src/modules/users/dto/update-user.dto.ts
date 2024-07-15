@@ -2,76 +2,22 @@ import {
   IsEmail,
   IsOptional,
   IsString,
-  Min,
-  IsBoolean,
-  IsDate
+  MinLength,
+  MaxLength,
+  Matches
 } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateUserDto {
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({
-    description: 'URL de la imagen del usuario',
-    example: 'https://example.com/image.jpg'
-  })
-  image?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({
-    description: 'Nombre del usuario',
-    example: 'John Doe'
-  })
-  name: string
-
-  @IsOptional()
-  @IsString()
+  @MinLength(3)
+  @MaxLength(20)
   @ApiPropertyOptional({
     description: 'Nombre de usuario',
     example: 'johndoe'
   })
-  username: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({
-    description: 'Contraseña del usuario',
-    example: 'newpassword123'
-  })
-  password: string
-
-  @IsOptional()
-  @Min(0)
-  @ApiPropertyOptional({
-    description: 'Número de seguidores',
-    example: 150
-  })
-  followers: number
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({
-    description: 'Permisos de edición del usuario',
-    example: true
-  })
-  editPermissions: boolean
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({
-    description: 'Biografía del usuario',
-    example: 'This is an updated biography.'
-  })
-  biography: string
-
-  @IsOptional()
-  @IsDate()
-  @ApiPropertyOptional({
-    description: 'Fecha de creación del usuario',
-    example: '2024-05-21T18:25:43.511Z'
-  })
-  creationDate: Date
+  username?: string
 
   @IsOptional()
   @IsEmail()
@@ -79,5 +25,27 @@ export class UpdateUserDto {
     description: 'Correo electrónico del usuario',
     example: 'johndoe@example.com'
   })
-  email: string
+  email?: string
+
+  @IsOptional()
+  @IsString()
+  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
+  @MaxLength(20, { message: 'La contraseña no debe exceder los 20 caracteres' })
+  @Matches(/(?=.*[a-z])/, {
+    message: 'La contraseña debe contener al menos una letra minúscula'
+  })
+  @Matches(/(?=.*[A-Z])/, {
+    message: 'La contraseña debe contener al menos una letra mayúscula'
+  })
+  @Matches(/(?=.*[0-9])/, {
+    message: 'La contraseña debe contener al menos un número'
+  })
+  @Matches(/(?=.*[!@#$%^&*(),.?":{}|<>])/, {
+    message: 'La contraseña debe contener al menos un carácter especial'
+  })
+  @ApiPropertyOptional({
+    description: 'Contraseña del usuario',
+    example: 'Password123!'
+  })
+  password?: string
 }
