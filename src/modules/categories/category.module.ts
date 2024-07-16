@@ -1,18 +1,26 @@
 import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
+
 import { CategoryController } from './controllers/category.controller'
 import { CategoryService } from './services/category.service'
-import { MongooseModule } from '@nestjs/mongoose'
+
+import { Category, CategorySchema } from './schemas/category.schema'
 import {
-  Category,
-  CategorySchema
-} from 'src/modules/categories/schemas/category.schema'
+  ArticleCategory,
+  ArticleCategorySchema
+} from './schemas/articleCategory.schema'
+import { CategoryData, CategoryDataSchema } from './schemas/categoryData.schema'
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Category.name, schema: CategorySchema }])
-  ], // Importar el modelo de la base de datos
+    MongooseModule.forFeature([
+      { name: Category.name, schema: CategorySchema },
+      { name: ArticleCategory.name, schema: ArticleCategorySchema },
+      { name: CategoryData.name, schema: CategoryDataSchema }
+    ])
+  ],
   controllers: [CategoryController],
   providers: [CategoryService],
-  exports: [MongooseModule, CategoryService] // Exportar el módulo de Mongoose
+  exports: [MongooseModule, CategoryService]
 })
 export class CategoryModule {}

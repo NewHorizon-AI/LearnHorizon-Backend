@@ -10,7 +10,9 @@ import {
 import { CategoryService } from 'src/modules/categories/services/category.service'
 import { CategoryModule } from 'src/modules/categories/category.module'
 import { Object3dModule } from '../objects3d/object3d.module'
+
 // import { Object3DService } from '../objects3d/services/object3d.service'
+
 @Module({
   imports: [
     MongooseModule.forFeature([

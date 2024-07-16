@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { User } from './user.schema'
 import { Role } from './role.schema'
 
-@Schema()
+@Schema({ timestamps: true })
 export class UserRole extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   @ApiProperty({
@@ -20,13 +20,6 @@ export class UserRole extends Document {
     example: '60d2f77bcf86cd799439012'
   })
   role_id: Role
-
-  @Prop({ required: true })
-  @ApiProperty({
-    description: 'Fecha de asignación del rol',
-    example: '2024-07-15T08:00:00.000Z'
-  })
-  assigned_at: Date
 }
 
 export const UserRoleSchema = SchemaFactory.createForClass(UserRole)

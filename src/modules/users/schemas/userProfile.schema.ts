@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { User } from './user.schema'
 
-@Schema()
+@Schema({ timestamps: true })
 export class UserProfile extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   @ApiProperty({
