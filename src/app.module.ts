@@ -4,8 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 
 import { UserModule } from './modules/users/user.module'
 import { CategoryModule } from './modules/categories/category.module'
-import { PublicationModule } from './modules/publications/publication.module'
-import { CommentModule } from './modules/comments/comment.module'
+import { ArticleModule } from './modules/articles/article.module'
+import { FileModule } from './modules/gltfFiles/article.module'
 
 import { SeederService } from './seeder'
 
@@ -24,8 +24,8 @@ import { SeederService } from './seeder'
     }),
     UserModule,
     CategoryModule,
-    PublicationModule,
-    CommentModule
+    ArticleModule,
+    FileModule
   ],
   controllers: [],
   providers: [SeederService]

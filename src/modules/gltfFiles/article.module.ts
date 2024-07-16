@@ -34,4 +34,4 @@ import {
   providers: [PublicationService], // , Object3DService
   exports: [MongooseModule] // Exportar el módulo de Mongoose
 })
-export class PublicationModule {}
+export class FileModule {}
