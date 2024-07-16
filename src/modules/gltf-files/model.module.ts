@@ -1,7 +1,13 @@
 import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
+
 import { ModelController } from './controllers/model.controller.ts.js'
 import { ModelService } from './services/model.service.ts.js'
-import { MongooseModule } from '@nestjs/mongoose'
+
+import { ModelGetService } from './services/get/model-get.service'
+import { ModelPostService } from './services/post/model-post.service'
+import { ModelPutService } from './services/put/model-put.service'
+import { ModelDeleteService } from './services/delete/model-delete.service'
 
 import {
   ArticleModelEntry,
@@ -29,9 +35,21 @@ import {
         schema: ModelTransformationSchema
       }
     ])
-  ], // Importar el modelo de la base de datos
+  ],
   controllers: [ModelController],
-  providers: [ModelService],
-  exports: [MongooseModule]
+  providers: [
+    ModelService,
+    ModelGetService,
+    ModelPostService,
+    ModelPutService,
+    ModelDeleteService
+  ],
+  exports: [
+    ModelService,
+    ModelGetService,
+    ModelPostService,
+    ModelPutService,
+    ModelDeleteService
+  ]
 })
 export class FileModule {}

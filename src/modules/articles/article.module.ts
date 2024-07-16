@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 import { ArticleController } from './controllers/article.controller'
 import { ArticleService } from './services/article.service'
-import { MongooseModule } from '@nestjs/mongoose'
+import { ArticleGetService } from './services/get/article-get.service'
+import { ArticlePostService } from './services/post/article-post.service'
+import { ArticlePutService } from './services/put/article-put.service'
+import { ArticleDeleteService } from './services/delete/article-delete.service'
 
 import { Article, ArticleSchema } from './schemas/article.schema'
 import {
@@ -14,9 +18,9 @@ import {
   ArticleMarkdownSchema
 } from './schemas/article-markdown.schema'
 import { ArticleUser, ArticleUserSchema } from './schemas/article-user.schema'
+import { ArticleTag, ArticleTagSchema } from './schemas/article-tag.schema'
 
-import { CategoryService } from 'src/modules/categories/services/category.service'
-import { CategoryModule } from 'src/modules/categories/category.module'
+import { CategoryModule } from '../categories/category.module'
 
 @Module({
   imports: [
@@ -25,12 +29,25 @@ import { CategoryModule } from 'src/modules/categories/category.module'
       { name: ArticleComment.name, schema: ArticleCommentSchema },
       { name: ArticleData.name, schema: ArticleDataSchema },
       { name: ArticleMarkdown.name, schema: ArticleMarkdownSchema },
-      { name: ArticleUser.name, schema: ArticleUserSchema }
+      { name: ArticleUser.name, schema: ArticleUserSchema },
+      { name: ArticleTag.name, schema: ArticleTagSchema }
     ]),
     CategoryModule
-  ], // Importar el modelo de la base de datos
+  ],
   controllers: [ArticleController],
-  providers: [ArticleService, CategoryService], // , Object3DService
-  exports: [MongooseModule] // Exportar el módulo de Mongoose
+  providers: [
+    ArticleService,
+    ArticleGetService,
+    ArticlePostService,
+    ArticlePutService,
+    ArticleDeleteService
+  ],
+  exports: [
+    ArticleService,
+    ArticleGetService,
+    ArticlePostService,
+    ArticlePutService,
+    ArticleDeleteService
+  ]
 })
 export class ArticleModule {}
