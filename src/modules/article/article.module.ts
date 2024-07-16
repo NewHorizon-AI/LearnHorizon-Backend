@@ -33,4 +33,4 @@ import { CategoryModule } from 'src/modules/categories/category.module'
   providers: [PublicationService, CategoryService], // , Object3DService
   exports: [MongooseModule] // Exportar el módulo de Mongoose
 })
-export class PublicationModule {}
+export class ArticleModule {}
