@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { CreateArticleCompleteDto } from '../../dto/create-article-complete.dto'
+import { CreateArticleCompleteDto } from '../../dto/article/create-article-complete.dto'
 import { Article } from '../../schemas/article.schema'
-import { ArticleComment } from '../../schemas/articleComment.schema'
-import { ArticleData } from '../../schemas/articleData.schema'
-import { ArticleMarkdown } from '../../schemas/articleMarkdown.schema'
-import { ArticleTag } from '../../schemas/articleTag.schema'
-import { ArticleUser } from '../../schemas/articleUser.schema'
+import { ArticleComment } from '../../schemas/article-comment.schema'
+import { ArticleData } from '../../schemas/article-data.schema'
+import { ArticleMarkdown } from '../../schemas/article-markdown.schema'
+import { ArticleTag } from '../../schemas/article-tag.schema'
+import { ArticleUser } from '../../schemas/article-user.schema'
 
 @Injectable()
 export class ArticlePostService {
@@ -25,54 +25,65 @@ export class ArticlePostService {
     private readonly articleUserModel: Model<ArticleUser>
   ) {}
 
-  private async handleRelatedEntities(entities, articleId, session) {
-    const models = {
-      comments: this.articleCommentModel,
-      data: this.articleDataModel,
-      markdown: this.articleMarkdownModel,
-      tags: this.articleTagModel,
-      users: this.articleUserModel
-    }
-
-    for (const [key, model] of Object.entries(models)) {
-      if (entities[key]) {
-        await model.deleteMany({ article_id: articleId }).session(session)
-        for (const entity of entities[key]) {
-          const newEntity = new model({
-            ...entity,
-            article_id: articleId
-          })
-          await newEntity.save({ session })
-        }
-      }
-    }
-  }
-
   async createComplete(
     createArticleCompleteDto: CreateArticleCompleteDto
-  ): Promise<Article> {
-    const session = await this.articleModel.db.startSession()
-    session.startTransaction()
+  ): Promise<void> {
+    const { article, comments, data, markdown, tags, users } =
+      createArticleCompleteDto
 
-    try {
-      const createdArticle = new this.articleModel(
-        createArticleCompleteDto.article
+    const createdArticle = new this.articleModel(article)
+    await createdArticle.save()
+
+    if (comments) {
+      await Promise.all(
+        comments.map(async (comment) => {
+          const newComment = new this.articleCommentModel({
+            ...comment,
+            article_id: createdArticle._id
+          })
+          await newComment.save()
+        })
       )
-      await createdArticle.save({ session })
+    }
 
-      await this.handleRelatedEntities(
-        createArticleCompleteDto,
-        createdArticle._id,
-        session
+    if (data) {
+      const newData = new this.articleDataModel({
+        ...data,
+        article_id: createdArticle._id
+      })
+      await newData.save()
+    }
+
+    if (markdown) {
+      const newMarkdown = new this.articleMarkdownModel({
+        ...markdown,
+        article_id: createdArticle._id
+      })
+      await newMarkdown.save()
+    }
+
+    if (tags) {
+      await Promise.all(
+        tags.map(async (tag) => {
+          const newTag = new this.articleTagModel({
+            ...tag,
+            article_id: createdArticle._id
+          })
+          await newTag.save()
+        })
       )
+    }
 
-      await session.commitTransaction()
-      return createdArticle
-    } catch (error) {
-      await session.abortTransaction()
-      throw error
-    } finally {
-      session.endSession()
+    if (users) {
+      await Promise.all(
+        users.map(async (user) => {
+          const newUser = new this.articleUserModel({
+            ...user,
+            article_id: createdArticle._id
+          })
+          await newUser.save()
+        })
+      )
     }
   }
 }

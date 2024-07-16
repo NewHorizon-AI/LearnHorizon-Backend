@@ -1,12 +1,7 @@
 import { Controller, Post, Put, Get, Delete, Body, Param } from '@nestjs/common'
-
-import { Article } from '../schemas/article.schema'
-
 import { ArticleService } from '../services/article.service'
-
 import { CreateArticleCompleteDto } from '../dto/article/create-article-complete.dto'
 import { UpdateArticleCompleteDto } from '../dto/article/update-article-complete.dto'
-
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
 
 @ApiTags('articles')
@@ -18,13 +13,12 @@ export class ArticleController {
   @ApiOperation({ summary: 'Crear un nuevo artículo completo' })
   @ApiResponse({
     status: 201,
-    description: 'El artículo completo ha sido creado con éxito.',
-    type: Article
+    description: 'El artículo completo ha sido creado con éxito.'
   })
   async create(
     @Body() createArticleCompleteDto: CreateArticleCompleteDto
-  ): Promise<Article> {
-    return this.articleService.createComplete(createArticleCompleteDto)
+  ): Promise<void> {
+    await this.articleService.createComplete(createArticleCompleteDto)
   }
 
   @Put(':id')
@@ -36,14 +30,13 @@ export class ArticleController {
   })
   @ApiResponse({
     status: 200,
-    description: 'El artículo completo ha sido actualizado con éxito.',
-    type: Article
+    description: 'El artículo completo ha sido actualizado con éxito.'
   })
   async update(
     @Param('id') id: string,
     @Body() updateArticleCompleteDto: UpdateArticleCompleteDto
-  ): Promise<Article> {
-    return this.articleService.updateComplete(id, updateArticleCompleteDto)
+  ): Promise<void> {
+    await this.articleService.updateComplete(id, updateArticleCompleteDto)
   }
 
   @Get(':id')
@@ -55,10 +48,9 @@ export class ArticleController {
   })
   @ApiResponse({
     status: 200,
-    description: 'El artículo completo ha sido encontrado.',
-    type: Article
+    description: 'El artículo completo ha sido encontrado.'
   })
-  async findOne(@Param('id') id: string): Promise<Article> {
+  async findOne(@Param('id') id: string): Promise<any> {
     return this.articleService.findOneComplete(id)
   }
 
@@ -74,6 +66,6 @@ export class ArticleController {
     description: 'El artículo completo ha sido eliminado con éxito.'
   })
   async remove(@Param('id') id: string): Promise<void> {
-    return this.articleService.remove(id)
+    await this.articleService.remove(id)
   }
 }

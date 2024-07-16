@@ -7,6 +7,7 @@ import { UpdateArticleDataDto } from './articleData/update-article-data.dto'
 import { UpdateArticleMarkdownDto } from './articleMarkdown/update-article-markdown.dto'
 import { UpdateArticleUserDto } from './articleUser/update-article-user.dto'
 import { CreateArticleCommentDto } from './articleComment/create-article-comment.dto'
+import { UpdateArticleTagDto } from './articleTag/update-article-tag.dto'
 
 export class UpdateArticleCompleteDto {
   @ValidateNested()
@@ -38,6 +39,12 @@ export class UpdateArticleCompleteDto {
     required: false
   })
   markdown?: UpdateArticleMarkdownDto
+
+  @ValidateNested({ each: true })
+  @Type(() => UpdateArticleTagDto)
+  @IsOptional()
+  @ApiProperty({ description: 'Etiquetas del artículo', isArray: true })
+  tags?: UpdateArticleTagDto[]
 
   @ValidateNested({ each: true })
   @Type(() => UpdateArticleUserDto)

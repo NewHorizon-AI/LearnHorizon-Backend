@@ -1,12 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
+
+import { type ArticleComplete } from './../../dto/shared/interfaces/article-complete.interface'
+
 import { Article } from '../../schemas/article.schema'
-import { ArticleComment } from '../../schemas/articleComment.schema'
-import { ArticleData } from '../../schemas/articleData.schema'
-import { ArticleMarkdown } from '../../schemas/articleMarkdown.schema'
-import { ArticleTag } from '../../schemas/articleTag.schema'
-import { ArticleUser } from '../../schemas/articleUser.schema'
+import { ArticleComment } from '../../schemas/article-comment.schema'
+import { ArticleData } from '../../schemas/article-data.schema'
+import { ArticleMarkdown } from '../../schemas/article-markdown.schema'
+import { ArticleTag } from '../../schemas/article-tag.schema'
+import { ArticleUser } from '../../schemas/article-user.schema'
 
 @Injectable()
 export class ArticleGetService {
@@ -24,13 +27,20 @@ export class ArticleGetService {
     private readonly articleUserModel: Model<ArticleUser>
   ) {}
 
-  async findOneComplete(id: string): Promise<any> {
+  async findOneComplete(id: string): Promise<ArticleComplete> {
     const article = await this.articleModel.findById(id).exec()
     if (!article) {
       throw new NotFoundException(`Article with id ${id} not found`)
     }
 
-    const result = { ...article.toObject() }
+    const result: ArticleComplete = {
+      article: article.toObject(),
+      comments: [],
+      data: null,
+      markdown: null,
+      tags: [],
+      users: []
+    }
 
     result.comments = await this.articleCommentModel
       .find({ article_id: id })

@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { UpdateArticleCompleteDto } from '../../dto/update-article-complete.dto'
+import { UpdateArticleCompleteDto } from '../../dto/article/update-article-complete.dto'
 import { Article } from '../../schemas/article.schema'
-import { ArticleComment } from '../../schemas/articleComment.schema'
-import { ArticleData } from '../../schemas/articleData.schema'
-import { ArticleMarkdown } from '../../schemas/articleMarkdown.schema'
-import { ArticleTag } from '../../schemas/articleTag.schema'
-import { ArticleUser } from '../../schemas/articleUser.schema'
+import { ArticleComment } from '../../schemas/article-comment.schema'
+import { ArticleData } from '../../schemas/article-data.schema'
+import { ArticleMarkdown } from '../../schemas/article-markdown.schema'
+import { ArticleTag } from '../../schemas/article-tag.schema'
+import { ArticleUser } from '../../schemas/article-user.schema'
 
 @Injectable()
 export class ArticlePutService {
@@ -25,63 +25,71 @@ export class ArticlePutService {
     private readonly articleUserModel: Model<ArticleUser>
   ) {}
 
-  private async handleRelatedEntities(entities, articleId, session) {
-    const models = {
-      comments: this.articleCommentModel,
-      data: this.articleDataModel,
-      markdown: this.articleMarkdownModel,
-      tags: this.articleTagModel,
-      users: this.articleUserModel
-    }
-
-    for (const [key, model] of Object.entries(models)) {
-      if (entities[key]) {
-        await model.deleteMany({ article_id: articleId }).session(session)
-        for (const entity of entities[key]) {
-          const newEntity = new model({
-            ...entity,
-            article_id: articleId
-          })
-          await newEntity.save({ session })
-        }
-      }
-    }
-  }
-
   async updateComplete(
     id: string,
     updateArticleCompleteDto: UpdateArticleCompleteDto
-  ): Promise<Article> {
-    const session = await this.articleModel.db.startSession()
-    session.startTransaction()
+  ): Promise<void> {
+    const { article, comments, data, markdown, tags, users } =
+      updateArticleCompleteDto
 
-    try {
-      const updatedArticle = await this.articleModel.findByIdAndUpdate(
-        id,
-        updateArticleCompleteDto.article,
-        {
-          new: true,
-          session
-        }
+    const existingArticle = await this.articleModel.findById(id)
+    if (!existingArticle) {
+      throw new NotFoundException('Article not found')
+    }
+    Object.assign(existingArticle, article)
+    await existingArticle.save()
+
+    if (comments) {
+      await this.articleCommentModel.deleteMany({ article_id: id }).exec()
+      await Promise.all(
+        comments.map(async (comment) => {
+          const newComment = new this.articleCommentModel({
+            ...comment,
+            article_id: id
+          })
+          await newComment.save()
+        })
       )
+    }
 
-      if (!updatedArticle) {
-        throw new NotFoundException(`Article with id ${id} not found`)
-      }
+    if (data) {
+      await this.articleDataModel
+        .findOneAndUpdate(
+          { article_id: id },
+          { ...data, article_id: id },
+          { upsert: true }
+        )
+        .exec()
+    }
 
-      await this.handleRelatedEntities(
-        updateArticleCompleteDto,
-        updatedArticle._id,
-        session
+    if (markdown) {
+      await this.articleMarkdownModel
+        .findOneAndUpdate(
+          { article_id: id },
+          { ...markdown, article_id: id },
+          { upsert: true }
+        )
+        .exec()
+    }
+
+    if (tags) {
+      await this.articleTagModel.deleteMany({ article_id: id }).exec()
+      await Promise.all(
+        tags.map(async (tag) => {
+          const newTag = new this.articleTagModel({ ...tag, article_id: id })
+          await newTag.save()
+        })
       )
+    }
 
-      await session.commitTransaction()
-      return updatedArticle
-    } catch (error) {
-      await session.abortTransaction()
-      throw error
-    } finally {
-      session.endSession()
+    if (users) {
+      await this.articleUserModel.deleteMany({ article_id: id }).exec()
+      await Promise.all(
+        users.map(async (user) => {
+          const newUser = new this.articleUserModel({ ...user, article_id: id })
+          await newUser.save()
+        })
+      )
     }
   }
 }

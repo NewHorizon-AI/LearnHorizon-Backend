@@ -7,13 +7,13 @@ import { Article, ArticleSchema } from './schemas/article.schema'
 import {
   ArticleComment,
   ArticleCommentSchema
-} from './schemas/articleComment.schema'
-import { ArticleData, ArticleDataSchema } from './schemas/articleData.schema'
+} from './schemas/article-comment.schema'
+import { ArticleData, ArticleDataSchema } from './schemas/article-data.schema'
 import {
   ArticleMarkdown,
   ArticleMarkdownSchema
-} from './schemas/ArticleMarkdown.schema'
-import { ArticleUser, ArticleUserSchema } from './schemas/articleUser.schema'
+} from './schemas/article-markdown.schema'
+import { ArticleUser, ArticleUserSchema } from './schemas/article-user.schema'
 
 import { CategoryService } from 'src/modules/categories/services/category.service'
 import { CategoryModule } from 'src/modules/categories/category.module'

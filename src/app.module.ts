@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UserModule } from './modules/users/user.module'
 import { CategoryModule } from './modules/categories/category.module'
 import { ArticleModule } from './modules/articles/article.module'
-import { FileModule } from './modules/gltfFiles/article.module'
+import { FileModule } from './modules/gltf-files/model.module'
 
 import { SeederService } from './seeder'
 

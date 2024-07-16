@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
+
 import { Article } from '../../schemas/article.schema'
-import { ArticleComment } from '../../schemas/articleComment.schema'
-import { ArticleData } from '../../schemas/articleData.schema'
-import { ArticleMarkdown } from '../../schemas/articleMarkdown.schema'
-import { ArticleTag } from '../../schemas/articleTag.schema'
-import { ArticleUser } from '../../schemas/articleUser.schema'
+import { ArticleComment } from '../../schemas/article-comment.schema'
+import { ArticleData } from '../../schemas/article-data.schema'
+import { ArticleMarkdown } from '../../schemas/article-markdown.schema'
+import { ArticleTag } from '../../schemas/article-tag.schema'
+import { ArticleUser } from '../../schemas/article-user.schema'
 
 @Injectable()
 export class ArticleDeleteService {
@@ -25,30 +26,16 @@ export class ArticleDeleteService {
   ) {}
 
   async remove(id: string): Promise<void> {
-    const session = await this.articleModel.db.startSession()
-    session.startTransaction()
-
-    try {
-      await this.articleModel.findByIdAndRemove(id).session(session)
-
-      const models = [
-        this.articleCommentModel,
-        this.articleDataModel,
-        this.articleMarkdownModel,
-        this.articleTagModel,
-        this.articleUserModel
-      ]
-
-      for (const model of models) {
-        await model.deleteMany({ article_id: id }).session(session)
-      }
-
-      await session.commitTransaction()
-    } catch (error) {
-      await session.abortTransaction()
-      throw error
-    } finally {
-      session.endSession()
+    const article = await this.articleModel.findById(id).exec()
+    if (!article) {
+      throw new NotFoundException(`Article with id ${id} not found`)
     }
+
+    await this.articleModel.findByIdAndDelete(id).exec()
+    await this.articleCommentModel.deleteMany({ article_id: id }).exec()
+    await this.articleDataModel.deleteOne({ article_id: id }).exec()
+    await this.articleMarkdownModel.deleteOne({ article_id: id }).exec()
+    await this.articleTagModel.deleteMany({ article_id: id }).exec()
+    await this.articleUserModel.deleteMany({ article_id: id }).exec()
   }
 }

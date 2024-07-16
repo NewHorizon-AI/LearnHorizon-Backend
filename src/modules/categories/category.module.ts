@@ -8,8 +8,11 @@ import { Category, CategorySchema } from './schemas/category.schema'
 import {
   ArticleCategory,
   ArticleCategorySchema
-} from './schemas/articleCategory.schema'
-import { CategoryData, CategoryDataSchema } from './schemas/categoryData.schema'
+} from './schemas/article-category.schema'
+import {
+  CategoryData,
+  CategoryDataSchema
+} from './schemas/category-data.schema'
 
 @Module({
   imports: [

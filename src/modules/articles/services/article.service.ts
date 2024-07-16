@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { ArticleGetService } from './article/get/article-get.service'
-import { ArticlePostService } from './article/post/article-post.service'
-import { ArticlePutService } from './article/put/article-put.service'
-import { ArticleDeleteService } from './article/delete/article-delete.service'
+import { ArticleGetService } from './get/article-get.service'
+import { ArticlePostService } from './post/article-post.service'
+import { ArticlePutService } from './put/article-put.service'
+import { ArticleDeleteService } from './delete/article-delete.service'
 
 @Injectable()
 export class ArticleService {
@@ -13,7 +13,6 @@ export class ArticleService {
     private readonly articleDeleteService: ArticleDeleteService
   ) {}
 
-  // Exposing methods from individual services
   findOneComplete(id: string) {
     return this.articleGetService.findOneComplete(id)
   }
