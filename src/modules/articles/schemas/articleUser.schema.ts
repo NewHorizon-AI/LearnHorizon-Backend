@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { User } from 'src/modules/users/schemas/user.schema'
-import { Article } from 'src/modules/article/schemas/article.schema'
+import { Article } from './article.schema'
 
 @Schema({ timestamps: true })
 export class ArticleUser extends Document {

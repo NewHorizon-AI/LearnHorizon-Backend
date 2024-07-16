@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common'
-import { PublicationController } from './controllers/publication.controller'
-import { PublicationService } from './services/publication.service'
+import { ArticleController } from './controllers/article.controller'
+import { ArticleService } from './services/article.service'
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { Article, ArticleSchema } from './schemas/article.schema'
 import {
   ArticleComment,
   ArticleCommentSchema
-} from './schemas/articleComments.schema'
+} from './schemas/articleComment.schema'
 import { ArticleData, ArticleDataSchema } from './schemas/articleData.schema'
 import {
   ArticleMarkdown,
@@ -29,8 +29,8 @@ import { CategoryModule } from 'src/modules/categories/category.module'
     ]),
     CategoryModule
   ], // Importar el modelo de la base de datos
-  controllers: [PublicationController],
-  providers: [PublicationService, CategoryService], // , Object3DService
+  controllers: [ArticleController],
+  providers: [ArticleService, CategoryService], // , Object3DService
   exports: [MongooseModule] // Exportar el módulo de Mongoose
 })
 export class ArticleModule {}
