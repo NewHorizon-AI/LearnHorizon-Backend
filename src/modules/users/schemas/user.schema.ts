@@ -18,7 +18,7 @@ export class User extends Document {
   @Prop({ required: true })
   @ApiProperty({
     description: 'Contraseña del usuario',
-    example: 'securepassword123'
+    example: 'Ex@mplePassw0rd2024!'
   })
   password: string
 

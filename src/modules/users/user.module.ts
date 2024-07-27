@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common'
 import { UserController } from './controllers/user.controller'
-import { UserService } from './services/user.service'
 import { MongooseModule } from '@nestjs/mongoose'
 
 // Importacion de los modelos de la base de datos
 import { User, UserSchema } from './schemas/user.schema'
-import { UserProfile, UserProfileSchema } from './schemas/userProfile.schema'
-import { UserContact, UserContactSchema } from './schemas/userContact.schema'
-import { UserData, UserDataSchema } from './schemas/UserData.scheme'
+import { UserProfile, UserProfileSchema } from './schemas/user-profile.schema'
+import { UserContact, UserContactSchema } from './schemas/user-contact.schema'
+import { UserData, UserDataSchema } from './schemas/user-data.schema'
 import { Role, RoleSchema } from './schemas/role.schema'
-import { UserRole, UserRoleSchema } from './schemas/userRole.schema'
+import { UserRole, UserRoleSchema } from './schemas/user-role.schema'
+
+// Importacion de los servicios
+import { UserService } from './services/user.service'
+import { UserBaseService } from './services/user-base/user-base.service'
 
 @Module({
   imports: [
@@ -23,7 +26,7 @@ import { UserRole, UserRoleSchema } from './schemas/userRole.schema'
     ])
   ], // Importar el modelo de la base de datos
   controllers: [UserController],
-  providers: [UserService],
-  exports: [MongooseModule, UserService] // Exportar el módulo de Mongoose
+  providers: [UserService, UserBaseService],
+  exports: [MongooseModule, UserService, UserBaseService] // Exportar el módulo de Mongoose
 })
 export class UserModule {}
