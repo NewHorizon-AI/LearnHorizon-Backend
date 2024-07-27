@@ -8,30 +8,40 @@ Este documento describe la arquitectura backend para. El backend está diseñado
 
 ```typescript
 // 
-export class CreateProductDto {
-    name: string;
-    description: string;
-    price: number;
-    metadata: CreateMetadataDto;
-    inventory: CreateInventoryDto;
-}
-```
+import { ApiProperty } from '@nestjs/swagger'
+import { IsEmail, IsNotEmpty, IsString, Length, Matches } from 'class-validator'
 
-```typescript
-// 
-export class CreateMetadataDto {
-    categories: string[];
-    tags: string[];
-}
-```
+export class CreateUserDto {
+  @ApiProperty({
+    description: 'Nombre único de usuario, debe ser único en el sistema',
+    example: 'john_doe'
+  })
+  @IsNotEmpty({ message: 'El nombre de usuario es obligatorio.' })
+  @IsString({ message: 'El nombre de usuario debe ser una cadena.' })
+  username: string
 
+  @ApiProperty({
+    description: 'Correo electrónico del usuario',
+    example: 'john.doe@example.com'
+  })
+  @IsEmail({}, { message: 'Debe proporcionar un correo electrónico válido.' })
+  email: string
 
-```typescript
-// 
-export class CreateInventoryDto {
-    quantity: number;
-    warehouseId: string;
+  @ApiProperty({
+    description: 'Contraseña del usuario',
+    example: 'Ex@mplePassw0rd2024!'
+  })
+  @IsNotEmpty({ message: 'La contraseña es obligatoria.' })
+  @Length(8, 50, {
+    message: 'La contraseña debe tener entre 8 y 50 caracteres.'
+  })
+  @Matches(/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,50})/, {
+    message:
+      'La contraseña debe incluir mayúsculas, minúsculas, números y caracteres especiales.'
+  })
+  password: string
 }
+
 ```
 
 ## Controlador
@@ -40,19 +50,16 @@ El controlador manejará las peticiones HTTP, utilizando el servicio para proces
 
 ```typescript
 // src/products/products.controller.ts
-import { Body, Controller, Post } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsService } from './products.service';
-
-@Controller('products')
-export class ProductsController {
-    constructor(private readonly productsService: ProductsService) {}
-
-    @Post()
-    async createProduct(@Body() createProductDto: CreateProductDto) {
-        return await this.productsService.createProduct(createProductDto);
-    }
-}
+  @Post()
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'The user has been successfully created.'
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  async createUser(@Body() createUserDto: CreateUserCompleteDto) {
+    return await this.userService.createCompleteUser(createUserDto)
+  }
 ```
 
 ## Servicio
@@ -74,20 +81,22 @@ Dividiremos las responsabilidades en servicios más pequeños y específicos par
 Vamos a definir cada servicio siguiendo los principios SOLID.
 
 ```typescript
-// src/products/services/product.service.ts
-import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, ClientSession } from 'mongoose';
-
-@Injectable()
-export class ProductService {
-    constructor(@InjectConnection() private readonly connection: Connection) {}
-
-    async createProduct(data: any, session: ClientSession) {
-        const productCollection = this.connection.collection('products');
-        return await productCollection.insertOne(data, { session });
+async createUser(createUserDto: CreateUserDto): Promise<User> {
+    if (!createUserDto) {
+      throw new Error('createUserDto is required')
     }
-}
+
+    // Verificar si el nombre de usuario ya existe
+    const existingUser = await this.userModel
+      .findOne({ username: createUserDto.username })
+      .exec()
+    if (existingUser) {
+      throw new ConflictException('Username already exists')
+    }
+
+    const newUser = new this.userModel(createUserDto)
+    return newUser.save()
+  }
 ```
 
 ```typescript
@@ -123,6 +132,15 @@ export class InventoryService {
         return await inventoryCollection.insertOne(inventory, options);
     }
 }
+
+async createCompleteUser(
+    createUserDto: CreateUserCompleteDto
+  ): Promise<void> {
+    try {
+      await this.userBaseService.createUser(createUserDto.user)
+    } catch (error) {
+      throw error
+    }
 ```
 
 ### Paso 3: Integración en el ProductController

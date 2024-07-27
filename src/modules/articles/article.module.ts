@@ -1,12 +1,15 @@
+// Importaciones de librerías necesarias
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { ArticleController } from './controllers/article.controller'
-import { ArticleService } from './services/article.service'
-import { ArticleGetService } from './services/get/article-get.service'
-import { ArticlePostService } from './services/post/article-post.service'
-import { ArticlePutService } from './services/put/article-put.service'
-import { ArticleDeleteService } from './services/delete/article-delete.service'
 
+// Importaciones de controladores
+import { ArticleController } from './controllers/article.controller'
+
+// Importaciones de servicios
+import { ArticleService } from './services/article.service'
+import { ArticleBaseService } from './services/article-base/article-base.service'
+
+// Importaciones de esquemas
 import { Article, ArticleSchema } from './schemas/article.schema'
 import {
   ArticleComment,
@@ -17,9 +20,9 @@ import {
   ArticleMarkdown,
   ArticleMarkdownSchema
 } from './schemas/article-markdown.schema'
-import { ArticleUser, ArticleUserSchema } from './schemas/article-user.schema'
 import { ArticleTag, ArticleTagSchema } from './schemas/article-tag.schema'
 
+// Importaciones de módulos
 import { CategoryModule } from '../categories/category.module'
 
 @Module({
@@ -29,25 +32,12 @@ import { CategoryModule } from '../categories/category.module'
       { name: ArticleComment.name, schema: ArticleCommentSchema },
       { name: ArticleData.name, schema: ArticleDataSchema },
       { name: ArticleMarkdown.name, schema: ArticleMarkdownSchema },
-      { name: ArticleUser.name, schema: ArticleUserSchema },
       { name: ArticleTag.name, schema: ArticleTagSchema }
     ]),
     CategoryModule
   ],
   controllers: [ArticleController],
-  providers: [
-    ArticleService,
-    ArticleGetService,
-    ArticlePostService,
-    ArticlePutService,
-    ArticleDeleteService
-  ],
-  exports: [
-    ArticleService,
-    ArticleGetService,
-    ArticlePostService,
-    ArticlePutService,
-    ArticleDeleteService
-  ]
+  providers: [ArticleService, ArticleBaseService],
+  exports: [ArticleService, ArticleBaseService]
 })
 export class ArticleModule {}

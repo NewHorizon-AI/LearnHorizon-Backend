@@ -1,31 +1,38 @@
 import { Injectable } from '@nestjs/common'
-import { ArticleGetService } from './get/article-get.service'
-import { ArticlePostService } from './post/article-post.service'
-import { ArticlePutService } from './put/article-put.service'
-import { ArticleDeleteService } from './delete/article-delete.service'
+
+// Importar el Dto completo del artículo
+import { CreateArticleCompleteDto } from '../dtos/article/create-article-complete.dto'
+
+// Importar los servicios necesarios
+import { ArticleBaseService } from './article-base/article-base.service'
 
 @Injectable()
 export class ArticleService {
-  constructor(
-    private readonly articleGetService: ArticleGetService,
-    private readonly articlePostService: ArticlePostService,
-    private readonly articlePutService: ArticlePutService,
-    private readonly articleDeleteService: ArticleDeleteService
-  ) {}
+  constructor(private articleBaseService: ArticleBaseService) {}
 
-  findOneComplete(id: string) {
-    return this.articleGetService.findOneComplete(id)
+  async createCompleterArticle(
+    createArticleDto: CreateArticleCompleteDto
+  ): Promise<void> {
+    try {
+      await this.articleBaseService.createArticle(createArticleDto.article)
+    } catch (error) {
+      throw error
+    }
   }
 
-  createComplete(dto: any) {
-    return this.articlePostService.createComplete(dto)
-  }
+  // findOneComplete(id: string) {
+  //   return this.articleGetService.findOneComplete(id)
+  // }
 
-  updateComplete(id: string, dto: any) {
-    return this.articlePutService.updateComplete(id, dto)
-  }
+  // createComplete(dto: any) {
+  //   return this.articlePostService.createComplete(dto)
+  // }
 
-  remove(id: string) {
-    return this.articleDeleteService.remove(id)
-  }
+  // updateComplete(id: string, dto: any) {
+  //   return this.articlePutService.updateComplete(id, dto)
+  // }
+
+  // remove(id: string) {
+  //   return this.articleDeleteService.remove(id)
+  // }
 }

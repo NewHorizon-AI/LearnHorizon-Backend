@@ -1,43 +1,41 @@
 import {
   IsString,
-  IsOptional,
+  IsNotEmpty,
   IsMongoId,
   IsUrl,
+  IsOptional,
   IsInt,
   Min,
   ValidateNested
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { UpdateArticleTagDto } from '../articleTag/update-article-tag.dto'
+import { CreateArticleTagDto } from '../article-tag/create-article-tag.dto'
 
-export class UpdateArticleDataDto {
+export class CreateArticleDataDto {
   @IsMongoId()
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({
     description: 'ID del artículo',
-    example: '60d2f77bcf86cd799439012',
-    required: false
+    example: '60d2f77bcf86cd799439012'
   })
-  article_id?: string
+  article_id: string
 
   @IsUrl()
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({
     description: 'URL de la foto del artículo',
-    example: 'https://example.com/photo.jpg',
-    required: false
+    example: 'https://example.com/photo.jpg'
   })
-  photo?: string
+  photo: string
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({
     description: 'Descripción del artículo',
-    example: 'Este es un artículo sobre NestJS y MongoDB.',
-    required: false
+    example: 'Este es un artículo sobre NestJS y MongoDB.'
   })
-  description?: string
+  description: string
 
   @IsInt()
   @Min(0)
@@ -45,7 +43,6 @@ export class UpdateArticleDataDto {
   @ApiProperty({
     description: 'Número de vistas del artículo',
     example: 100,
-    required: false,
     default: 0
   })
   views?: number
@@ -56,7 +53,6 @@ export class UpdateArticleDataDto {
   @ApiProperty({
     description: 'Número de likes del artículo',
     example: 50,
-    required: false,
     default: 0
   })
   likes?: number
@@ -67,18 +63,17 @@ export class UpdateArticleDataDto {
   @ApiProperty({
     description: 'Número de dislikes del artículo',
     example: 5,
-    required: false,
     default: 0
   })
   dislikes?: number
 
   @ValidateNested({ each: true })
-  @Type(() => UpdateArticleTagDto)
+  @Type(() => CreateArticleTagDto)
   @IsOptional()
   @ApiProperty({
     description: 'Etiquetas asociadas al artículo',
-    type: [UpdateArticleTagDto],
+    type: [CreateArticleTagDto],
     required: false
   })
-  tags?: UpdateArticleTagDto[]
+  tags?: CreateArticleTagDto[]
 }
