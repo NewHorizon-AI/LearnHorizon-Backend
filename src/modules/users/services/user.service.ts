@@ -32,9 +32,9 @@ export class UserService {
     }
   }
 
-  // async findAllUsers(): Promise<User[]> {
-  //   return await this.userModel.find().exec()
-  // }
+  async findAllUsers(): Promise<User[]> {
+    return await this.userModel.find().exec()
+  }
 
   // async getUserById(id: string): Promise<User> {
   //   return await this.userModel.findById(id).exec()

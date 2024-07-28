@@ -1,15 +1,15 @@
 import { Controller, Post, Put, Get, Delete, Body, Param } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
 
-import { ModelService } from '../services/model.service.ts'
+import { ModelCompositeService } from '../services/model-composite.service'
 
-import { CreateModelCompleteDto } from '../dto/create-model-complete.dto.ts'
-import { UpdateModelCompleteDto } from '../dto/update-model-complete.dto.ts'
+import { CreateModelCompleteDto } from '../dtos/file/create-model-complete.dto.ts'
+import { UpdateModelCompleteDto } from '../dtos/file/update-model-complete.dto.ts'
 
 @ApiTags('models')
 @Controller('models')
 export class ModelController {
-  constructor(private readonly modelService: ModelService) {}
+  constructor(private readonly modelService: ModelCompositeService) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo modelo completo' })

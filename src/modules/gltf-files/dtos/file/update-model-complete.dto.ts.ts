@@ -2,9 +2,9 @@ import { IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
-import { UpdateArticleModelEntryDto } from './file/article-model-entry/update-article-model-entry.dto'
-import { UpdateGltfFileDto } from './file/gltf-file/update-gltf-file.dto'
-import { UpdateModelTransformationDto } from './file/model-transformation/update-model-transformation.dto'
+import { UpdateArticleModelEntryDto } from './article-model-entry/update-article-model-entry.dto'
+import { UpdateGltfFileDto } from './gltf-file/update-gltf-file.dto'
+import { UpdateModelTransformationDto } from './model-transformation/update-model-transformation.dto'
 
 export class UpdateModelCompleteDto {
   @IsOptional()

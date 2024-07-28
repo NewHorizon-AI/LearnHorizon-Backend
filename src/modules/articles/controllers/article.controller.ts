@@ -1,5 +1,5 @@
-import { Controller, Post, Body } from '@nestjs/common'
-import { ArticleService } from '../services/article.service'
+import { Controller, Post, Body, Get } from '@nestjs/common'
+import { ArticleCompositeService } from '../services/article-composite.service'
 
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
@@ -9,7 +9,7 @@ import { CreateArticleCompleteDto } from '../dtos/article/create-article-complet
 @ApiTags('articles')
 @Controller('articles')
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(private readonly articleService: ArticleCompositeService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new article' })
@@ -17,21 +17,19 @@ export class ArticleController {
     status: 201,
     description: 'The article has been successfully created.'
   })
-  async create(@Body() createArticleDto: CreateArticleCompleteDto) {
+  async createArticle(@Body() createArticleDto: CreateArticleCompleteDto) {
     await this.articleService.createCompleterArticle(createArticleDto)
   }
 
-  // @Post()
-  // @ApiOperation({ summary: 'Crear un nuevo artículo completo' })
-  // @ApiResponse({
-  //   status: 201,
-  //   description: 'El artículo completo ha sido creado con éxito.'
-  // })
-  // async create(
-  //   @Body() createArticleCompleteDto: CreateArticleCompleteDto
-  // ): Promise<void> {
-  //   await this.articleService.createComplete(createArticleCompleteDto)
-  // }
+  @Get()
+  @ApiOperation({ summary: 'Get all articles' })
+  @ApiResponse({
+    status: 200,
+    description: 'All articles have been successfully obtained.'
+  })
+  async findAllArticles() {
+    return this.articleService.getAllArticlesDetails()
+  }
 
   // @Put(':id')
   // @ApiOperation({ summary: 'Actualizar un artículo completo existente' })

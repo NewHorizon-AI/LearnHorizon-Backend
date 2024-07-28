@@ -11,7 +11,7 @@ export class ArticleModelEntry extends Document {
     description: 'ID del artículo',
     example: '60d2f77bcf86cd799439012'
   })
-  article_id: Types.ObjectId
+  article_id: Article
 
   @Prop({ required: true })
   @ApiProperty({

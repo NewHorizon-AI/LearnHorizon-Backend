@@ -11,14 +11,14 @@ export class GltfFile extends Document {
     description: 'ID del modelo de artículo',
     example: '60d2f77bcf86cd799439012'
   })
-  model_id: ArticleModelEntry
+  article_id: ArticleModelEntry
 
   @Prop({ required: true })
   @ApiProperty({
     description: 'Ruta del archivo GLTF',
     example: '/path/to/model.gltf'
   })
-  file_path: string
+  file: string
 }
 
 export const GltfFileSchema = SchemaFactory.createForClass(GltfFile)

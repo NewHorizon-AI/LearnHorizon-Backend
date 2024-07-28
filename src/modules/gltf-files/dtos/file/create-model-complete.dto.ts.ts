@@ -2,9 +2,9 @@ import { IsNotEmpty, ValidateNested, IsOptional } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CreateArticleModelEntryDto } from './file/article-model-entry/create-article-model-entry.dto'
-import { CreateGltfFileDto } from './file/gltf-file/create-gltf-file.dto'
-import { CreateModelTransformationDto } from './file/model-transformation/create-model-transformation.dto'
+import { CreateArticleModelEntryDto } from './article-model-entry/create-article-model-entry.dto'
+import { CreateGltfFileDto } from './gltf-file/create-gltf-file.dto'
+import { CreateModelTransformationDto } from './model-transformation/create-model-transformation.dto'
 
 export class CreateModelCompleteDto {
   @IsNotEmpty()

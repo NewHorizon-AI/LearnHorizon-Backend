@@ -3,6 +3,7 @@ import { Document, Types } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { ArticleModelEntry } from './article-model-entry.schema'
+import { GltfFile } from './gltf-file.schema'
 
 @Schema()
 export class ModelTransformation extends Document {
@@ -11,7 +12,7 @@ export class ModelTransformation extends Document {
     description: 'ID del modelo de artículo',
     example: '60d2f77bcf86cd799439012'
   })
-  model_id: Types.ObjectId
+  model_id: GltfFile
 
   @Prop({ required: true, type: [Number] })
   @ApiProperty({
