@@ -8,7 +8,8 @@ import {
   UploadedFile,
   HttpException,
   HttpStatus,
-  Res
+  Res,
+  Put
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import {
@@ -24,7 +25,7 @@ import { CreateUploadDto } from '../dtos/create-upload.dto'
 import { Upload } from '../schema/upload.schema'
 
 import { Response } from 'express'
-import { createReadStream } from 'fs'
+import { createReadStream, existsSync } from 'fs'
 import { join } from 'path'
 
 import { GltfValidationService } from '../services/gltf-validation.service'
@@ -81,6 +82,57 @@ export class UploadController {
     }
   }
 
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualizar un archivo GLTF existente' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary'
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Archivo actualizado exitosamente.'
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'No se proporcionó un archivo o el formato del archivo es inválido.'
+  })
+  @ApiResponse({ status: 404, description: 'Archivo no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @UseInterceptors(FileInterceptor('file'))
+  async updateFile(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File
+  ): Promise<Upload> {
+    try {
+      await this.gltfValidationService.validateGltfFile(file)
+
+      const createUploadDto: CreateUploadDto = {
+        filename: file.filename,
+        path: file.path,
+        mimetype: file.mimetype
+      }
+
+      return await this.uploadService.update(id, createUploadDto)
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          message: error.message || 'Error al actualizar el archivo.'
+        },
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
   @Get()
   @ApiOperation({ summary: 'Obtener todos los archivos subidos' })
   @ApiResponse({ status: 200, description: 'Archivos obtenidos exitosamente.' })
@@ -127,6 +179,11 @@ export class UploadController {
     try {
       const upload = await this.uploadService.findOne(id)
       const filePath = join(process.cwd(), upload.path)
+
+      if (!existsSync(filePath)) {
+        throw new HttpException('File not found', HttpStatus.NOT_FOUND)
+      }
+
       const fileStream = createReadStream(filePath)
 
       fileStream.on('error', () => {

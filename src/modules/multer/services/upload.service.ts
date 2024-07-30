@@ -10,6 +10,8 @@ import { Model } from 'mongoose'
 import { CreateUploadDto } from '../dtos/create-upload.dto'
 import { Upload, UploadDocument } from '../schema/upload.schema'
 
+import { unlink } from 'fs/promises'
+
 @Injectable()
 export class UploadService {
   constructor(
@@ -67,23 +69,46 @@ export class UploadService {
     }
   }
 
-  async remove(id: string): Promise<void> {
-    try {
-      const result = await this.uploadModel.deleteOne({ _id: id }).exec()
-      if (result.deletedCount === 0) {
-        throw new NotFoundException(`Upload with ID ${id} not found`)
-      }
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error
-      }
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Error al eliminar la subida del archivo'
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR
-      )
+  async update(id: string, createUploadDto: CreateUploadDto): Promise<Upload> {
+    const existingUpload = await this.uploadModel.findById(id).exec()
+    if (!existingUpload) {
+      throw new NotFoundException(`Upload with ID ${id} not found`)
     }
+
+    try {
+      // Eliminar el archivo anterior
+      await unlink(existingUpload.path)
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw new HttpException(
+          'Error al eliminar el archivo anterior',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      }
+    }
+
+    // Actualizar la información del archivo en la base de datos
+    existingUpload.filename = createUploadDto.filename
+    existingUpload.path = createUploadDto.path
+    existingUpload.mimetype = createUploadDto.mimetype
+    return existingUpload.save()
+  }
+
+  async remove(id: string): Promise<void> {
+    const upload = await this.uploadModel.findById(id).exec()
+    if (!upload) {
+      throw new NotFoundException(`Upload with ID ${id} not found`)
+    }
+    try {
+      await unlink(upload.path)
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw new HttpException(
+          'Error al eliminar el archivo',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      }
+    }
+    await upload.deleteOne()
   }
 }
