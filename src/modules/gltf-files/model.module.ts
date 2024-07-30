@@ -22,8 +22,8 @@ import {
   ModelTransformationSchema
 } from './schemas/model-transformation.schema.js'
 
-// Importar Moodules
-import { MulterModule } from 'src/modules/multer/multer.module'
+// // Importar Moodules
+// import { MulterModule } from 'src/modules/multer/multer.module'
 
 @Module({
   imports: [
@@ -40,8 +40,8 @@ import { MulterModule } from 'src/modules/multer/multer.module'
         name: ModelTransformation.name,
         schema: ModelTransformationSchema
       }
-    ]),
-    MulterModule
+    ])
+    // MulterModule
   ],
   controllers: [ModelController],
   providers: [

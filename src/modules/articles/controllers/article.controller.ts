@@ -18,7 +18,7 @@ export class ArticleController {
     description: 'The article has been successfully created.'
   })
   async createArticle(@Body() createArticleDto: CreateArticleCompleteDto) {
-    await this.articleService.createCompleterArticle(createArticleDto)
+    await this.articleService.createCompleteArticle(createArticleDto)
   }
 
   @Get()

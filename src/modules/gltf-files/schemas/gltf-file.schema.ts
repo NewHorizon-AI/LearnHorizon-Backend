@@ -18,7 +18,28 @@ export class GltfFile extends Document {
     description: 'Ruta del archivo GLTF',
     example: '/path/to/model.gltf'
   })
-  file: string
+  path: string
+
+  @Prop({ required: true })
+  @ApiProperty({
+    description: 'Nombre original del archivo GLTF',
+    example: 'model.gltf'
+  })
+  originalName: string
+
+  @Prop({ required: true })
+  @ApiProperty({
+    description: 'Tamaño del archivo en bytes',
+    example: 123456
+  })
+  size: number
+
+  @Prop({ required: true })
+  @ApiProperty({
+    description: 'Tipo MIME del archivo',
+    example: 'model/gltf+json'
+  })
+  mimetype: string
 }
 
 export const GltfFileSchema = SchemaFactory.createForClass(GltfFile)

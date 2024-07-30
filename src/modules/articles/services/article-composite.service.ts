@@ -20,7 +20,7 @@ export class ArticleCompositeService {
     private articleMarkdownService: ArticleMarkdownService
   ) {}
 
-  async createCompleterArticle(
+  async createCompleteArticle(
     createArticleDto: CreateArticleCompleteDto
   ): Promise<void> {
     try {

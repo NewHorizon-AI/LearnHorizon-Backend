@@ -7,7 +7,8 @@ import { CategoryModule } from './modules/categories/category.module'
 import { ArticleModule } from './modules/articles/article.module'
 import { FileModule } from './modules/gltf-files/model.module'
 
-import { SeederService } from './seeder'
+// OTROS
+import { UploadModule } from './modules/multer/upload.module'
 
 @Module({
   imports: [
@@ -25,9 +26,10 @@ import { SeederService } from './seeder'
     UserModule,
     CategoryModule,
     ArticleModule,
-    FileModule
+    FileModule,
+    UploadModule
   ],
   controllers: [],
-  providers: [SeederService]
+  providers: []
 })
 export class AppModule {}

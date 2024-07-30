@@ -65,7 +65,7 @@ export class ArticleAggregatorService {
    * Método para obtener datos del artículo desde el servicio de datos.
    * Maneja errores devolviendo un objeto vacío si la búsqueda falla.
    */
-  private async fetchArticleData(articleId: string): Promise<any> {
+  private async fetchArticleData(articleId: any): Promise<any> {
     return this.articleDataService
       .findArticleDataById(articleId)
       .catch(() => ({}))
@@ -75,7 +75,7 @@ export class ArticleAggregatorService {
    * Método para obtener datos de markdown del artículo desde el servicio correspondiente.
    * Similar al método fetchArticleData, maneja errores y devuelve un objeto vacío si hay fallos.
    */
-  private async fetchArticleMarkdown(articleId: string): Promise<any> {
+  private async fetchArticleMarkdown(articleId: any): Promise<any> {
     return this.articleMarkdownService
       .findArticleMarkdownById(articleId)
       .catch(() => ({}))
