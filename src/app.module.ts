@@ -5,7 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UserModule } from './modules/users/user.module'
 import { CategoryModule } from './modules/categories/category.module'
 import { ArticleModule } from './modules/articles/article.module'
-import { FileModule } from './modules/gltf-files/model.module'
+// import { FileModule } from './modules/gltf-files/model.module'
+import { GltfUploader } from './modules/gltf-uploader/gltf-uploader'
 
 // OTROS
 import { UploadModule } from './modules/multer/upload.module'
@@ -26,7 +27,8 @@ import { UploadModule } from './modules/multer/upload.module'
     UserModule,
     CategoryModule,
     ArticleModule,
-    FileModule,
+    GltfUploader,
+    // FileModule,
     UploadModule
   ],
   controllers: [],
