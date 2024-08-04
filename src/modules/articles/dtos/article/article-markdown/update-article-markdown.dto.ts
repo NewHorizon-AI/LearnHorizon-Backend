@@ -1,19 +1,7 @@
-import { IsString, IsOptional, IsMongoId } from 'class-validator'
-import { ApiProperty, PartialType } from '@nestjs/swagger'
-import { CreateArticleMarkdownDto } from './create-article-markdown.dto'
+import { IsString, IsOptional } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
-export class UpdateArticleMarkdownDto extends PartialType(
-  CreateArticleMarkdownDto
-) {
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty({
-    description: 'ID del artículo',
-    example: '60d2f77bcf86cd799439012',
-    required: false
-  })
-  article_id?: string
-
+export class UpdateArticleMarkdownDto {
   @IsString()
   @IsOptional()
   @ApiProperty({

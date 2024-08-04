@@ -1,7 +1,6 @@
 import {
   IsString,
   IsOptional,
-  IsMongoId,
   IsUrl,
   IsInt,
   Min,
@@ -12,15 +11,6 @@ import { Type } from 'class-transformer'
 import { UpdateArticleTagDto } from '../article-tag/update-article-tag.dto'
 
 export class UpdateArticleDataDto {
-  @IsMongoId()
-  @IsOptional()
-  @ApiProperty({
-    description: 'ID del artículo',
-    example: '60d2f77bcf86cd799439012',
-    required: false
-  })
-  article_id?: string
-
   @IsUrl()
   @IsOptional()
   @ApiProperty({

@@ -5,7 +5,7 @@ import { Type } from 'class-transformer'
 import { CreateArticleDto } from './article-base/create-article.dto'
 import { CreateArticleDataDto } from './article-data/create-article-data.dto'
 import { CreateArticleMarkdownDto } from './article-markdown/create-article-markdown.dto'
-import { CreateArticleTagDto } from './article-tag/create-article-tag.dto'
+// import { CreateArticleTagDto } from './article-tag/create-article-tag.dto'
 
 export class CreateArticleCompleteDto {
   @ApiProperty({
@@ -24,7 +24,7 @@ export class CreateArticleCompleteDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateArticleDataDto)
-  data?: CreateArticleDataDto
+  articleData?: CreateArticleDataDto
 
   @ApiProperty({
     description: 'Contenido en Markdown del artículo',
@@ -33,15 +33,15 @@ export class CreateArticleCompleteDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateArticleMarkdownDto)
-  markdown?: CreateArticleMarkdownDto
+  articleMarkdown?: CreateArticleMarkdownDto
 
-  @ApiProperty({
-    description: 'Etiquetas del artículo',
-    isArray: true,
-    type: CreateArticleTagDto
-  })
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => CreateArticleTagDto)
-  tags?: CreateArticleTagDto[]
+  // @ApiProperty({
+  //   description: 'Etiquetas del artículo',
+  //   isArray: true,
+  //   type: CreateArticleTagDto
+  // })
+  // @IsOptional()
+  // @ValidateNested({ each: true })
+  // @Type(() => CreateArticleTagDto)
+  // tags?: CreateArticleTagDto[]
 }

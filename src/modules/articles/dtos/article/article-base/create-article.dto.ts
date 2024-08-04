@@ -1,34 +1,37 @@
 import {
-  IsNotEmpty,
   IsString,
-  IsEnum,
   IsArray,
   ArrayNotEmpty,
-  IsMongoId
+  IsMongoId,
+  IsOptional,
+  IsEnum
 } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ArticleStatus } from '../../../interfaces/article-status.enum'
 
-import { ArticleStatus } from '../../shared/interfaces/article-status.enum'
+import { User } from 'src/modules/users/schemas/user.schema'
 
 export class CreateArticleDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Título de la publicación',
-    example: 'Cómo usar NestJS con MongoDB'
+    example: 'Cómo usar NestJS con MongoDB',
+    default: 'Nuevo artículo'
   })
-  title: string
+  title?: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(ArticleStatus, {
     message: 'El estado debe ser uno de los valores permitidos en ArticleStatus'
   })
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Estado de la publicación',
     example: ArticleStatus.PUBLISHED,
-    enum: ArticleStatus
+    enum: ArticleStatus,
+    default: ArticleStatus.DRAFT
   })
-  status: ArticleStatus
+  status?: ArticleStatus
 
   @IsArray()
   @ArrayNotEmpty()
@@ -40,5 +43,5 @@ export class CreateArticleDto {
     type: 'string',
     isArray: true
   })
-  users: string[]
+  users: User[]
 }

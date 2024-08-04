@@ -1,18 +1,7 @@
-// Importaciones de librerías necesarias
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-// Importaciones de controladores
-import { ArticleController } from './controllers/article.controller'
-
-// Importaciones de servicios
-import { ArticleCompositeService } from './services/article-composite.service'
-import { ArticleAggregatorService } from './services/aggregators/article-aggregator.service'
-import { ArticleBaseService } from './services/article-services/article-base/article-base.service'
-import { ArticleDataService } from './services/article-services/article-data/article-data.service'
-import { ArticleMarkdownService } from './services/article-services/article-markdown/article-markdown.service'
-
-// Importaciones de esquemas
+// * (1) Importar Esquemas
 import { Article, ArticleSchema } from './schemas/article.schema'
 import {
   ArticleComment,
@@ -25,9 +14,21 @@ import {
 } from './schemas/article-markdown.schema'
 import { ArticleTag, ArticleTagSchema } from './schemas/article-tag.schema'
 
-// Importaciones de módulos
+// * (2) Importar Controladores
+
+import { ArticleController } from './controllers/article.controller'
+
+// * (3) Importar Servicios
+import { ArticleCompositeService } from './services/article-composite.service'
+import { ArticleAggregatorService } from './services/aggregators/article-aggregator.service'
+import { ArticleBaseService } from './services/article-services/article-base/article-base.service'
+import { ArticleDataService } from './services/article-services/article-data/article-data.service'
+import { ArticleMarkdownService } from './services/article-services/article-markdown/article-markdown.service'
+
+// * (4) Importar Módulos
 import { CategoryModule } from '../categories/category.module'
 import { UserModule } from 'src/modules/users/user.module'
+import { ArticleModelModule } from 'src/modules/article-model/article-model.module'
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { UserModule } from 'src/modules/users/user.module'
       { name: ArticleTag.name, schema: ArticleTagSchema }
     ]),
     CategoryModule,
-    UserModule
+    UserModule,
+    ArticleModelModule
   ],
   controllers: [ArticleController],
   providers: [
@@ -54,7 +56,8 @@ import { UserModule } from 'src/modules/users/user.module'
     ArticleBaseService,
     ArticleDataService,
     ArticleMarkdownService,
-    ArticleAggregatorService
+    ArticleAggregatorService,
+    MongooseModule
   ]
 })
 export class ArticleModule {}

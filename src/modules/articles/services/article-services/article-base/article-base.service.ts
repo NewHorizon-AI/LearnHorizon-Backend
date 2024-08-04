@@ -21,9 +21,11 @@ export class ArticleBaseService {
     @InjectModel(User.name) private userModel: Model<User>
   ) {}
 
-  async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
+  async createBaseArticle(
+    createArticleDto: CreateArticleDto
+  ): Promise<Article> {
     if (!createArticleDto) {
-      throw new Error('createArticleDto is required')
+      throw new BadRequestException('createArticleDto is required')
     }
 
     // Verifica que todos los usuarios en el DTO existan en la base de datos
@@ -47,20 +49,29 @@ export class ArticleBaseService {
     if (!article) {
       throw new NotFoundException(`Article with ID ${id} not found`)
     }
+
     return article
   }
 
-  async updateArticle(
+  // // Busca un artículo compuesto por su ID y retorna null si no existe
+  // async findCompositeArticleById(id: string): Promise<Article> {
+  //   const article = await this.articleModel.findById(id).exec()
+  //   if (!article) {
+  //     return null
+  //   }
+  //   return article
+  // }
+
+  async updateBaseArticle(
     id: string,
     updateArticleDto: UpdateArticleDto
-  ): Promise<Article> {
-    const updatedArticle = await this.articleModel
+  ): Promise<void> {
+    const updateBaseArticle = await this.articleModel
       .findByIdAndUpdate(id, updateArticleDto, { new: true })
       .exec()
-    if (!updatedArticle) {
+    if (!updateBaseArticle) {
       throw new NotFoundException(`Article with ID ${id} not found`)
     }
-    return updatedArticle
   }
 
   async deleteArticle(id: string): Promise<Article> {

@@ -6,7 +6,7 @@ import { UpdateArticleDto } from './article-base/update-article.dto'
 import { UpdateArticleDataDto } from './article-data/update-article-data.dto'
 import { UpdateArticleMarkdownDto } from './article-markdown/update-article-markdown.dto'
 
-import { UpdateArticleTagDto } from './article-tag/update-article-tag.dto'
+// import { UpdateArticleTagDto } from './article-tag/update-article-tag.dto'
 
 export class UpdateArticleCompleteDto {
   @ValidateNested()
@@ -22,7 +22,7 @@ export class UpdateArticleCompleteDto {
     description: 'Datos adicionales del artículo',
     required: false
   })
-  data?: UpdateArticleDataDto
+  articleData?: UpdateArticleDataDto
 
   @ValidateNested()
   @Type(() => UpdateArticleMarkdownDto)
@@ -31,11 +31,11 @@ export class UpdateArticleCompleteDto {
     description: 'Contenido en Markdown del artículo',
     required: false
   })
-  markdown?: UpdateArticleMarkdownDto
+  articleMarkdown?: UpdateArticleMarkdownDto
 
-  @ValidateNested({ each: true })
-  @Type(() => UpdateArticleTagDto)
-  @IsOptional()
-  @ApiProperty({ description: 'Etiquetas del artículo', isArray: true })
-  tags?: UpdateArticleTagDto[]
+  // @ValidateNested({ each: true })
+  // @Type(() => UpdateArticleTagDto)
+  // @IsOptional()
+  // @ApiProperty({ description: 'Etiquetas del artículo', isArray: true })
+  // tags?: UpdateArticleTagDto[]
 }

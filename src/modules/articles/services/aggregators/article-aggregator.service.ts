@@ -93,6 +93,7 @@ export class ArticleAggregatorService {
   ): any {
     return {
       article: {
+        _id: article._id,
         title: article.title,
         status: article.status,
         users: users

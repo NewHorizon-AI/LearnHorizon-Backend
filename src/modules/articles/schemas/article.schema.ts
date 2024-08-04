@@ -3,28 +3,32 @@ import { Document, Types } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { User } from 'src/modules/users/schemas/user.schema'
 
+import { ArticleStatus } from '../interfaces/article-status.enum'
+
 @Schema({ timestamps: true })
 export class Article extends Document {
-  @Prop({ required: true })
+  @Prop({ default: 'Nuevo artículo' })
   @ApiProperty({
     description: 'Título de la publicación',
-    example: 'Cómo usar NestJS con MongoDB'
+    example: 'Cómo usar NestJS con MongoDB',
+    default: 'Nuevo artículo'
   })
   title: string
 
   @Prop({ type: [{ type: Types.ObjectId, ref: User.name }], required: true })
   @ApiProperty({
     description: 'Autores de la publicación',
-    example: 'John Doe, Jane Doe, etc.'
+    example: '[UserObjectId1, UserObjectId2]'
   })
   users: User[]
 
-  @Prop({ required: true })
+  @Prop({ default: ArticleStatus.DRAFT, enum: ArticleStatus })
   @ApiProperty({
     description: 'Estado de la publicación',
-    example: 'publicado'
+    example: ArticleStatus.PUBLISHED,
+    default: ArticleStatus.DRAFT
   })
-  status: string
+  status: ArticleStatus
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article)

@@ -6,15 +6,17 @@ import {
   IsMongoId
 } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ArticleStatus } from '../../../interfaces/article-status.enum'
 
-import { ArticleStatus } from '../../shared/interfaces/article-status.enum'
+import { User } from 'src/modules/users/schemas/user.schema'
 
 export class UpdateArticleDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({
     description: 'Título de la publicación, opcional para actualización',
-    example: 'Cómo usar NestJS con MongoDB'
+    example: 'Cómo usar NestJS con MongoDB',
+    default: 'Nuevo artículo'
   })
   title?: string
 
@@ -25,7 +27,8 @@ export class UpdateArticleDto {
   @ApiPropertyOptional({
     description: 'Estado de la publicación, opcional para actualización',
     example: ArticleStatus.PUBLISHED,
-    enum: ArticleStatus
+    enum: ArticleStatus,
+    default: ArticleStatus.DRAFT
   })
   status?: ArticleStatus
 
@@ -39,5 +42,5 @@ export class UpdateArticleDto {
     type: 'string',
     isArray: true
   })
-  users?: string[]
+  users?: User[]
 }

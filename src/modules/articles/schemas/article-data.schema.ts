@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { Article } from './article.schema'
-import { ArticleTag } from './article-tag.schema'
+// import { ArticleTag } from './article-tag.schema'
 
 @Schema({ timestamps: true })
 export class ArticleData extends Document {
@@ -12,7 +12,7 @@ export class ArticleData extends Document {
     description: 'ID del artículo',
     example: '60d2f77bcf86cd799439012'
   })
-  data_id: Article
+  article_id: Article
 
   @Prop({ required: true })
   @ApiProperty({
@@ -49,12 +49,12 @@ export class ArticleData extends Document {
   })
   dislikes: number
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: ArticleTag.name }] })
-  @ApiProperty({
-    description: 'Etiquetas asociadas al artículo',
-    example: ['60d2f77bcf86cd799439013', '60d2f77bcf86cd799439014']
-  })
-  tags: ArticleTag[]
+  // @Prop({ type: [{ type: Types.ObjectId, ref: ArticleTag.name }] })
+  // @ApiProperty({
+  //   description: 'Etiquetas asociadas al artículo',
+  //   example: ['60d2f77bcf86cd799439013', '60d2f77bcf86cd799439014']
+  // })
+  // tags: ArticleTag[]
 }
 
 export const ArticleDataSchema = SchemaFactory.createForClass(ArticleData)
