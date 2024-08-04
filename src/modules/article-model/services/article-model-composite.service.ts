@@ -7,7 +7,6 @@ import {
 // * (1) Importar Esquemas
 import { ArticleModel } from '../schemas/article-model.schema'
 import { ArticleModelTransformation } from '../schemas/article-model-transformation.schema'
-import { Article } from 'src/modules/articles/schemas/article.schema'
 
 // * (2) Importar Dtos
 // import { CreateArticleModelDto } from '../dtos/article-model/create-article-model.dto'
@@ -16,6 +15,7 @@ import { Article } from 'src/modules/articles/schemas/article.schema'
 // * (3) Importar Servicios
 import { ArticleModelService } from './article-model-services/article-model/article-model.service'
 import { ArticleModelTransformationService } from './article-model-services/article-model-transformation/article-model-transformation.service'
+import { Types } from 'mongoose'
 
 @Injectable()
 export class ArticleModelCompositeService {
@@ -24,14 +24,18 @@ export class ArticleModelCompositeService {
     private readonly articleModelTransformationService: ArticleModelTransformationService
   ) {}
 
-  async createArticleModelWithDefaultTransformation(article: Article): Promise<{
+  // ! POST - create
+
+  async createArticleModelWithDefaultTransformation(
+    article_id: Types.ObjectId
+  ): Promise<{
     articleModel: ArticleModel
     articleModelTransformation: ArticleModelTransformation
   }> {
     try {
       // * (1))Crear ArticleModel
       const articleModel =
-        await this.articleModelService.createWithDefault(article)
+        await this.articleModelService.createWithDefault(article_id)
 
       // * (3) Crear ModelTransformation usando el ID del ArticleModel recién creado
       const articleModelTransformation =
@@ -46,17 +50,15 @@ export class ArticleModelCompositeService {
     }
   }
 
+  // ! GET - find
+
   async findArticleModelTransformationById(
     article_id: string
   ): Promise<ArticleModelTransformation> {
     try {
-      // Buscar ArticleModel usando article_id
-      const articleModel = await this.articleModelService.findOne(article_id)
-      if (!articleModel) {
-        throw new NotFoundException(
-          `ArticleModel with ID ${article_id} not found`
-        )
-      }
+      // * (1) Buscar el ArticleModel usando article_id
+      const articleModel =
+        await this.articleModelService.findOneArticleModel(article_id)
 
       // Usar article_model_id para buscar ModelTransformation
       const articleModelTransformation =

@@ -35,7 +35,7 @@ export class ArticleController {
   })
   async createArticleBase(
     @Body() createArticleDto: CreateArticleDto
-  ): Promise<any> {
+  ): Promise<CreateArticleDto> {
     const article =
       await this.articleCompositeService.createArticleDraft(createArticleDto)
     return article
@@ -74,33 +74,34 @@ export class ArticleController {
     schema: { type: 'string' }
   })
   async getArticlModelEntryById(
-    @Param('id') id: string
+    @Param('id') article_id: string
   ): Promise<UpdateArticleCompleteDto> {
-    const article = await this.articleCompositeService.getArticleDetails(id)
+    const article =
+      await this.articleCompositeService.getArticleDetails(article_id)
     return article
   }
 
-  @Get('model/:id')
-  @ApiOperation({ summary: 'Get an article by ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The article has been successfully obtained.'
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Article not found.'
-  })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: 'The ID of the article to retrieve',
-    schema: { type: 'string' }
-  })
-  async getArticleDetailsById(@Param('id') _id: string) {
-    const article = await this.articleCompositeService.getArticleDetails(_id)
+  // @Get('model/:id')
+  // @ApiOperation({ summary: 'Get an article by ID' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'The article has been successfully obtained.'
+  // })
+  // @ApiResponse({
+  //   status: 404,
+  //   description: 'Article not found.'
+  // })
+  // @ApiParam({
+  //   name: 'id',
+  //   required: true,
+  //   description: 'The ID of the article to retrieve',
+  //   schema: { type: 'string' }
+  // })
+  // async getArticleDetailsById(@Param('id') _id: string) {
+  //   const article = await this.articleCompositeService.getArticleDetails(_id)
 
-    return article
-  }
+  //   return article
+  // }
 
   // ! PUT
 

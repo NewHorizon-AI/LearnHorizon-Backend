@@ -28,7 +28,7 @@ export class ArticleBaseService {
       throw new BadRequestException('createArticleDto is required')
     }
 
-    // Verifica que todos los usuarios en el DTO existan en la base de datos
+    // * Verifica que todos los usuarios en el DTO existan en la base de datos
     for (const userId of createArticleDto.users) {
       const userExists = await this.userModel.findById(userId).exec()
       if (!userExists) {
@@ -36,18 +36,23 @@ export class ArticleBaseService {
       }
     }
 
-    const newArticle = new this.articleModel(createArticleDto)
-    return newArticle.save()
+    try {
+      // * Crea un nuevo artículo
+      const newArticle = await this.articleModel.create(createArticleDto)
+      return newArticle
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   async findAllArticles(): Promise<Article[]> {
     return await this.articleModel.find().exec()
   }
 
-  async findArticleById(id: string): Promise<Article> {
-    const article = await this.articleModel.findById(id).exec()
+  async findArticleById(article_id: string): Promise<Article> {
+    const article = await this.articleModel.findById(article_id).exec()
     if (!article) {
-      throw new NotFoundException(`Article with ID ${id} not found`)
+      throw new NotFoundException(`Article with ID ${article_id} not found`)
     }
 
     return article

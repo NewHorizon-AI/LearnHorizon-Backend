@@ -36,7 +36,13 @@ export class ArticleCompositeService {
     private articleModelCompositeService: ArticleModelCompositeService
   ) {}
 
+  // ! POST
+
   async createArticleDraft(createArticleDto: CreateArticleDto): Promise<any> {
+    if (!createArticleDto) {
+      throw new BadRequestException('createArticleDto is required')
+    }
+
     try {
       // * (1) Creacion del artículo
       const article =
@@ -45,7 +51,7 @@ export class ArticleCompositeService {
       // * (3) Creación de datos del modelo del artículo
       const articleModel =
         await this.articleModelCompositeService.createArticleModelWithDefaultTransformation(
-          article
+          article.toJSON()._id
         )
 
       // * (4) Union de los datos del artículo
@@ -59,6 +65,8 @@ export class ArticleCompositeService {
       throw new BadRequestException(error.message)
     }
   }
+
+  // ! GET
 
   async getAllArticlesDetails(): Promise<any[]> {
     return this.articleAggregatorService.getAllArticlesDetails()
@@ -97,6 +105,8 @@ export class ArticleCompositeService {
       throw new NotFoundException(error.message)
     }
   }
+
+  // ! UPDATE
 
   async updateArticle(
     id: string,
