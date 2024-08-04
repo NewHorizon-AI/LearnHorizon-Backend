@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
@@ -19,8 +23,18 @@ export class ArticleModelService {
   async create(
     createArticleModelDto: CreateArticleModelDto
   ): Promise<ArticleModel> {
-    const newArticleModel = new this.articleModelModel(createArticleModelDto)
-    return newArticleModel.save()
+    try {
+      const newArticleModel = new this.articleModelModel(createArticleModelDto)
+      return await newArticleModel.save()
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to create ArticleModel: ${error.message}`
+      )
+    }
+  }
+
+  async createWithDefault(article: any): Promise<ArticleModel> {
+    return await this.articleModelModel.create({ article_id: article._id })
   }
 
   async findAll(): Promise<ArticleModel[]> {

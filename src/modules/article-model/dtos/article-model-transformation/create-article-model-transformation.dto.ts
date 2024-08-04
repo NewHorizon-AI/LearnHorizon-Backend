@@ -1,7 +1,21 @@
-import { IsNotEmpty, IsArray, IsNumber, ArrayMinSize } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsArray,
+  IsNumber,
+  ArrayMinSize,
+  IsMongoId
+} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateArticleModelTransformationDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty({
+    description: 'ID del modelo de artículo',
+    example: '60d2f77bcf86cd799439012'
+  })
+  article_model_id: string
+
   @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(3)

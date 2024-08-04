@@ -21,7 +21,7 @@ import { ArticleMarkdownService } from '../services/article-services/article-mar
 import { ArticleAggregatorService } from './aggregators/article-aggregator.service'
 
 import { ArticleModelCompositeService } from 'src/modules/article-model/services/article-model-composite.service'
-import { CreateArticleModelDto } from 'src/modules/article-model/dtos/article-model/create-article-model.dto'
+// import { CreateArticleModelDto } from 'src/modules/article-model/dtos/article-model/create-article-model.dto'
 
 @Injectable()
 export class ArticleCompositeService {
@@ -39,18 +39,21 @@ export class ArticleCompositeService {
   async createArticleDraft(createArticleDto: CreateArticleDto): Promise<any> {
     try {
       // * (1) Creacion del artículo
-
       const article =
         await this.articleBaseService.createBaseArticle(createArticleDto)
 
-      // * (3) Creacion de tablas relacionadas con el modelo de artículo
-      const createArticleModelDto: CreateArticleModelDto = {
-        article_id: article.id
-      }
+      // * (3) Creación de datos del modelo del artículo
+      const articleModel =
+        await this.articleModelCompositeService.createArticleModelWithDefaultTransformation(
+          article
+        )
 
-      await this.articleModelCompositeService.createArticleModelWithTransformation(
-        createArticleModelDto
-      )
+      // * (4) Union de los datos del artículo
+      const articleDetails = {
+        article,
+        articleModel
+      }
+      return articleDetails
     } catch (error) {
       // * (2) Si falla la creación del artículo, arrojar error
       throw new BadRequestException(error.message)
@@ -64,17 +67,28 @@ export class ArticleCompositeService {
   async getArticleDetails(article_id: string): Promise<any> {
     // * (1) Buscar el artículo por ID
     try {
-      const [article, articleData, articleMarkdown] = await Promise.all([
+      const [
+        article,
+        articleData,
+        articleMarkdown,
+        articleModelTransformation
+      ] = await Promise.all([
         this.articleBaseService.findArticleById(article_id),
         this.articleDataService.findCompositeArticleDataById(article_id),
-        this.articleMarkdownService.findCompositeArticleMarkdownById(article_id)
+        this.articleMarkdownService.findCompositeArticleMarkdownById(
+          article_id
+        ),
+        this.articleModelCompositeService.findArticleModelTransformationById(
+          article_id
+        )
       ])
 
       // * (4) Union de los datos del artículo
       const articleDetails = {
         article,
         articleData,
-        articleMarkdown
+        articleMarkdown,
+        articleModelTransformation
       }
 
       return articleDetails

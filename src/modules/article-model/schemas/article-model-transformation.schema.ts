@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { ArticleModel } from './article-model.schema'
 
 @Schema()
-export class ModelTransformation extends Document {
+export class ArticleModelTransformation extends Document {
   @Prop({ type: Types.ObjectId, ref: ArticleModel.name, required: true })
   @ApiProperty({
     description: 'ID del la entrada del modelo de artículo',
@@ -35,5 +35,6 @@ export class ModelTransformation extends Document {
   position: number[]
 }
 
-export const ModelTransformationSchema =
-  SchemaFactory.createForClass(ModelTransformation)
+export const ArticleModelTransformationSchema = SchemaFactory.createForClass(
+  ArticleModelTransformation
+)

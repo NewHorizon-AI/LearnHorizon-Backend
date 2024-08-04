@@ -1,61 +1,74 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 // * (1) Importar Esquemas
-import { ModelTransformation } from '../../../schemas/article-model-transformation.schema'
-import { Article } from 'src/modules/articles/schemas/article.schema'
+import { ArticleModelTransformation } from '../../../schemas/article-model-transformation.schema'
+import { ArticleModel } from '../../../schemas/article-model.schema'
 
 // * (2) Importar Dtos
-import { CreateArticleModelTransformationDto } from '../../../dtos/article-model-transformation/create-article-model-transformation.dto'
+// import { CreateArticleModelTransformationDto } from '../../../dtos/article-model-transformation/create-article-model-transformation.dto'
 import { UpdateModelTransformationDto } from '../../../dtos/article-model-transformation/update-article-model-transformation.dto'
 
 @Injectable()
-export class ModelTransformationService {
+export class ArticleModelTransformationService {
   constructor(
-    @InjectModel(ModelTransformation.name)
-    private modelTransformationModel: Model<ModelTransformation>
+    @InjectModel(ArticleModel.name)
+    private articleModelModel: Model<ArticleModel>,
+    @InjectModel(ArticleModelTransformation.name)
+    private modelTransformationModel: Model<ArticleModelTransformation>
   ) {}
 
-  async create(
-    article_id: Article,
-    createArticleModelTransformationDto: CreateArticleModelTransformationDto
-  ): Promise<ModelTransformation> {
+  // async create(
+  //   article_id: ,
+  //   createArticleModelTransformationDto: CreateArticleModelTransformationDto
+  // ): Promise<ArticleModelTransformation> {
+  //   try {
+  //     const newModelTransformation = await this.modelTransformationModel.create(
+  //       { article_model_id: article_id, createArticleModelTransformationDto }
+  //     )
+  //     return newModelTransformation
+  //   } catch (error) {
+  //     throw new BadRequestException(
+  //       `Failed to create ArticleModelTransformation: ${error.message}`
+  //     )
+  //   }
+  // }
+
+  async createWithDefault(
+    article_model: ArticleModel
+  ): Promise<ArticleModelTransformation> {
+    return await this.modelTransformationModel.create({
+      article_model_id: article_model._id
+    })
+  }
+
+  async findOne(article_model_id: string): Promise<ArticleModelTransformation> {
     try {
-      const newModelTransformation = await this.modelTransformationModel.create(
-        { article_model_id: article_id, createArticleModelTransformationDto }
-      )
-      return newModelTransformation
+      const modelTransformation = await this.modelTransformationModel
+        .findById({ article_model_id: article_model_id })
+        .exec()
+      if (!modelTransformation) {
+        throw new NotFoundException(
+          `ArticleModelTransformation with ID ${article_model_id} not found`
+        )
+      }
+      return modelTransformation
     } catch (error) {
-      throw new BadRequestException(
-        `Failed to create ModelTransformation: ${error.message}`
-      )
+      throw new NotFoundException(error.message)
     }
   }
 
-  async createWithDefault(article_id: Article): Promise<ModelTransformation> {
-    try {
-      const newModelTransformation = await this.modelTransformationModel.create(
-        { article_model_id: article_id }
-      )
-      return newModelTransformation
-    } catch (error) {
-      throw new BadRequestException(
-        `Failed to create ModelTransformation: ${error.message}`
-      )
-    }
-  }
-
-  async findOne(id: string): Promise<ModelTransformation> {
+  async findOneByArticleModelId(
+    article_model_id: string
+  ): Promise<ArticleModelTransformation> {
     const modelTransformation = await this.modelTransformationModel
-      .findById(id)
+      .findOne({ article_model_id })
       .exec()
     if (!modelTransformation) {
-      throw new NotFoundException(`ModelTransformation with ID ${id} not found`)
+      throw new NotFoundException(
+        `ModelTransformation with article_model_id ${article_model_id} not found`
+      )
     }
     return modelTransformation
   }
@@ -63,22 +76,26 @@ export class ModelTransformationService {
   async update(
     id: string,
     updateModelTransformationDto: UpdateModelTransformationDto
-  ): Promise<ModelTransformation> {
+  ): Promise<ArticleModelTransformation> {
     const updatedModelTransformation = await this.modelTransformationModel
       .findByIdAndUpdate(id, updateModelTransformationDto, { new: true })
       .exec()
     if (!updatedModelTransformation) {
-      throw new NotFoundException(`ModelTransformation with ID ${id} not found`)
+      throw new NotFoundException(
+        `ArticleModelTransformation with ID ${id} not found`
+      )
     }
     return updatedModelTransformation
   }
 
-  async remove(id: string): Promise<ModelTransformation> {
+  async remove(id: string): Promise<ArticleModelTransformation> {
     const deletedModelTransformation = await this.modelTransformationModel
       .findByIdAndDelete(id)
       .exec()
     if (!deletedModelTransformation) {
-      throw new NotFoundException(`ModelTransformation with ID ${id} not found`)
+      throw new NotFoundException(
+        `ArticleModelTransformation with ID ${id} not found`
+      )
     }
     return deletedModelTransformation
   }

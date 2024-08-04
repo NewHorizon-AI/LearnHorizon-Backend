@@ -8,17 +8,17 @@ import {
 } from './schemas/article-model.schema'
 
 import {
-  ModelTransformation,
-  ModelTransformationSchema
+  ArticleModelTransformation,
+  ArticleModelTransformationSchema
 } from './schemas/article-model-transformation.schema'
 
 // * (2) Importar Controladores
-import { ArticleModelController } from './controllers/article-model.controller'
+// import { ArticleModelController } from './controllers/article-model.controller'
 
 // * (3) Importar Servicios
 import { ArticleModelCompositeService } from './services/article-model-composite.service'
-import { ArticleModelService } from './services/article-model-services/article-model/article-mode-.service'
-import { ModelTransformationService } from './services/article-model-services/article-model-transformation/article-model-transformation.service'
+import { ArticleModelService } from './services/article-model-services/article-model/article-model.service'
+import { ArticleModelTransformationService } from './services/article-model-services/article-model-transformation/article-model-transformation.service'
 
 @Module({
   imports: [
@@ -29,22 +29,22 @@ import { ModelTransformationService } from './services/article-model-services/ar
       },
 
       {
-        name: ModelTransformation.name,
-        schema: ModelTransformationSchema
+        name: ArticleModelTransformation.name,
+        schema: ArticleModelTransformationSchema
       }
     ])
   ],
-  controllers: [ArticleModelController],
+  // controllers: [ArticleModelController],
   providers: [
     ArticleModelCompositeService,
     ArticleModelService,
-    ModelTransformationService
+    ArticleModelTransformationService
   ],
   exports: [
     MongooseModule,
     ArticleModelCompositeService,
     ArticleModelService,
-    ModelTransformationService
+    ArticleModelTransformationService
   ]
 })
 export class ArticleModelModule {}
