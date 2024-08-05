@@ -45,18 +45,28 @@ export class ArticleModelService {
     return this.articleModelModel.find().exec()
   }
 
-  async findOneArticleModel(article_id: string): Promise<ArticleModel> {
-    const articleModel = await this.articleModelModel.findOne({
-      article_id: article_id
-    })
-
-    console.log(articleModel)
-    if (!articleModel) {
-      throw new NotFoundException(
-        `ArticleModel with ID ${article_id} not found`
-      )
+  // * Buscar el ArticleModel usando article_id con tipo de dato ObjectId
+  async findOneArticleModel(article_id: Types.ObjectId): Promise<ArticleModel> {
+    if (!article_id) {
+      throw new BadRequestException('article_id is required')
     }
-    return articleModel
+
+    try {
+      // * (1) Buscar el ArticleModel usando article_id
+      const articleModel = await this.articleModelModel.findOne({
+        article_id: article_id
+      })
+
+      // * (2) Manejar errores
+      if (!articleModel) {
+        throw new NotFoundException(
+          `ArticleModel with ID ${article_id} not found`
+        )
+      }
+      return articleModel
+    } catch (error) {
+      throw new NotFoundException(error.message)
+    }
   }
 
   // ! PUT - Update

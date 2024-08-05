@@ -4,7 +4,7 @@ import {
   NotFoundException
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
 // * (1) Importar Los Esquemas
 import { Article } from '../schemas/article.schema'
@@ -73,6 +73,13 @@ export class ArticleCompositeService {
   }
 
   async getArticleDetails(article_id: string): Promise<any> {
+    // Validar si el string es un ObjectId válido
+    if (!Types.ObjectId.isValid(article_id)) {
+      throw new BadRequestException('Invalid article ID format')
+    }
+
+    const object_id = Types.ObjectId.createFromHexString(article_id)
+
     // * (1) Buscar el artículo por ID
     try {
       const [
@@ -81,13 +88,11 @@ export class ArticleCompositeService {
         articleMarkdown,
         articleModelTransformation
       ] = await Promise.all([
-        this.articleBaseService.findArticleById(article_id),
-        this.articleDataService.findCompositeArticleDataById(article_id),
-        this.articleMarkdownService.findCompositeArticleMarkdownById(
-          article_id
-        ),
+        this.articleBaseService.findArticleById(object_id),
+        this.articleDataService.findCompositeArticleDataById(object_id),
+        this.articleMarkdownService.findCompositeArticleMarkdownById(object_id),
         this.articleModelCompositeService.findArticleModelTransformationById(
-          article_id
+          object_id
         )
       ])
 

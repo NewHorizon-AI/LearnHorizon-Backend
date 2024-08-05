@@ -4,7 +4,7 @@ import {
   NotFoundException
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
 // Importacion de DTOs
 import { CreateArticleMarkdownDto } from '../../../dtos/article/article-markdown/create-article-markdown.dto'
@@ -43,7 +43,7 @@ export class ArticleMarkdownService {
 
   // Busca los datos de un articulo descompuesto por su ID y retorna null si no existe
   async findCompositeArticleMarkdownById(
-    article_id: string
+    article_id: Types.ObjectId
   ): Promise<ArticleMarkdown> {
     const article = await this.articleMarkdownModel
       .findOne({ article_id: article_id })

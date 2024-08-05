@@ -11,7 +11,7 @@ export class ArticleModelTransformation extends Document {
     description: 'ID del la entrada del modelo de artículo',
     example: '60d2f77bcf86cd799439012'
   })
-  article_model_id: ArticleModel
+  article_model_id: Types.ObjectId
 
   @Prop({ required: true, type: [Number], default: [1, 1, 1] })
   @ApiProperty({

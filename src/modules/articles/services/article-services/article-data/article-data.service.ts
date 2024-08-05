@@ -4,7 +4,7 @@ import {
   NotFoundException
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
 // Importacion de DTOs
 import { CreateArticleDataDto } from '../../../dtos/article/article-data/create-article-data.dto'
@@ -39,7 +39,9 @@ export class ArticleDataService {
   }
 
   // Busca los datos de un articulo descompuesto por su ID y retorna null si no existe
-  async findCompositeArticleDataById(article_id: string): Promise<ArticleData> {
+  async findCompositeArticleDataById(
+    article_id: Types.ObjectId
+  ): Promise<ArticleData> {
     const article = await this.articleDataModel
       .findOne({ article_id: article_id })
       .exec()

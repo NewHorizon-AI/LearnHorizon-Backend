@@ -11,7 +11,7 @@ export class ArticleModel extends Document {
     description: 'ID del artículo',
     example: '60d2f77bcf86cd799439012'
   })
-  article_id: Article
+  article_id: Types.ObjectId
 }
 
 export const ArticleModelSchema = SchemaFactory.createForClass(ArticleModel)

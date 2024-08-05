@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
 // * (1) Importar Esquemas
 import { ArticleModelTransformation } from '../../../schemas/article-model-transformation.schema'
@@ -18,6 +18,8 @@ export class ArticleModelTransformationService {
     @InjectModel(ArticleModelTransformation.name)
     private modelTransformationModel: Model<ArticleModelTransformation>
   ) {}
+
+  // ! POST - Create
 
   // async create(
   //   article_id: ,
@@ -38,10 +40,15 @@ export class ArticleModelTransformationService {
   async createWithDefault(
     article_model: ArticleModel
   ): Promise<ArticleModelTransformation> {
+    /*
+    @ Param article_model: ArticleModel - Modelo de artículo al que se le aplicará la transformación
+    */
     return await this.modelTransformationModel.create({
       article_model_id: article_model._id
     })
   }
+
+  // ! GET - Read
 
   async findOne(article_model_id: string): Promise<ArticleModelTransformation> {
     try {
@@ -60,11 +67,13 @@ export class ArticleModelTransformationService {
   }
 
   async findOneByArticleModelId(
-    article_model_id: string
+    article_model_id: Types.ObjectId
   ): Promise<ArticleModelTransformation> {
+    console.log(article_model_id)
     const modelTransformation = await this.modelTransformationModel
-      .findOne({ article_model_id })
+      .findOne({ article_model_id: article_model_id })
       .exec()
+
     if (!modelTransformation) {
       throw new NotFoundException(
         `ModelTransformation with article_model_id ${article_model_id} not found`

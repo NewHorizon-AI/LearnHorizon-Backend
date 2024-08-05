@@ -53,17 +53,17 @@ export class ArticleModelCompositeService {
   // ! GET - find
 
   async findArticleModelTransformationById(
-    article_id: string
+    article_id: Types.ObjectId
   ): Promise<ArticleModelTransformation> {
     try {
       // * (1) Buscar el ArticleModel usando article_id
       const articleModel =
         await this.articleModelService.findOneArticleModel(article_id)
 
-      // Usar article_model_id para buscar ModelTransformation
+      // * Usar article_model_id para buscar ModelTransformation
       const articleModelTransformation =
         await this.articleModelTransformationService.findOneByArticleModelId(
-          articleModel._id.toString()
+          articleModel.toJSON()._id
         )
       if (!articleModelTransformation) {
         throw new NotFoundException(
