@@ -21,14 +21,22 @@ export class ArticleBaseService {
     @InjectModel(User.name) private userModel: Model<User>
   ) {}
 
-  async createBaseArticle(
-    createArticleDto: CreateArticleDto
-  ): Promise<Article> {
+  // ! POST - create
+
+  async creatArticle(createArticleDto: CreateArticleDto): Promise<Article> {
+    /* 
+    * Crea un nuevo artículo con los datos proporcionados
+    @ Param createArticleDto: DTO que contiene los datos necesarios para crear un nuevo artículo
+    @ Return: Artículo recién creado
+    TODO: Mejorar la verificacion de los usuarios 
+    */
+
+    // * (1) Verifica que el DTO no sea nulo
     if (!createArticleDto) {
       throw new BadRequestException('createArticleDto is required')
     }
 
-    // * Verifica que todos los usuarios en el DTO existan en la base de datos
+    // * (3) Verifica que todos los usuarios en el DTO existan en la base de datos
     for (const userId of createArticleDto.users) {
       const userExists = await this.userModel.findById(userId).exec()
       if (!userExists) {
@@ -37,10 +45,13 @@ export class ArticleBaseService {
     }
 
     try {
-      // * Crea un nuevo artículo
+      // * (4) Crear un nuevo artículo
       const newArticle = await this.articleModel.create(createArticleDto)
+
+      // * (5) Devuelve el artículo recién creado
       return newArticle
     } catch (error) {
+      // * (2) Manejar errores
       throw new BadRequestException(error.message)
     }
   }

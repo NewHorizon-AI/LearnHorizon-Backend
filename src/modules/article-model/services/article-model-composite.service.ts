@@ -1,21 +1,17 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { Types } from 'mongoose'
 
 // * (1) Importar Esquemas
 import { ArticleModel } from '../schemas/article-model.schema'
 import { ArticleModelTransformation } from '../schemas/article-model-transformation.schema'
 
 // * (2) Importar Dtos
-// import { CreateArticleModelDto } from '../dtos/article-model/create-article-model.dto'
-// import { CreateArticleModelTransformationDto } from '../dtos/article-model-transformation/create-article-model-transformation.dto'
+import { CreateArticleModelDto } from '../dtos/article-model/create-article-model.dto'
+import { CreateArticleModelTransformationDto } from '../dtos/article-model-transformation/create-article-model-transformation.dto'
 
 // * (3) Importar Servicios
 import { ArticleModelService } from './article-model-services/article-model/article-model.service'
 import { ArticleModelTransformationService } from './article-model-services/article-model-transformation/article-model-transformation.service'
-import { Types } from 'mongoose'
 
 @Injectable()
 export class ArticleModelCompositeService {
@@ -26,28 +22,38 @@ export class ArticleModelCompositeService {
 
   // ! POST - create
 
-  async createArticleModelWithDefaultTransformation(
-    article_id: Types.ObjectId
-  ): Promise<{
-    articleModel: ArticleModel
-    articleModelTransformation: ArticleModelTransformation
-  }> {
-    try {
-      // * (1))Crear ArticleModel
-      const articleModel =
-        await this.articleModelService.createWithDefault(article_id)
+  async createArticleModel(article_id: Types.ObjectId): Promise<ArticleModel> {
+    /*
+     * Crea un nuevo ArticleModel con el article_id proporcionado, para ser utilizado en la creación de un nuevo articleModel
+     @ Param article_id ID del artículo al que se asociará el ArticleModel
+     */
 
-      // * (3) Crear ModelTransformation usando el ID del ArticleModel recién creado
-      const articleModelTransformation =
-        await this.articleModelTransformationService.createWithDefault(
-          articleModel
-        )
-
-      return { articleModel, articleModelTransformation }
-    } catch (error) {
-      // * (2) Manejar errores
-      throw new BadRequestException(error.message)
+    // * (1) Verifica que el article_id no sea nulo y crea la instancia de CreateArticleModelDto
+    const articleModel: CreateArticleModelDto = {
+      article_id: article_id
     }
+
+    // * (2) Crea un nuevo ArticleModel
+    return await this.articleModelService.create(articleModel)
+  }
+
+  async createArticleModelTransformation(
+    articl_model_id: Types.ObjectId
+  ): Promise<ArticleModelTransformation> {
+    /*
+     * Crea un nuevo ModelTransformation con el article_model_id proporcionado, para ser utilizado en la creación de un nuevo articleModelTransformation
+     @ Param articleModel_id ID del ArticleModel al que se asociará el ModelTransformation
+     */
+
+    // * (1) Verifica que el articleModel_id no sea nulo y crea la instancia de CreateArticleModelTransformationDto
+    const articleModelTransformation: CreateArticleModelTransformationDto = {
+      article_model_id: articl_model_id
+    }
+
+    // * (2) Crea un nuevo ModelTransformation
+    return await this.articleModelTransformationService.create(
+      articleModelTransformation
+    )
   }
 
   // ! GET - find

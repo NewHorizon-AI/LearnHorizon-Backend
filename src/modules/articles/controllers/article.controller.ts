@@ -1,4 +1,12 @@
-import { Controller, Post, Put, Body, Get, Param } from '@nestjs/common'
+import {
+  Controller,
+  Post,
+  Put,
+  Body,
+  Get,
+  Param,
+  BadRequestException
+} from '@nestjs/common'
 
 import {
   ApiTags,
@@ -76,8 +84,12 @@ export class ArticleController {
   async getArticlModelEntryById(
     @Param('id') article_id: string
   ): Promise<UpdateArticleCompleteDto> {
+    if (!article_id) {
+      throw new BadRequestException('article_id is required')
+    }
     const article =
       await this.articleCompositeService.getArticleDetails(article_id)
+
     return article
   }
 

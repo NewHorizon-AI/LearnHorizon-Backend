@@ -25,18 +25,25 @@ export class ArticleModelService {
   async create(
     createArticleModelDto: CreateArticleModelDto
   ): Promise<ArticleModel> {
+    /*
+     * Crea un nuevo ArticleModel
+      @ Param createArticleModelDto: DTO que contiene los datos necesarios para crear un nuevo ArticleModel
+     */
+
     try {
-      const newArticleModel = new this.articleModelModel(createArticleModelDto)
-      return await newArticleModel.save()
+      // * (1) Verifica que el DTO no sea nulo
+      if (!createArticleModelDto) {
+        throw new BadRequestException('createArticleModelDto is required')
+      }
+
+      // * (3) Crea un nuevo ArticleModel
+      return await this.articleModelModel.create(createArticleModelDto)
     } catch (error) {
+      // * (2) Manejar errores
       throw new BadRequestException(
         `Failed to create ArticleModel: ${error.message}`
       )
     }
-  }
-
-  async createWithDefault(article_id: Types.ObjectId): Promise<ArticleModel> {
-    return await this.articleModelModel.create({ article_id: article_id })
   }
 
   // ! GET - Read

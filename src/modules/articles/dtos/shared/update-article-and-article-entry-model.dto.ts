@@ -7,8 +7,8 @@ import { UpdateArticleDataDto } from '../article/article-data/update-article-dat
 import { UpdateArticleMarkdownDto } from '../article/article-markdown/update-article-markdown.dto'
 
 // Dto External
-import { UpdateModelTransformationDto } from 'src/modules/article-entry/dtos/article-entry/model-transformation/update-model-transformation.dto'
-// import { UpdateArticleTagDto } from './article-tag/update-article-tag.dto'
+// import { UpdateModelTransformationDto } from 'src/modules/article-entry/dtos/article-entry/model-transformation/update-model-transformation.dto'
+// // import { UpdateArticleTagDto } from './article-tag/update-article-tag.dto'
 
 export class UpdateArticleCompleteDto {
   @ValidateNested()
@@ -35,12 +35,12 @@ export class UpdateArticleCompleteDto {
   })
   markdown?: UpdateArticleMarkdownDto
 
-  @ValidateNested()
-  @Type(() => UpdateArticleMarkdownDto)
-  @IsOptional()
-  @ApiProperty({
-    description: 'Contenido en Markdown del artículo',
-    required: false
-  })
-  transformation?: UpdateModelTransformationDto
+  // @ValidateNested()
+  // @Type(() => UpdateArticleMarkdownDto)
+  // @IsOptional()
+  // @ApiProperty({
+  //   description: 'Contenido en Markdown del artículo',
+  //   required: false
+  // })
+  // transformation?: UpdateModelTransformationDto
 }

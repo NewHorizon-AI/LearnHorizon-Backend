@@ -1,17 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document, Types } from 'mongoose'
+import { Document } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ArticleModelEntry } from 'src/modules/article-entry/schemas/article-model-entry.schema'
+// import { ArticleModelEntry } from 'src/modules/article-entry/schemas/article-model-entry.schema'
 
 @Schema()
 export class UploadGltf extends Document {
-  @Prop({ type: Types.ObjectId, ref: ArticleModelEntry.name, required: true })
-  @ApiProperty({
-    description: 'ID del artículo',
-    example: '60d2f77bcf86cd799439012'
-  })
-  article_entry_id: ArticleModelEntry
+  // @Prop({ type: Types.ObjectId, ref: ArticleModelEntry.name, required: true })
+  // @ApiProperty({
+  //   description: 'ID del artículo',
+  //   example: '60d2f77bcf86cd799439012'
+  // })
+  // article_entry_id: Types.ObjectId
 
   @ApiProperty({
     description: 'Nombre del archivo',

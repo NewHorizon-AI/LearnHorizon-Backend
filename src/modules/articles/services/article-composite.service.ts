@@ -20,6 +20,7 @@ import { ArticleMarkdownService } from '../services/article-services/article-mar
 
 import { ArticleAggregatorService } from './aggregators/article-aggregator.service'
 
+// * (4) Importar los servicios externos
 import { ArticleModelCompositeService } from 'src/modules/article-model/services/article-model-composite.service'
 // import { CreateArticleModelDto } from 'src/modules/article-model/dtos/article-model/create-article-model.dto'
 
@@ -36,28 +37,40 @@ export class ArticleCompositeService {
     private articleModelCompositeService: ArticleModelCompositeService
   ) {}
 
-  // ! POST
+  // ! POST - create
 
   async createArticleDraft(createArticleDto: CreateArticleDto): Promise<any> {
+    /*
+     * Crea un nuevo artículo sin datos adicionales
+     @ Param createArticleDto: DTO que contiene los datos necesarios para crear un nuevo artículo
+     */
+
+    // * (1) Verifica que el DTO no sea nulo
     if (!createArticleDto) {
       throw new BadRequestException('createArticleDto is required')
     }
 
     try {
-      // * (1) Creacion del artículo
+      // * (2) Creacion del artículo
       const article =
-        await this.articleBaseService.createBaseArticle(createArticleDto)
+        await this.articleBaseService.creatArticle(createArticleDto)
 
       // * (3) Creación de datos del modelo del artículo
       const articleModel =
-        await this.articleModelCompositeService.createArticleModelWithDefaultTransformation(
+        await this.articleModelCompositeService.createArticleModel(
           article.toJSON()._id
+        )
+
+      const articleModelTransformation =
+        await this.articleModelCompositeService.createArticleModelTransformation(
+          articleModel.toJSON()._id
         )
 
       // * (4) Union de los datos del artículo
       const articleDetails = {
         article,
-        articleModel
+        articleModel,
+        articleModelTransformation
       }
       return articleDetails
     } catch (error) {

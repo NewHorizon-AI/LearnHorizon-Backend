@@ -3,9 +3,11 @@ import {
   IsArray,
   IsNumber,
   ArrayMinSize,
-  IsMongoId
+  IsMongoId,
+  IsOptional
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { Types } from 'mongoose'
 
 export class CreateArticleModelTransformationDto {
   @IsNotEmpty()
@@ -14,9 +16,9 @@ export class CreateArticleModelTransformationDto {
     description: 'ID del modelo de artículo',
     example: '60d2f77bcf86cd799439012'
   })
-  article_model_id: string
+  article_model_id: Types.ObjectId
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ArrayMinSize(3)
   @IsNumber({}, { each: true })
@@ -25,9 +27,9 @@ export class CreateArticleModelTransformationDto {
     example: [1, 1, 1],
     default: [1, 1, 1]
   })
-  scale: number[]
+  scale?: number[] = [1, 1, 1]
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ArrayMinSize(3)
   @IsNumber({}, { each: true })
@@ -36,9 +38,9 @@ export class CreateArticleModelTransformationDto {
     example: [0, 0, 0],
     default: [0, 0, 0]
   })
-  rotation: number[]
+  rotation?: number[] = [0, 0, 0]
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ArrayMinSize(3)
   @IsNumber({}, { each: true })
@@ -47,5 +49,5 @@ export class CreateArticleModelTransformationDto {
     example: [0, 0, 0],
     default: [0, 0, 0]
   })
-  position: number[]
+  position?: number[] = [0, 0, 0]
 }
