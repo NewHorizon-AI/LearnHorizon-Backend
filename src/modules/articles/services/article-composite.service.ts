@@ -100,12 +100,7 @@ export class ArticleCompositeService {
     */
 
     try {
-      const [
-        article,
-        articleData,
-        articleMarkdown,
-        articleModelTransformation
-      ] = await Promise.all([
+      const [article, data, markdown, transformation] = await Promise.all([
         this.articleBaseService.getArticleById(article_id),
         this.articleDataService.findCompositeArticleDataById(article_id),
         this.articleMarkdownService.findCompositeArticleMarkdownById(
@@ -117,9 +112,9 @@ export class ArticleCompositeService {
       // * (4) Union de los datos del artículo
       const articleDetails = {
         article,
-        articleData,
-        articleMarkdown,
-        articleModelTransformation
+        data,
+        markdown,
+        transformation
       }
 
       return articleDetails

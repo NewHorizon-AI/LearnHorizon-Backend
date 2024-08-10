@@ -1,12 +1,6 @@
 import { Controller, Post, Put, Body, Get, Param } from '@nestjs/common'
 
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-  ApiBody
-} from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger'
 
 // importar Servicios
 import { ArticleCompositeService } from '../services/article-composite.service'
@@ -18,8 +12,8 @@ import { UpdateArticleCompleteDto } from '../dtos/article/update-article-complet
 import { CreateArticleDto } from '../dtos/article/article-base/create-article.dto'
 import { Types } from 'mongoose'
 
-@ApiTags('article')
-@Controller('article')
+@ApiTags('articles')
+@Controller('articles')
 export class ArticleController {
   constructor(
     private readonly articleCompositeService: ArticleCompositeService,
@@ -67,21 +61,16 @@ export class ArticleController {
     status: 404,
     description: 'Article not found.'
   })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: 'The ID of the article to retrieve',
-    schema: { type: 'string' }
-  })
-  async getArticleDetails(
-    @Param('id') article_id: Types.ObjectId
-  ): Promise<UpdateArticleCompleteDto> {
+  async getArticleDetails(@Param('id') article_id: string) {
     /* 
       * Obtiene un artículo completo por ID
       @ Param article_id ID del artículo a recuperar
 
     */
-    return await this.articleCompositeService.getArticleDetails(article_id)
+
+    const object_id = new Types.ObjectId(article_id)
+
+    return await this.articleCompositeService.getArticleDetails(object_id)
   }
 
   @Get('details/:id/model')
@@ -95,17 +84,10 @@ export class ArticleController {
     status: 404,
     description: 'Article not found.'
   })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: 'The ID of the article to retrieve',
-    schema: { type: 'string' }
-  })
-  async getArticleDetailWithModel(
-    @Param('id') article_id: Types.ObjectId
-  ): Promise<UpdateArticleCompleteDto> {
+  async getArticleDetailWithModel(@Param('id') article_id: string) {
+    const object_id = new Types.ObjectId(article_id)
     return await this.articleCompositeService.getArticleDetailsWithModel(
-      article_id
+      object_id
     )
   }
 
