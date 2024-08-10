@@ -18,8 +18,8 @@ import { UpdateArticleCompleteDto } from '../dtos/article/update-article-complet
 import { CreateArticleDto } from '../dtos/article/article-base/create-article.dto'
 import { Types } from 'mongoose'
 
-@ApiTags('articles')
-@Controller('articles')
+@ApiTags('article')
+@Controller('article')
 export class ArticleController {
   constructor(
     private readonly articleCompositeService: ArticleCompositeService,
@@ -56,7 +56,7 @@ export class ArticleController {
     return this.articleCompositeService.getAllArticlesDetails()
   }
 
-  @Get(':id')
+  @Get('details/:id')
   @ApiOperation({ summary: 'Get an article by ID' })
   @ApiResponse({
     status: 200,
@@ -82,6 +82,31 @@ export class ArticleController {
 
     */
     return await this.articleCompositeService.getArticleDetails(article_id)
+  }
+
+  @Get('details/:id/model')
+  @ApiOperation({ summary: 'Get an article by ID with model included' })
+  @ApiResponse({
+    status: 200,
+    description: 'The article has been successfully obtained with model data.',
+    type: UpdateArticleCompleteDto
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Article not found.'
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'The ID of the article to retrieve',
+    schema: { type: 'string' }
+  })
+  async getArticleDetailWithModel(
+    @Param('id') article_id: Types.ObjectId
+  ): Promise<UpdateArticleCompleteDto> {
+    return await this.articleCompositeService.getArticleDetailsWithModel(
+      article_id
+    )
   }
 
   // ! PUT

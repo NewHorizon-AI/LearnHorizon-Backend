@@ -128,6 +128,11 @@ export class ArticleCompositeService {
     }
   }
 
+  async getArticleDetailsWithModel(article_id: Types.ObjectId): Promise<any> {
+    const articleDetails = await this.getArticleDetails(article_id)
+    return articleDetails
+  }
+
   // ! UPDATE
 
   async updateArticle(
