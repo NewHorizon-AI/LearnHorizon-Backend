@@ -1,23 +1,7 @@
-import {
-  IsNotEmpty,
-  IsArray,
-  IsNumber,
-  ArrayMinSize,
-  IsMongoId,
-  IsOptional
-} from 'class-validator'
+import { IsArray, IsNumber, ArrayMinSize, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { Types } from 'mongoose'
 
 export class CreateArticleModelTransformationDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  @ApiProperty({
-    description: 'ID del modelo de artículo',
-    example: '60d2f77bcf86cd799439012'
-  })
-  article_model_id: Types.ObjectId
-
   @IsOptional()
   @IsArray()
   @ArrayMinSize(3)

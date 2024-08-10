@@ -33,13 +33,6 @@ export class UploadGltf extends Document {
   })
   @Prop({ required: true })
   mimetype: string
-
-  @ApiProperty({
-    description: 'Fecha y hora en que se subió el archivo',
-    example: '2024-07-31T00:00:00.000Z'
-  })
-  @Prop({ default: Date.now })
-  uploadedAt: Date
 }
 
 export const UploadGltfSchema = SchemaFactory.createForClass(UploadGltf)

@@ -55,15 +55,15 @@ export class ArticleCompositeService {
       const article =
         await this.articleBaseService.creatArticle(createArticleDto)
 
+      // * (3) Creación de datos extra del modelo del artículo
+      const articleModelTransformation =
+        await this.articleModelCompositeService.createArticleModelTransformation()
+
       // * (3) Creación de datos del modelo del artículo
       const articleModel =
         await this.articleModelCompositeService.createArticleModel(
-          article.toJSON()._id
-        )
-
-      const articleModelTransformation =
-        await this.articleModelCompositeService.createArticleModelTransformation(
-          articleModel.toJSON()._id
+          article.toJSON()._id,
+          articleModelTransformation.toJSON()._id
         )
 
       // * (4) Union de los datos del artículo

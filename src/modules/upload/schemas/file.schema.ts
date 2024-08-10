@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 
-@Schema()
-export class UploadGltf extends Document {
+@Schema({ timestamps: true })
+export class File extends Document {
   @ApiProperty({
     description: 'Nombre del archivo',
     example: 'model.gltf'
@@ -24,13 +24,6 @@ export class UploadGltf extends Document {
   })
   @Prop({ required: true })
   mimetype: string
-
-  @ApiProperty({
-    description: 'Fecha y hora en que se subió el archivo',
-    example: '2024-07-31T00:00:00.000Z'
-  })
-  @Prop({ default: Date.now })
-  uploadedAt: Date
 }
 
-export const UploadGltfSchema = SchemaFactory.createForClass(UploadGltf)
+export const FileSchema = SchemaFactory.createForClass(File)

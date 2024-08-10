@@ -22,7 +22,10 @@ export class ArticleModelCompositeService {
 
   // ! POST - create
 
-  async createArticleModel(article_id: Types.ObjectId): Promise<ArticleModel> {
+  async createArticleModel(
+    article_id: Types.ObjectId,
+    transformation_id: Types.ObjectId
+  ): Promise<ArticleModel> {
     /*
      * Crea un nuevo ArticleModel con el article_id proporcionado, para ser utilizado en la creación de un nuevo articleModel
      @ Param article_id ID del artículo al que se asociará el ArticleModel
@@ -30,7 +33,8 @@ export class ArticleModelCompositeService {
 
     // * (1) Verifica que el article_id no sea nulo y crea la instancia de CreateArticleModelDto
     const articleModel: CreateArticleModelDto = {
-      article_id: article_id
+      article_id: article_id,
+      transformation_id: transformation_id
     }
 
     // * (2) Crea un nuevo ArticleModel
@@ -38,21 +42,15 @@ export class ArticleModelCompositeService {
   }
 
   async createArticleModelTransformation(
-    articl_model_id: Types.ObjectId
+    createArticleModelTransformationDto?: CreateArticleModelTransformationDto
   ): Promise<ArticleModelTransformation> {
     /*
      * Crea un nuevo ModelTransformation con el article_model_id proporcionado, para ser utilizado en la creación de un nuevo articleModelTransformation
-     @ Param articleModel_id ID del ArticleModel al que se asociará el ModelTransformation
      */
 
-    // * (1) Verifica que el articleModel_id no sea nulo y crea la instancia de CreateArticleModelTransformationDto
-    const articleModelTransformation: CreateArticleModelTransformationDto = {
-      article_model_id: articl_model_id
-    }
-
-    // * (2) Crea un nuevo ModelTransformation
+    // * (1) Crea un nuevo ModelTransformation
     return await this.articleModelTransformationService.create(
-      articleModelTransformation
+      createArticleModelTransformationDto
     )
   }
 

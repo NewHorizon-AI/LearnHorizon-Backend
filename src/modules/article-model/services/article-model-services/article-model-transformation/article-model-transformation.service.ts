@@ -19,20 +19,13 @@ export class ArticleModelTransformationService {
   // ! POST - Create
 
   async create(
-    createArticleModelTransformationDto: CreateArticleModelTransformationDto
+    createArticleModelTransformationDto?: CreateArticleModelTransformationDto
   ): Promise<ArticleModelTransformation> {
     /*
      * Crea un nuevo Article Model Transformation utilizando el DTO proporcionado
      @ Param createArticleModelTransformationDto: DTO que contiene los datos necesarios para crear un nuevo Article Model Transformation
      */
     try {
-      // * (1) Verifica que el article_model no sea nulo
-      if (!createArticleModelTransformationDto) {
-        throw new NotFoundException(
-          'createArticleModelTransformationDto is required'
-        )
-      }
-
       // * (3) Crear un nuevo ModelTransformation
       return await this.articleModelTransformationModel.create(
         createArticleModelTransformationDto

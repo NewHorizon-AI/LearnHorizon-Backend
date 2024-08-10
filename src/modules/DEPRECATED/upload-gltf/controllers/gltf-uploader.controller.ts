@@ -33,7 +33,7 @@ import { GltfValidationService } from '../services/gltf-validation.service'
 import { UpdateGltfUploadDto } from '../dtos/update-gltf-upload.dto'
 
 @ApiTags('gltf')
-@Controller('gltf')
+@Controller('upload-gltf')
 export class GltfUploaderController {
   constructor(
     private readonly uploadService: UploadService,
