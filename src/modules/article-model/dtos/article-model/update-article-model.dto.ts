@@ -8,7 +8,7 @@ export class UpdateArticleModelDto {
   @ApiProperty({
     description: 'ID del artículo asociado con el modelo',
     example: '60d2f77bcf86cd799439012',
-    required: false // Explicitly marking as not required for updates
+    required: false
   })
   article_id?: Types.ObjectId
 
@@ -20,4 +20,13 @@ export class UpdateArticleModelDto {
     required: false
   })
   transformation_id?: Types.ObjectId
+
+  @IsOptional()
+  @IsMongoId()
+  @ApiProperty({
+    description: 'ID del archivo del modelo',
+    example: '60d2f77bcf86cd799439014',
+    required: false
+  })
+  file_id?: Types.ObjectId
 }

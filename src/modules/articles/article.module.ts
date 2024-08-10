@@ -3,16 +3,11 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 // * (1) Importar Esquemas
 import { Article, ArticleSchema } from './schemas/article.schema'
-import {
-  ArticleComment,
-  ArticleCommentSchema
-} from './schemas/article-comment.schema'
 import { ArticleData, ArticleDataSchema } from './schemas/article-data.schema'
 import {
   ArticleMarkdown,
   ArticleMarkdownSchema
 } from './schemas/article-markdown.schema'
-import { ArticleTag, ArticleTagSchema } from './schemas/article-tag.schema'
 
 // * (2) Importar Controladores
 
@@ -34,10 +29,8 @@ import { ArticleModelModule } from 'src/modules/article-model/article-model.modu
   imports: [
     MongooseModule.forFeature([
       { name: Article.name, schema: ArticleSchema },
-      { name: ArticleComment.name, schema: ArticleCommentSchema },
       { name: ArticleData.name, schema: ArticleDataSchema },
-      { name: ArticleMarkdown.name, schema: ArticleMarkdownSchema },
-      { name: ArticleTag.name, schema: ArticleTagSchema }
+      { name: ArticleMarkdown.name, schema: ArticleMarkdownSchema }
     ]),
     CategoryModule,
     UserModule,

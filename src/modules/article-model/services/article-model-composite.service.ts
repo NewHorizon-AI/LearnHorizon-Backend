@@ -56,28 +56,29 @@ export class ArticleModelCompositeService {
 
   // ! GET - find
 
-  async findArticleModelTransformationById(
+  async getTransformationById(
     article_id: Types.ObjectId
   ): Promise<ArticleModelTransformation> {
-    try {
-      // * (1) Buscar el ArticleModel usando article_id
-      const articleModel =
-        await this.articleModelService.findOneArticleModel(article_id)
+    /*
+     * Obtiene un ModelTransformation por article_id
+     @ Param article_id ID del artículo a recuperar
+    */
 
-      // * Usar article_model_id para buscar ModelTransformation
-      const articleModelTransformation =
-        await this.articleModelTransformationService.findOneByArticleModelId(
-          articleModel.toJSON()._id
-        )
-      if (!articleModelTransformation) {
-        throw new NotFoundException(
-          `ModelTransformation with article_model_id ${articleModel._id} not found`
-        )
-      }
+    // * (1) Buscar el ArticleModel usando article_id
+    const articleModel =
+      await this.articleModelService.getArticleModelByArticleId(article_id)
 
-      return articleModelTransformation
-    } catch (error) {
-      throw new NotFoundException(error.message)
+    // * Usar article_model_id para buscar ModelTransformation
+    const articleModelTransformation =
+      await this.articleModelTransformationService.findOneByArticleModelId(
+        articleModel.toJSON()._id
+      )
+    if (!articleModelTransformation) {
+      throw new NotFoundException(
+        `ModelTransformation with article_model_id ${articleModel._id} not found`
+      )
     }
+
+    return articleModelTransformation
   }
 }

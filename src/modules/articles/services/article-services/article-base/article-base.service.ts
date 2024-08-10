@@ -60,13 +60,14 @@ export class ArticleBaseService {
     return await this.articleModel.find().exec()
   }
 
-  async findArticleById(article_id: Types.ObjectId): Promise<Article> {
-    const article = await this.articleModel.findById(article_id).exec()
-    if (!article) {
-      throw new NotFoundException(`Article with ID ${article_id} not found`)
-    }
+  async getArticleById(article_id: Types.ObjectId): Promise<Article> {
+    /*
+     * Obtiene un artículo completo por ID
+     @ Param article_id ID del artículo a recuperar
+    */
 
-    return article
+    // * (1) Llamar al servicio para obtener los detalles del artículo
+    return await this.articleModel.findById(article_id).exec()
   }
 
   // // Busca un artículo compuesto por su ID y retorna null si no existe

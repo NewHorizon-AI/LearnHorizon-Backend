@@ -1,9 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Types } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
-import { User } from 'src/modules/users/schemas/user.schema'
 
 import { ArticleStatus } from '../interfaces/article-status.enum'
+
+// * (1) Importar los Esquemas necesarios
+import { User } from 'src/modules/users/schemas/user.schema'
 
 @Schema({ timestamps: true })
 export class Article extends Document {

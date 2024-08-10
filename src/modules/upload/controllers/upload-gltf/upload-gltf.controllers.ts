@@ -1,81 +1,263 @@
-// import {
-//   Controller,
-//   Post,
-//   Get,
-//   Put,
-//   Delete,
-//   Param,
-//   Body,
-//   UseInterceptors,
-//   UploadedFile,
-//   BadRequestException
-// } from '@nestjs/common'
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Delete,
+  UseInterceptors,
+  UploadedFile,
+  HttpException,
+  HttpStatus,
+  Res,
+  Put,
+  Body
+} from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger'
 
-// import {
-//   ApiBody,
-//   ApiConsumes,
-//   ApiOperation,
-//   ApiResponse,
-//   ApiTags
-// } from '@nestjs/swagger'
+import { Response } from 'express'
+import { createReadStream, existsSync } from 'fs'
+import { join } from 'path'
 
-// import { FileInterceptor } from '@nestjs/platform-express'
+// * Importacion de schemas
+import { File } from '../../schemas/file.schema'
 
-// @Controller('upload/modelo')
-// export class UploadModelController {
-//   constructor(private readonly modelService: ModelService) {}
+// * Importacion de servicios
+import { GltfValidationService } from '../../services/gltf-validation.service'
+import { UploadService } from '../../services/upload.service'
 
-//   @Post()
-//   @UseInterceptors(FileInterceptor('file'))
-//   async createModel(
-//     @UploadedFile() file: Express.Multer.File,
-//     @Body('article_model_id') articleModelId: string
-//   ) {
-//     if (!file || !articleModelId) {
-//       throw new BadRequestException('Archivo y article_model_id son requeridos')
-//     }
-//     const model = await this.modelService.createModel(file, articleModelId)
-//     return {
-//       message: 'Modelo creado exitosamente',
-//       data: model
-//     }
-//   }
+// * Importacion de dtos
+import { UpdateFileDto } from '../../dtos/update-file.dto'
+import { CreateFileDto } from '../../dtos/create-file.dto'
+@ApiTags('upload/model')
+@Controller('upload/model')
+export class GltfUploaderController {
+  constructor(
+    private readonly uploadService: UploadService,
+    private readonly gltfValidationService: GltfValidationService
+  ) {}
 
-//   @Get(':id')
-//   async getModel(@Param('id') id: string) {
-//     const model = await this.modelService.getModelById(id)
-//     return {
-//       message: 'Modelo obtenido exitosamente',
-//       data: model
-//     }
-//   }
+  // ! POST
 
-//   @Put(':id')
-//   @UseInterceptors(FileInterceptor('file'))
-//   async updateModel(
-//     @Param('id') id: string,
-//     @UploadedFile() file: Express.Multer.File,
-//     @Body('article_model_id') articleModelId: string
-//   ) {
-//     if (!file || !articleModelId) {
-//       throw new BadRequestException('Archivo y article_model_id son requeridos')
-//     }
-//     const updatedModel = await this.modelService.updateModel(
-//       id,
-//       file,
-//       articleModelId
-//     )
-//     return {
-//       message: 'Modelo actualizado exitosamente',
-//       data: updatedModel
-//     }
-//   }
+  @Post()
+  @ApiOperation({ summary: 'Subir un archivo GLTF' })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Subida de archivo',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Archivo a subir'
+        },
+        id: {
+          type: 'string',
+          description: 'ID asociado al archivo'
+        }
+      }
+    }
+  })
+  @ApiResponse({ status: 201, description: 'Archivo subido exitosamente.' })
+  @ApiResponse({
+    status: 400,
+    description:
+      'No se proporcionó un archivo o el formato del archivo es inválido.'
+  })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File
+    // @Body() body: string
+  ): Promise<File> {
+    try {
+      await this.gltfValidationService.validateGltfFile(file)
 
-//   @Delete(':id')
-//   async deleteModel(@Param('id') id: string) {
-//     await this.modelService.deleteModel(id)
-//     return {
-//       message: 'Modelo eliminado exitosamente'
-//     }
-//   }
-// }
+      const createUploadDto: CreateFileDto = {
+        filename: file.filename,
+        path: file.path,
+        mimetype: file.mimetype
+      }
+
+      return await this.uploadService.create(createUploadDto)
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          message: error.message || 'Error al subir el archivo.'
+        },
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  // ! GET
+
+  @Get()
+  @ApiOperation({ summary: 'Obtener todos los archivos subidos' })
+  @ApiResponse({ status: 200, description: 'Archivos obtenidos exitosamente.' })
+  async findAll(): Promise<File[]> {
+    try {
+      return await this.uploadService.findAll()
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Error al obtener los archivos subidos.'
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener un archivo subido por ID' })
+  @ApiResponse({ status: 200, description: 'Archivo obtenido exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Archivo no encontrado.' })
+  async findOne(@Param('id') id: string): Promise<File> {
+    try {
+      return await this.uploadService.findOne(id)
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error
+      }
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Error al obtener el archivo subido.'
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  @Get('file/:id')
+  @ApiOperation({ summary: 'Descargar un archivo subido por ID' })
+  @ApiResponse({ status: 200, description: 'Archivo descargado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Archivo no encontrado.' })
+  async getFile(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    try {
+      const upload = await this.uploadService.findOne(id)
+      const filePath = join(process.cwd(), upload.path)
+
+      if (!existsSync(filePath)) {
+        throw new HttpException('File not found', HttpStatus.NOT_FOUND)
+      }
+
+      const fileStream = createReadStream(filePath)
+
+      fileStream.on('error', () => {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: 'Error al leer el archivo.'
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      })
+
+      res.set({
+        'Content-Type': upload.mimetype,
+        'Content-Disposition': `attachment; filename="${upload.filename}"`
+      })
+
+      fileStream.pipe(res)
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error
+      }
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Error al descargar el archivo.'
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  // ! PUT
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualizar un archivo GLTF existente' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary'
+        },
+        UpdateFileDto: {
+          type: 'string'
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Archivo actualizado exitosamente.'
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'No se proporcionó un archivo o el formato del archivo es inválido.'
+  })
+  @ApiResponse({ status: 404, description: 'Archivo no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @UseInterceptors(FileInterceptor('file'))
+  async updateFile(
+    @Param('id') id: string,
+    @Body() article_entry_id: string,
+    @UploadedFile() file: Express.Multer.File
+  ): Promise<File> {
+    try {
+      await this.gltfValidationService.validateGltfFile(file)
+
+      const updateGltfFile: UpdateFileDto = {
+        filename: file.filename,
+        path: file.path,
+        mimetype: file.mimetype
+      }
+
+      return await this.uploadService.update(id, updateGltfFile)
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          message: error.message || 'Error al actualizar el archivo.'
+        },
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar un archivo subido por ID' })
+  @ApiResponse({ status: 200, description: 'Archivo eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Archivo no encontrado.' })
+  async remove(@Param('id') id: string): Promise<void> {
+    try {
+      await this.uploadService.remove(id)
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error
+      }
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Error al eliminar el archivo subido.'
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+}

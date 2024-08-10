@@ -57,7 +57,6 @@ export class ArticleModelTransformationService {
   async findOneByArticleModelId(
     article_model_id: Types.ObjectId
   ): Promise<ArticleModelTransformation> {
-    console.log(article_model_id)
     const modelTransformation = await this.articleModelTransformationModel
       .findOne({ article_model_id: article_model_id })
       .exec()

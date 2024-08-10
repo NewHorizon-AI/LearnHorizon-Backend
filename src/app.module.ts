@@ -7,6 +7,7 @@ import { UserModule } from './modules/users/user.module'
 import { CategoryModule } from './modules/categories/category.module'
 import { ArticleModule } from './modules/articles/article.module'
 import { ArticleModelModule } from './modules/article-model/article-model.module'
+import { UploadModule } from './modules/upload/upload.module'
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { ArticleModelModule } from './modules/article-model/article-model.module
     UserModule,
     CategoryModule,
     ArticleModule,
-    ArticleModelModule
+    ArticleModelModule,
+    UploadModule
   ],
   controllers: [],
   providers: []

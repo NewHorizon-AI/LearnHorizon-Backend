@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Put,
-  Body,
-  Get,
-  Param,
-  BadRequestException
-} from '@nestjs/common'
+import { Controller, Post, Put, Body, Get, Param } from '@nestjs/common'
 
 import {
   ApiTags,
@@ -24,6 +16,7 @@ import { CreateArticleCompleteDto } from '../dtos/article/create-article-complet
 import { UpdateArticleCompleteDto } from '../dtos/article/update-article-complete.dto'
 
 import { CreateArticleDto } from '../dtos/article/article-base/create-article.dto'
+import { Types } from 'mongoose'
 
 @ApiTags('articles')
 @Controller('articles')
@@ -63,7 +56,6 @@ export class ArticleController {
     return this.articleCompositeService.getAllArticlesDetails()
   }
 
-  // * Obtener un artículo completo por ID
   @Get(':id')
   @ApiOperation({ summary: 'Get an article by ID' })
   @ApiResponse({
@@ -81,39 +73,16 @@ export class ArticleController {
     description: 'The ID of the article to retrieve',
     schema: { type: 'string' }
   })
-  async getArticlModelEntryById(
-    @Param('id') article_id: string
+  async getArticleDetails(
+    @Param('id') article_id: Types.ObjectId
   ): Promise<UpdateArticleCompleteDto> {
-    if (!article_id) {
-      throw new BadRequestException('article_id is required')
-    }
-    const article =
-      await this.articleCompositeService.getArticleDetails(article_id)
+    /* 
+      * Obtiene un artículo completo por ID
+      @ Param article_id ID del artículo a recuperar
 
-    return article
+    */
+    return await this.articleCompositeService.getArticleDetails(article_id)
   }
-
-  // @Get('model/:id')
-  // @ApiOperation({ summary: 'Get an article by ID' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'The article has been successfully obtained.'
-  // })
-  // @ApiResponse({
-  //   status: 404,
-  //   description: 'Article not found.'
-  // })
-  // @ApiParam({
-  //   name: 'id',
-  //   required: true,
-  //   description: 'The ID of the article to retrieve',
-  //   schema: { type: 'string' }
-  // })
-  // async getArticleDetailsById(@Param('id') _id: string) {
-  //   const article = await this.articleCompositeService.getArticleDetails(_id)
-
-  //   return article
-  // }
 
   // ! PUT
 
@@ -131,52 +100,4 @@ export class ArticleController {
   ) {
     await this.articleCompositeService.updateArticle(id, updateArticleDto)
   }
-
-  // @Put(':id')
-  // @ApiOperation({ summary: 'Actualizar un artículo completo existente' })
-  // @ApiParam({
-  //   name: 'id',
-  //   description: 'ID del artículo',
-  //   example: '60d2f77bcf86cd799439013'
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'El artículo completo ha sido actualizado con éxito.'
-  // })
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() updateArticleCompleteDto: UpdateArticleCompleteDto
-  // ): Promise<void> {
-  //   await this.articleCompositeService.updateComplete(id, updateArticleCompleteDto)
-  // }
-
-  // @Get(':id')
-  // @ApiOperation({ summary: 'Obtener un artículo completo por ID' })
-  // @ApiParam({
-  //   name: 'id',
-  //   description: 'ID del artículo',
-  //   example: '60d2f77bcf86cd799439013'
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'El artículo completo ha sido encontrado.'
-  // })
-  // async findOne(@Param('id') id: string): Promise<any> {
-  //   return this.articleCompositeService.findOneComplete(id)
-  // }
-
-  // @Delete(':id')
-  // @ApiOperation({ summary: 'Eliminar un artículo completo por ID' })
-  // @ApiParam({
-  //   name: 'id',
-  //   description: 'ID del artículo',
-  //   example: '60d2f77bcf86cd799439013'
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'El artículo completo ha sido eliminado con éxito.'
-  // })
-  // async remove(@Param('id') id: string): Promise<void> {
-  //   await this.articleCompositeService.remove(id)
-  // }
 }

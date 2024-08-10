@@ -5,12 +5,9 @@ import {
   IsUrl,
   IsOptional,
   IsInt,
-  Min,
-  ValidateNested
+  Min
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
-import { CreateArticleTagDto } from '../article-tag/create-article-tag.dto'
 
 export class CreateArticleDataDto {
   @IsMongoId()
@@ -66,14 +63,4 @@ export class CreateArticleDataDto {
     default: 0
   })
   dislikes?: number
-
-  @ValidateNested({ each: true })
-  @Type(() => CreateArticleTagDto)
-  @IsOptional()
-  @ApiProperty({
-    description: 'Etiquetas asociadas al artículo',
-    type: [CreateArticleTagDto],
-    required: false
-  })
-  tags?: CreateArticleTagDto[]
 }

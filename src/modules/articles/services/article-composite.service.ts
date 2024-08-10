@@ -85,15 +85,20 @@ export class ArticleCompositeService {
     return this.articleAggregatorService.getAllArticlesDetails()
   }
 
-  async getArticleDetails(article_id: string): Promise<any> {
-    // Validar si el string es un ObjectId válido
-    if (!Types.ObjectId.isValid(article_id)) {
-      throw new BadRequestException('Invalid article ID format')
+  async getArticleById(article_id: Types.ObjectId): Promise<Article> {
+    try {
+      return this.articleBaseService.getArticleById(article_id)
+    } catch (error) {
+      throw new NotFoundException(error.message)
     }
+  }
 
-    const object_id = Types.ObjectId.createFromHexString(article_id)
+  async getArticleDetails(article_id: Types.ObjectId): Promise<any> {
+    /*
+      * Busca un artículo por ID y devuelve todos los datos relacionados con él
+      @ Param article_id ID del artículo a buscar
+    */
 
-    // * (1) Buscar el artículo por ID
     try {
       const [
         article,
@@ -101,12 +106,12 @@ export class ArticleCompositeService {
         articleMarkdown,
         articleModelTransformation
       ] = await Promise.all([
-        this.articleBaseService.findArticleById(object_id),
-        this.articleDataService.findCompositeArticleDataById(object_id),
-        this.articleMarkdownService.findCompositeArticleMarkdownById(object_id),
-        this.articleModelCompositeService.findArticleModelTransformationById(
-          object_id
-        )
+        this.articleBaseService.getArticleById(article_id),
+        this.articleDataService.findCompositeArticleDataById(article_id),
+        this.articleMarkdownService.findCompositeArticleMarkdownById(
+          article_id
+        ),
+        this.articleModelCompositeService.getTransformationById(article_id)
       ])
 
       // * (4) Union de los datos del artículo
@@ -119,7 +124,6 @@ export class ArticleCompositeService {
 
       return articleDetails
     } catch (error) {
-      // * (2) Si no se encuentra el artículo, arrojar error de no encontrado
       throw new NotFoundException(error.message)
     }
   }

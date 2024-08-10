@@ -31,11 +31,6 @@ export class ArticleModelService {
      */
 
     try {
-      // * (1) Verifica que el DTO no sea nulo
-      if (!createArticleModelDto) {
-        throw new BadRequestException('createArticleModelDto is required')
-      }
-
       // * (3) Crea un nuevo ArticleModel
       return await this.articleModelModel.create(createArticleModelDto)
     } catch (error) {
@@ -52,28 +47,28 @@ export class ArticleModelService {
     return this.articleModelModel.find().exec()
   }
 
-  // * Buscar el ArticleModel usando article_id con tipo de dato ObjectId
-  async findOneArticleModel(article_id: Types.ObjectId): Promise<ArticleModel> {
-    if (!article_id) {
-      throw new BadRequestException('article_id is required')
-    }
+  async getArticleModelByArticleId(
+    article_id: Types.ObjectId
+  ): Promise<ArticleModel> {
+    /*
+      * Obtiene un ArticleModel por article_id
+      @ Param article_id ID del artículo para recuperar el Article
+    */
 
-    try {
-      // * (1) Buscar el ArticleModel usando article_id
-      const articleModel = await this.articleModelModel.findOne({
-        article_id: article_id
-      })
+    // * (1) Buscar el ArticleModel usando article_id
+    // const articleModel = await this.articleModelModel.findOne({ article_id })
 
-      // * (2) Manejar errores
-      if (!articleModel) {
-        throw new NotFoundException(
-          `ArticleModel with ID ${article_id} not found`
-        )
-      }
-      return articleModel
-    } catch (error) {
-      throw new NotFoundException(error.message)
+    const articleModel = await this.articleModelModel.findOne({
+      article_id: new Types.ObjectId(article_id)
+    })
+
+    // * (2) Arronjar un error si el ArticleModel no existe
+    if (!articleModel) {
+      throw new NotFoundException(
+        `ArticleModel with ID ${article_id} not found`
+      )
     }
+    return articleModel
   }
 
   // ! PUT - Update

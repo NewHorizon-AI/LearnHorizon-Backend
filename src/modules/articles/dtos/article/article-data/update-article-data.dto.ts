@@ -1,14 +1,5 @@
-import {
-  IsString,
-  IsOptional,
-  IsUrl,
-  IsInt,
-  Min,
-  ValidateNested
-} from 'class-validator'
+import { IsString, IsOptional, IsUrl, IsInt, Min } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
-import { UpdateArticleTagDto } from '../article-tag/update-article-tag.dto'
 
 export class UpdateArticleDataDto {
   @IsUrl()
@@ -61,14 +52,4 @@ export class UpdateArticleDataDto {
     default: 0
   })
   dislikes?: number
-
-  @ValidateNested({ each: true })
-  @Type(() => UpdateArticleTagDto)
-  @IsOptional()
-  @ApiProperty({
-    description: 'Etiquetas asociadas al artículo',
-    type: [UpdateArticleTagDto],
-    required: false
-  })
-  tags?: UpdateArticleTagDto[]
 }
