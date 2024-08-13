@@ -89,7 +89,16 @@ export class ArticleModelCompositeService {
     */
     try {
       // * (1) Buscar el ArticleModel usando article_id
-      return await this.articleModelService.getByArticleId(article_id)
+
+      const articleModel =
+        await this.articleModelService.getByArticleId(article_id)
+
+      if (!articleModel) {
+        throw new NotFoundException(
+          `ArticleModel with ID ${article_id} not found`
+        )
+      }
+      return articleModel
     } catch (error) {
       throw new NotFoundException(error.message)
     }

@@ -10,7 +10,8 @@ import {
   HttpStatus,
   Res,
   Put,
-  Body
+  Body,
+  NotFoundException
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import {
@@ -86,10 +87,14 @@ export class GltfUploaderController {
       @ Param id: ID del articleModel al que se asociará el archivo
      */
 
-    return await this.uploadCompositeService.uploadFileGltf(file, article_id)
+    try {
+      return await this.uploadCompositeService.uploadFileGltf(file, article_id)
+    } catch (error) {
+      throw new NotFoundException(error.message)
+    }
   }
 
-  // // ! GET
+  // ! GET
 
   // @Get()
   // @ApiOperation({ summary: 'Obtener todos los archivos subidos' })

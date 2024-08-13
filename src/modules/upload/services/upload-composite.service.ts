@@ -62,6 +62,8 @@ export class UploadCompositeService {
     return await this.uploadGltfModel.create(createUploadDto)
   }
 
+  // ! GET - Obtener todos los archivos subidos
+
   async findAll(): Promise<File[]> {
     try {
       return this.uploadModel.find().exec()
@@ -76,25 +78,19 @@ export class UploadCompositeService {
     }
   }
 
-  async findOne(id: string): Promise<File> {
-    try {
-      const upload = await this.uploadModel.findById(id).exec()
-      if (!upload) {
-        throw new NotFoundException(`File with ID ${id} not found`)
-      }
-      return upload
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error
-      }
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Error al obtener la subida del archivo'
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR
-      )
-    }
+  // ! GET - Obtener un archivo sub
+
+  async getModel(article_id: string): Promise<FileGltf> {
+    const articleModel =
+      await this.articleModelService.getArticleModelByArticleId(article_id)
+
+    const article_model_id = articleModel.toJSON()._id
+
+    const model = this.uploadGltfModel.findOne({
+      article_model_id: article_model_id
+    })
+
+    return model
   }
 
   async update(

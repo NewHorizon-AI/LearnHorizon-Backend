@@ -11,7 +11,8 @@ import { File, FileSchema } from './schemas/file.schema'
 import { FileGltf, FileGltfSchema } from './schemas/file-gltf.schema'
 
 // * Importacion de controladores
-import { GltfUploaderController } from './controllers/upload-gltf/upload-gltf.controllers'
+import { GltfUploaderController } from './controllers/upload-gltf/upload-gltf.controller'
+import { ModelController } from './controllers/model/model.controller'
 
 // * Importacion de servicios
 import { MulterConfigService } from './services/multer/multer-config.service'
@@ -32,7 +33,7 @@ import { GltfValidationService } from './services/gltf-validation.service'
     }),
     ArticleModelModule
   ],
-  controllers: [GltfUploaderController],
+  controllers: [GltfUploaderController, ModelController],
   providers: [
     UploadCompositeService,
     GltfValidationService,
