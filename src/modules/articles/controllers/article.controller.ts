@@ -19,7 +19,7 @@ export class ArticleController {
     private readonly articleBaseService: ArticleBaseService
   ) {}
 
-  // ! POST
+  // ! POST - Crear un artículo base
 
   @Post()
   @ApiOperation({ summary: 'Create a new base article' })
