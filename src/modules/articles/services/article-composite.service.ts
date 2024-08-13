@@ -93,20 +93,20 @@ export class ArticleCompositeService {
     }
   }
 
-  async getArticleDetails(article_id: Types.ObjectId): Promise<any> {
+  async getArticleDetails(article_id: string): Promise<any> {
     /*
       * Busca un artículo por ID y devuelve todos los datos relacionados con él
       @ Param article_id ID del artículo a buscar
     */
 
+    const object_id = new Types.ObjectId(article_id)
+
     try {
       const [article, data, markdown, transformation] = await Promise.all([
-        this.articleBaseService.getArticleById(article_id),
-        this.articleDataService.findCompositeArticleDataById(article_id),
-        this.articleMarkdownService.findCompositeArticleMarkdownById(
-          article_id
-        ),
-        this.articleModelCompositeService.getTransformationById(article_id)
+        this.articleBaseService.getArticleById(object_id),
+        this.articleDataService.findCompositeArticleDataById(object_id),
+        this.articleMarkdownService.findCompositeArticleMarkdownById(object_id),
+        this.articleModelCompositeService.getTransformationById(object_id)
       ])
 
       // * (4) Union de los datos del artículo
@@ -123,9 +123,8 @@ export class ArticleCompositeService {
     }
   }
 
-  async getArticleDetailsWithModel(article_id: Types.ObjectId): Promise<any> {
-    const articleDetails = await this.getArticleDetails(article_id)
-    return articleDetails
+  async getArticleDetailsWithModel(article_id: string): Promise<any> {
+    return await this.getArticleDetails(article_id)
   }
 
   // ! UPDATE

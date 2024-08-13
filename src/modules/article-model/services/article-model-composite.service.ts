@@ -81,4 +81,17 @@ export class ArticleModelCompositeService {
 
     return articleModelTransformation
   }
+
+  async getArticleModelByArticleId(article_id: string): Promise<ArticleModel> {
+    /*
+     * Obtiene un ArticleModel por article_id
+     @ Param article_id ID del artículo a recuperar
+    */
+    try {
+      // * (1) Buscar el ArticleModel usando article_id
+      return await this.articleModelService.getByArticleId(article_id)
+    } catch (error) {
+      throw new NotFoundException(error.message)
+    }
+  }
 }

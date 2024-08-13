@@ -10,31 +10,56 @@ import { unlink } from 'fs/promises'
 
 // * Importacion de schemas
 import { File } from '../schemas/file.schema'
+import { FileGltf } from '../schemas/file-gltf.schema'
 
 // * Importacion de dtos
-import { UpdateFileDto } from '../dtos/update-file.dto'
-import { CreateFileDto } from '../dtos/create-file.dto'
+import { UpdateFileGltfDto } from '../dtos/update-file-gltf.dto'
+import { CreateFileGltfDto } from '../dtos/create-file-gltf.dto'
+
+// * Importacion de servicios
+import { GltfValidationService } from './gltf-validation.service'
+
+import { ArticleModelCompositeService } from 'src/modules/article-model/services/article-model-composite.service'
 
 @Injectable()
-export class UploadService {
+export class UploadCompositeService {
   constructor(
     @InjectModel(File.name)
-    private readonly uploadModel: Model<File>
+    private readonly uploadModel: Model<File>,
+    @InjectModel(FileGltf.name)
+    private readonly uploadGltfModel: Model<FileGltf>,
+    private readonly gltfValidationService: GltfValidationService,
+
+    private readonly articleModelService: ArticleModelCompositeService
   ) {}
 
-  async create(createFileDto: CreateFileDto): Promise<File> {
-    try {
-      const createdUpload = new this.uploadModel(createFileDto)
-      return createdUpload.save()
-    } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Error al crear la subida del archivo'
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR
-      )
+  // ! POST - Subir un archivo GLTF
+
+  async uploadFileGltf(
+    file: Express.Multer.File,
+    article_id: string
+  ): Promise<FileGltf> {
+    /*
+     * Validar el archivo GLTF y subirlo al servidor
+     * @param file - Archivo GLTF a subir
+     * @param article_id - ID del artículo al que pertenece el archivo
+     
+      TODO: Verificar la logica de la validacion del archivo GLTF
+     */
+
+    await this.gltfValidationService.validateGltfFile(file)
+
+    const article_model =
+      await this.articleModelService.getArticleModelByArticleId(article_id)
+
+    const createUploadDto: CreateFileGltfDto = {
+      article_model_id: article_model.toJSON()._id,
+      filename: file.filename,
+      path: file.path,
+      mimetype: file.mimetype
     }
+
+    return await this.uploadGltfModel.create(createUploadDto)
   }
 
   async findAll(): Promise<File[]> {
@@ -72,7 +97,10 @@ export class UploadService {
     }
   }
 
-  async update(id: string, updateFileDto: UpdateFileDto): Promise<File> {
+  async update(
+    id: string,
+    UpdateFileGltfDto: UpdateFileGltfDto
+  ): Promise<File> {
     const existingUpload = await this.uploadModel.findById(id).exec()
     if (!existingUpload) {
       throw new NotFoundException(`File with ID ${id} not found`)
@@ -91,9 +119,9 @@ export class UploadService {
     }
 
     // Actualizar la información del archivo en la base de datos
-    existingUpload.filename = updateFileDto.filename
-    existingUpload.path = updateFileDto.path
-    existingUpload.mimetype = updateFileDto.mimetype
+    existingUpload.filename = UpdateFileGltfDto.filename
+    existingUpload.path = UpdateFileGltfDto.path
+    existingUpload.mimetype = UpdateFileGltfDto.mimetype
     return existingUpload.save()
   }
 

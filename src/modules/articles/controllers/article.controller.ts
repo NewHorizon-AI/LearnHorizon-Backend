@@ -1,16 +1,15 @@
 import { Controller, Post, Put, Body, Get, Param } from '@nestjs/common'
-
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger'
 
-// importar Servicios
+// * importar Servicios
 import { ArticleCompositeService } from '../services/article-composite.service'
 import { ArticleBaseService } from '../services/article-services/article-base/article-base.service'
 
+// * importar DTOs
 import { CreateArticleCompleteDto } from '../dtos/article/create-article-complete.dto'
 import { UpdateArticleCompleteDto } from '../dtos/article/update-article-complete.dto'
 
 import { CreateArticleDto } from '../dtos/article/article-base/create-article.dto'
-import { Types } from 'mongoose'
 
 @ApiTags('articles')
 @Controller('articles')
@@ -68,9 +67,7 @@ export class ArticleController {
 
     */
 
-    const object_id = new Types.ObjectId(article_id)
-
-    return await this.articleCompositeService.getArticleDetails(object_id)
+    return await this.articleCompositeService.getArticleDetails(article_id)
   }
 
   @Get('details/:id/model')
@@ -85,9 +82,8 @@ export class ArticleController {
     description: 'Article not found.'
   })
   async getArticleDetailWithModel(@Param('id') article_id: string) {
-    const object_id = new Types.ObjectId(article_id)
     return await this.articleCompositeService.getArticleDetailsWithModel(
-      object_id
+      article_id
     )
   }
 

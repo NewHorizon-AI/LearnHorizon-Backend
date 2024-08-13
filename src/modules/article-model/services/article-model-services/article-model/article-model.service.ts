@@ -71,6 +71,28 @@ export class ArticleModelService {
     return articleModel
   }
 
+  async getByArticleId(artitcle_id: string): Promise<ArticleModel> {
+    /*
+      * Obtiene un ArticleModel por article_id
+      @ Param article_id ID del artículo para recuperar el Article
+    */
+
+    // * (1) transformar el article_id a un ObjectId
+    const object_article_id = new Types.ObjectId(artitcle_id)
+
+    const articleModel = await this.articleModelModel.findOne({
+      article_id: object_article_id
+    })
+
+    if (!articleModel) {
+      throw new NotFoundException(
+        `ArticleModel with ID ${artitcle_id} not found`
+      )
+    }
+
+    return articleModel
+  }
+
   // ! PUT - Update
 
   async update(
