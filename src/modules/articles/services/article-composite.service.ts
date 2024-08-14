@@ -127,6 +127,22 @@ export class ArticleCompositeService {
     return await this.getArticleDetails(article_id)
   }
 
+  // // ! Get - Obtiene los artículos de un usuario con paginación
+  // async getArticlesByUser(
+  //   userId: string,
+  //   limit: number,
+  //   offset: number
+  // ): Promise<UpdateArticleCompleteDto[]> {
+  //   const articles = await this.articleModel
+  //     .find({ user_id: userId })
+  //     .sort({ updatedAt: -1 }) // Ordena por la última actualización, de más reciente a más antiguo
+  //     .skip(offset)
+  //     .limit(limit)
+  //     .exec()
+
+  //   return articles.map((article) => this.mapToDto(article)) // mapToDto es un método que mapea el modelo a un DTO
+  // }
+
   // ! UPDATE
 
   async updateArticle(
