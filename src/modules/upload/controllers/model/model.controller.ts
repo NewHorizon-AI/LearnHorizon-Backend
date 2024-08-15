@@ -71,11 +71,11 @@ export class ModelController {
   @ApiResponse({ status: 200, description: 'Archivo obtenido exitosamente.' })
   @ApiResponse({ status: 404, description: 'Archivo no encontrado.' })
   async findOne(
-    @Param('id') article_id: string,
+    @Param('id') articleId: string,
     @Res() res: Response
   ): Promise<void> {
     try {
-      const upload = await this.uploadCompositeService.getModel(article_id)
+      const upload = await this.uploadCompositeService.getModel(articleId)
       const filePath = join(process.cwd(), upload.path)
 
       if (!existsSync(filePath)) {
@@ -101,16 +101,7 @@ export class ModelController {
 
       fileStream.pipe(res)
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error
-      }
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Error al descargar el archivo.'
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR
-      )
+      throw new NotFoundException(error.message)
     }
   }
 
