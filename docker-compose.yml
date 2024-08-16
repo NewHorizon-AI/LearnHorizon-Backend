@@ -5,10 +5,6 @@ services:
       context: .
       target: ${NODE_ENV:-development}
     image: ixyz0/learnhorizon-backend-app:latest
-    deploy:
-      resources:
-        limits:
-          memory: 2g
     ports:
       - "${PORT}:${PORT}"
     env_file:
@@ -20,12 +16,13 @@ services:
       - APP_ENVIRONMENT=${APP_ENVIRONMENT}
       - MONGO_URI_LOCAL=${MONGO_URI_LOCAL}
       - MONGO_URI_REMOTE=${MONGO_URI_REMOTE}
-
     depends_on:
       - mongo
     volumes:
       - .:/app
       - /app/node_modules
+    networks:
+      - my-network
 
   mongo:
     image: mongo:latest
@@ -35,6 +32,12 @@ services:
       - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - my-network
 
 volumes:
   mongodb_data:
+
+networks:
+  my-network:
+    driver: bridge

@@ -1,35 +1,33 @@
-# Etapa base común para ambos entornos
-FROM node:20.16 as base
+# Etapa base: Se utiliza para instalar dependencias y preparar el entorno
+FROM node:20.16-alpine as base
 
-# Crear directorio de trabajo
+# Crear el directorio de trabajo
 WORKDIR /app
 
-# Copiar el package.json y package-lock.json
+# Copiar los archivos de configuración de npm
 COPY package*.json ./
 
-# Instalar dependencias
+# Instalar todas las dependencias (producción + desarrollo)
 RUN npm install
 
-# Copiar todos los archivos del proyecto
+# Copiar todo el código fuente al contenedor
 COPY . .
 
-# Etapa de desarrollo
-FROM base as development
+# Etapa de construcción: Se compila TypeScript a JavaScript
+FROM base as build
 
-# Instalar dependencias de desarrollo
-RUN npm install --only=development
+# Ejecutar la compilación de TypeScript a JavaScript
+RUN npm run build
 
-# Exponer el puerto en el que corre la aplicación
-EXPOSE 3001
+# Etapa de producción: Se prepara la imagen final para producción
+FROM node:20.16-alpine as production
 
-# Comando para ejecutar la aplicación en desarrollo
-CMD ["npm", "run", "start:dev"]
+# Crear el directorio de trabajo
+WORKDIR /app
 
-# Etapa de producción
-FROM base as production
-
-# Instalar dependencias de producción
-RUN npm install --only=production
+# Copiar solo los archivos necesarios desde la etapa de construcción
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
 
 # Exponer el puerto en el que corre la aplicación
 EXPOSE 3001
