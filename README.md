@@ -41,13 +41,27 @@ La misión de **Learn Horizon** es ofrecer una plataforma accesible y poderosa d
 
 Para iniciar el entorno de desarrollo:
 
-1. Establece la variable de entorno:
-   ```bash
-   export NODE_ENV=development
+1. **En PowerShell**:
+
+   Establece la variable de entorno:
+   ```powershell
+   $env:NODE_ENV="development"
    ```
 
-2. Levanta los servicios con Docker:
-   ```bash
+   Luego, levanta los servicios con Docker:
+   ```powershell
+   docker-compose up
+   ```
+
+2. **En Command Prompt (CMD)**:
+
+   Establece la variable de entorno:
+   ```cmd
+   set NODE_ENV=development
+   ```
+
+   Luego, levanta los servicios con Docker:
+   ```cmd
    docker-compose up
    ```
 
@@ -55,12 +69,26 @@ Para iniciar el entorno de desarrollo:
 
 Para preparar y ejecutar en producción:
 
-1. Establece la variable de entorno:
-   ```bash
-   export NODE_ENV=production
+1. **En PowerShell**:
+
+   Establece la variable de entorno:
+   ```powershell
+   $env:NODE_ENV="production"
    ```
 
-2. Levanta los servicios con Docker:
-   ```bash
+   Luego, levanta los servicios con Docker:
+   ```powershell
+   docker-compose up
+   ```
+
+2. **En Command Prompt (CMD)**:
+
+   Establece la variable de entorno:
+   ```cmd
+   set NODE_ENV=production
+   ```
+
+   Luego, levanta los servicios con Docker:
+   ```cmd
    docker-compose up
    ```
