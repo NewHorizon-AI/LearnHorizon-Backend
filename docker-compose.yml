@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      target: ${NODE_ENV:-development}
+    ports:
+      - "3001:3001"
+    environment:
+      - SEED_DB=False
+      - UPLOAD_PATH=./uploads
+      - PORT=3001 
+      - APP_ENVIRONMENT=${NODE_ENV:-development}
+      - MONGO_URI_LOCAL=mongodb://mongo:27017/learn-horizon-backend-2
+      - MONGO_URI_REMOTE=mongodb+srv://user:password@cluster.mongodb.net/mydatabase
+
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+      - /app/node_modules
+    profiles:
+      - ${NODE_ENV:-development}
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=nest
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
