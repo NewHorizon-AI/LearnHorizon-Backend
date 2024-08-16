@@ -4,8 +4,13 @@ services:
     build:
       context: .
       target: ${NODE_ENV:-development}
+    image: ixyz0/learnhorizon-backend-app:latest
+    deploy:
+      resources:
+        limits:
+          memory: 2g
     ports:
-      - "${PORT}:${PORT}"  # Usar la variable PORT del .env
+      - "${PORT}:${PORT}"
     env_file:
       - .env
     environment:
