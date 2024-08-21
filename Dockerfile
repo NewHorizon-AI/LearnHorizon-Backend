@@ -2,7 +2,7 @@
 FROM node:20.16-alpine AS base
 
 # Crear el directorio de trabajo
-WORKDIR /app
+WORKDIR /learn-horizon-backend-app
 
 # Copiar los archivos de configuración de npm
 COPY package*.json ./
@@ -23,12 +23,12 @@ RUN npm run build
 FROM node:20.16-alpine AS production
 
 # Crear el directorio de trabajo
-WORKDIR /app
+WORKDIR /learn-horizon-backend-app
 
 # Copiar solo los archivos necesarios desde la etapa de construcción
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
+COPY --from=build /learn-horizon-backend-app/dist ./dist
+COPY --from=build /learn-horizon-backend-app/node_modules ./node_modules
+COPY --from=build /learn-horizon-backend-app/package.json ./package.json
 
 # Exponer el puerto en el que corre la aplicación
 EXPOSE 3001
