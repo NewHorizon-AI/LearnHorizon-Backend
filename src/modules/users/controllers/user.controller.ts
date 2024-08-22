@@ -1,52 +1,93 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put
+} from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
 
-// Importing DTOs
+// * Importar Dtos para consultas
 import { CreateUserCompleteDto } from '../dtos/user/create-user-complete.dto'
 import { UpdateUserCompleteDto } from '../dtos/user/update-user-complete.dto'
+import { CreateUserDto } from '../dtos/user/user/create-user.dto'
 
-// Importing Service
-import { UserService } from '../services/user.service'
+// * Importar Dtos para respuestas
+import { UserResponseDto } from '../dtos/user/user/res/user-response.dto'
+
+// * Importar servicios necesarios
+import { UserCompositeService } from '../services/user-composite.service'
 
 @ApiTags('users')
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userCompositeService: UserCompositeService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ summary: 'Crear un nuevo usuario.' })
   @ApiResponse({
     status: 201,
-    description: 'The user has been successfully created.'
+    description: 'El usuario ha sido creado exitosamente.',
+    type: UserResponseDto
   })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
-  async createUser(@Body() createUserDto: CreateUserCompleteDto) {
-    return await this.userService.createCompleteUser(createUserDto)
+  @ApiResponse({
+    status: 400,
+    description: 'Error en la solicitud.'
+  })
+  async createUserController(
+    @Body() createUserDto: CreateUserDto
+  ): Promise<UserResponseDto> {
+    return await this.userCompositeService.createDefaultUser(createUserDto)
   }
+
+  // @Post('/complete')
+  // @ApiOperation({ summary: 'Create a new user' })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: 'The user has been successfully created.',
+  //   type: CreateUserCompleteDto
+  // })
+  // @ApiResponse({ status: 400, description: 'Bad request.' })
+  // async createCompleteUser(@Body() createUserDto: CreateUserCompleteDto) {
+  //   return await this.userCompositeService.createCompleteUser(createUserDto)
+  // }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Obtener todos los usuarios registrados.' })
   @ApiResponse({
     status: 200,
-    description: 'Returned all users.',
-    type: CreateUserCompleteDto,
+    description: 'Retorno exitoso de todos los usuarios.',
+    type: UserResponseDto,
     isArray: true
   })
-  async getAllUsers() {
-    return await this.userService.findAllUsers()
+  async getAllUsersController() {
+    try {
+      return await this.userCompositeService.getAllUsers()
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
+  // ! READ - GET /users
+
   @Get(':id')
-  @ApiOperation({ summary: 'Get a user by ID' })
-  @ApiParam({ name: 'id', type: String, description: 'The user ID' })
+  @ApiOperation({ summary: 'Obtener un usuario por su _id' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Identificador unico de un usuario'
+  })
   @ApiResponse({
     status: 200,
-    description: 'Returned the user.',
+    description: 'Usuario encontrado exitosamente.',
     type: CreateUserCompleteDto
   })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  async getUserById(@Param('id') id: string) {
-    return await this.userService.findUserById(id)
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
+    return await this.userCompositeService.findUserById(id)
   }
 
   @Put(':id')
@@ -62,7 +103,7 @@ export class UserController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserCompleteDto
   ) {
-    return await this.userService.updateUser(id, updateUserDto)
+    return await this.userCompositeService.updateUser(id, updateUserDto)
   }
 
   @Delete(':id')
@@ -74,6 +115,6 @@ export class UserController {
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
   async deleteUser(@Param('id') id: string) {
-    return await this.userService.deleteUser(id)
+    return await this.userCompositeService.deleteUser(id)
   }
 }

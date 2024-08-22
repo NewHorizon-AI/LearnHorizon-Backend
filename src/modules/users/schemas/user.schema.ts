@@ -5,13 +5,16 @@ import { ApiProperty } from '@nestjs/swagger'
 @Schema({ timestamps: true })
 export class User extends Document {
   @Prop({ required: true, unique: true })
-  @ApiProperty({ description: 'Nombre único de usuario', example: 'john_doe' })
+  @ApiProperty({
+    description: 'Nombre único de usuario',
+    example: 'Kevin Diaz'
+  })
   username: string
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   @ApiProperty({
     description: 'Correo electrónico del usuario',
-    example: 'john.doe@example.com'
+    example: 'kevin.diaz@alumnos.uv.cl'
   })
   email: string
 

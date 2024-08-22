@@ -3,7 +3,7 @@ import { Type } from 'class-transformer'
 import { ValidateNested, IsNotEmpty } from 'class-validator'
 
 // Importamos todos los DTOs necesarios para la creación de un
-import { CreateUserDto } from './user-base/create-user.dto'
+import { CreateUserDto } from './user/create-user.dto'
 import { CreateUserContactDto } from './user-contact/create-user-contact.dto'
 import { CreateUserDataDto } from './user-data/create-user-data.dto'
 import { CreateUserProfileDto } from './user-profile/create-user-profile.dto'

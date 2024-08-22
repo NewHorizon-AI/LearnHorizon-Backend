@@ -14,6 +14,7 @@ export class CreateUserDto {
     description: 'Correo electrónico del usuario',
     example: 'john.doe@example.com'
   })
+  @IsNotEmpty({ message: 'El correo es obligatorio.' })
   @IsEmail({}, { message: 'Debe proporcionar un correo electrónico válido.' })
   email: string
 

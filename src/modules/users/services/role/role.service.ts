@@ -1,3 +1,14 @@
+/*
+TODO: 
+* assignRoleToUser
+* removeRoleFromUser
+* getRolesByUserId
+* listAllRoles
+* createNewRole
+* updateRolePermissions
+* deleteRole
+*/
+
 // // roles.service.ts
 // import { Injectable, NotFoundException } from '@nestjs/common'
 // import { InjectModel } from '@nestjs/mongoose'

@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { ValidateNested, IsOptional } from 'class-validator'
 
-import { UpdateUserDto } from './user-base/update-user.dto'
+import { UpdateUserDto } from './user/update-user.dto'
 import { UpdateUserContactDto } from './user-contact/update-user-contact.dto'
 import { UpdateUserDataDto } from './user-data/update-user-data.dto'
 import { UpdateUserProfileDto } from './user-profile/update-user-profile.dto'

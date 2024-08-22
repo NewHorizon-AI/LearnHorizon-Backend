@@ -11,8 +11,8 @@ import { Role, RoleSchema } from './schemas/role.schema'
 import { UserRole, UserRoleSchema } from './schemas/user-role.schema'
 
 // Importacion de los servicios
-import { UserService } from './services/user.service'
-import { UserBaseService } from './services/user-base/user-base.service'
+import { UserCompositeService } from './services/user-composite.service'
+import { UserService } from './services/user-services/user.service'
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { UserBaseService } from './services/user-base/user-base.service'
     ])
   ], // Importar el modelo de la base de datos
   controllers: [UserController],
-  providers: [UserService, UserBaseService],
-  exports: [MongooseModule, UserService, UserBaseService] // Exportar el módulo de Mongoose
+  providers: [UserService, UserCompositeService],
+  exports: [MongooseModule, UserService, UserCompositeService] // Exportar el módulo de Mongoose
 })
 export class UserModule {}
