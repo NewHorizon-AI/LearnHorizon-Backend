@@ -6,7 +6,7 @@ import {
   BadRequestException
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { ClientSession, Model, Types } from 'mongoose'
 import { unlink } from 'fs/promises'
 
 // * Importacion de schemas
@@ -100,21 +100,55 @@ export class UploadGltfService {
     return existingUpload.save()
   }
 
-  async remove(id: string): Promise<void> {
-    const upload = await this.fileGltf.findById(id).exec()
-    if (!upload) {
-      throw new NotFoundException(`File with ID ${id} not found`)
-    }
-    try {
-      await unlink(upload.path)
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        throw new HttpException(
-          'Error al eliminar el archivo',
-          HttpStatus.INTERNAL_SERVER_ERROR
-        )
-      }
-    }
-    await upload.deleteOne()
+  // async remove(id: string): Promise<void> {
+  //   const upload = await this.fileGltf.findById(id).exec()
+  //   if (!upload) {
+  //     throw new NotFoundException(`File with ID ${id} not found`)
+  //   }
+  //   try {
+  //     await unlink(upload.path)
+  //   } catch (error) {
+  //     if (error.code !== 'ENOENT') {
+  //       throw new HttpException(
+  //         'Error al eliminar el archivo',
+  //         HttpStatus.INTERNAL_SERVER_ERROR
+  //       )
+  //     }
+  //   }
+  //   await upload.deleteOne()
+  // }
+
+  async deleteAssociatedFiles(
+    articleModelId: Types.ObjectId,
+    session?: ClientSession
+  ): Promise<void> {
+    // Buscar todos los uploads relacionados con el articleModelId
+    const uploads = await this.fileGltf
+      .find({ articleModelId })
+      .session(session)
+      .exec()
+
+    if (!uploads.length) return // Si no hay archivos, salir de la función
+
+    await Promise.all(
+      uploads.map(async (upload) => {
+        try {
+          await unlink(upload.path) // Elimina el archivo del sistema de archivos
+        } catch (error) {
+          if (error.code !== 'ENOENT') {
+            // Si ocurre un error distinto a 'archivo no encontrado', lanza una excepción
+            throw new HttpException(
+              'Error al eliminar el archivo',
+              HttpStatus.INTERNAL_SERVER_ERROR
+            )
+          }
+        }
+        // Elimina el registro del archivo en la base de datos
+        await this.fileGltf
+          .deleteOne({ _id: upload._id })
+          .session(session)
+          .exec()
+      })
+    )
   }
 }

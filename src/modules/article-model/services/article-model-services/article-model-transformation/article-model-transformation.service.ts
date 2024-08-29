@@ -13,7 +13,7 @@ import { UpdateModelTransformationDto } from '../../../dtos/article-model-transf
 export class ArticleModelTransformationService {
   constructor(
     @InjectModel(ArticleModelTransformation.name)
-    private articleModelTransformationModel: Model<ArticleModelTransformation>
+    private articleTransformationModel: Model<ArticleModelTransformation>
   ) {}
 
   // ! POST - Create
@@ -27,7 +27,7 @@ export class ArticleModelTransformationService {
      */
     try {
       // * (3) Crear un nuevo ModelTransformation
-      return await this.articleModelTransformationModel.create(
+      return await this.articleTransformationModel.create(
         createArticleModelTransformationDto
       )
     } catch (error) {
@@ -40,7 +40,7 @@ export class ArticleModelTransformationService {
 
   async findOne(article_model_id: string): Promise<ArticleModelTransformation> {
     try {
-      const modelTransformation = await this.articleModelTransformationModel
+      const modelTransformation = await this.articleTransformationModel
         .findById({ article_model_id: article_model_id })
         .exec()
       if (!modelTransformation) {
@@ -57,7 +57,7 @@ export class ArticleModelTransformationService {
   async findOneByArticleModelId(
     article_model_id: Types.ObjectId
   ): Promise<ArticleModelTransformation> {
-    const modelTransformation = await this.articleModelTransformationModel
+    const modelTransformation = await this.articleTransformationModel
       .findOne({ article_model_id: article_model_id })
       .exec()
 
@@ -75,10 +75,9 @@ export class ArticleModelTransformationService {
     id: string,
     updateModelTransformationDto: UpdateModelTransformationDto
   ): Promise<ArticleModelTransformation> {
-    const updatedModelTransformation =
-      await this.articleModelTransformationModel
-        .findByIdAndUpdate(id, updateModelTransformationDto, { new: true })
-        .exec()
+    const updatedModelTransformation = await this.articleTransformationModel
+      .findByIdAndUpdate(id, updateModelTransformationDto, { new: true })
+      .exec()
     if (!updatedModelTransformation) {
       throw new NotFoundException(
         `ArticleModelTransformation with ID ${id} not found`
@@ -89,14 +88,9 @@ export class ArticleModelTransformationService {
 
   // ! DELETE - Remove
 
-  async remove(id: string): Promise<ArticleModelTransformation> {
-    const deletedModelTransformation =
-      await this.articleModelTransformationModel.findByIdAndDelete(id).exec()
-    if (!deletedModelTransformation) {
-      throw new NotFoundException(
-        `ArticleModelTransformation with ID ${id} not found`
-      )
-    }
-    return deletedModelTransformation
+  async deleteTransformationsByModelId(modelId: Types.ObjectId): Promise<void> {
+    await this.articleTransformationModel.deleteMany({
+      article_model_id: modelId
+    })
   }
 }

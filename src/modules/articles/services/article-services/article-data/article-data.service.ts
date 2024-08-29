@@ -101,13 +101,12 @@ export class ArticleDataService {
     }
   }
 
-  async deleteArticleData(id: string): Promise<ArticleData> {
-    const deletedArticleData = await this.articleDataModel
-      .findByIdAndDelete(id)
-      .exec()
-    if (!deletedArticleData) {
-      throw new NotFoundException(`ArticleData with ID ${id} not found`)
-    }
-    return deletedArticleData
+  async deleteArticleData(id: Types.ObjectId): Promise<void> {
+    /*
+     * Elimina un artículo por ID
+     @ Param id ID del artículo a eliminar
+     */
+
+    await this.articleDataModel.deleteOne({ _id: id })
   }
 }

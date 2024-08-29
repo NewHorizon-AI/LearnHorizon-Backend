@@ -27,21 +27,10 @@ import { UserService } from './user-services/user.service'
 
 @Injectable()
 export class UserCompositeService {
-  [x: string]: any
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private userService: UserService
   ) {}
-
-  // async createCompleteUser(
-  //   createUserDto: CreateUserCompleteDto
-  // ): Promise<void> {
-  //   try {
-  //     await this.userBaseService.createUser(createUserDto.user)
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // }
 
   // ! CREATE - POST /users
 
@@ -61,37 +50,12 @@ export class UserCompositeService {
     return await this.userService.getUserAccountById(id)
   }
 
+  // ? Obtener un usuario por su username
+  async getUserByUsername(username: string): Promise<UserResponseDto> {
+    return await this.userService.getUserAccountByUsername(username)
+  }
+
   async getAllUsers(): Promise<UserResponseDto[]> {
     return this.userService.getAllUsersAccounts()
   }
-
-  // async getUserById(id: string): Promise<User> {
-  //   return await this.userModel.findById(id).exec()
-  // }
-
-  // async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-  //   const existingUser = await this.userModel.findById(id)
-  //   if (!existingUser) {
-  //     throw new NotFoundException('User not found')
-  //   }
-
-  //   if (updateUserDto.password) {
-  //     updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10)
-  //   }
-
-  //   Object.assign(existingUser, updateUserDto)
-  //   return existingUser.save()
-  // }
-
-  // async deleteUser(id: string): Promise<User> {
-  //   return await this.userModel.findByIdAndDelete(id).exec()
-  // }
-
-  // // async validateUser(email: string, password: string): Promise<User | null> {
-  // //   const user = await this.userModel.findOne({ email })
-  // //   if (user && (await bcrypt.compare(password, user.password))) {
-  // //     return user
-  // //   }
-  // //   return null
-  // // }
 }

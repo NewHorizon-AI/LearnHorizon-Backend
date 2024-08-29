@@ -52,10 +52,6 @@ export class UserService {
 
   // ! READ - GET /users
 
-  // async findAllUsers(): Promise<User[]> {
-  //   return this.userModel.find().exec()
-  // }
-
   async getUserAccountById(id: string): Promise<UserResponseDto> {
     const user = await this.userModel.findById(id).exec()
     if (!user) {
@@ -69,6 +65,12 @@ export class UserService {
   async getAllUsersAccounts(): Promise<UserResponseDto[]> {
     const users = await this.userModel.find().exec()
     return users.map((user) => new UserResponseDto(user))
+  }
+
+  // ? Obtener un usuario por su username
+  async getUserAccountByUsername(username: string): Promise<UserResponseDto> {
+    const user = await this.userModel.findOne({ username }).exec()
+    return user ? new UserResponseDto(user) : null
   }
 
   // !

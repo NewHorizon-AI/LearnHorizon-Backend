@@ -12,12 +12,13 @@ import { CreateArticleModelTransformationDto } from '../dtos/article-model-trans
 // * (3) Importar Servicios
 import { ArticleModelService } from './article-model-services/article-model/article-model.service'
 import { ArticleModelTransformationService } from './article-model-services/article-model-transformation/article-model-transformation.service'
-
+import { UploadGltfService } from 'src/modules/upload/services/upload-gltf/upload-gltf.service'
 @Injectable()
 export class ArticleModelCompositeService {
   constructor(
     private readonly articleModelService: ArticleModelService,
-    private readonly articleModelTransformationService: ArticleModelTransformationService
+    private readonly articleModelTransformationService: ArticleModelTransformationService,
+    private readonly uploadGltfService: UploadGltfService
   ) {}
 
   // ! POST - create
@@ -108,5 +109,41 @@ export class ArticleModelCompositeService {
     } catch (error) {
       throw new NotFoundException(error.message)
     }
+  }
+
+  // ! Delete
+  // async deleteArticleModel(article_id: Types.ObjectId): Promise<void> {
+  //   /*
+  //    * Elimina un ArticleModel por article_id
+  //    @ Param article_id ID del artículo a eliminar
+  //   */
+
+  //   try {
+  //     // * (1) Buscar el ArticleModel usando article_id
+  //     const articleModel =
+  //       await this.articleModelService.getArticleModelByArticleId(article_id)
+
+  //     // * (2) Eliminar el ArticleModel
+  //     await this.articleModelService.deleteArticleModels(
+  //       articleModel.toJSON()._id
+  //     )
+  //   } catch (error) {
+  //     throw new NotFoundException(error.message)
+  //   }
+  // }
+
+  async deleteArticleModelCascade(article_id: Types.ObjectId): Promise<void> {
+    // * (1) Buscar el ArticleModel usando article_id
+    const articleModel =
+      await this.articleModelService.getArticleModelByArticleId(article_id)
+
+    // * (2) Eliminar submodelos relacionados
+    await Promise.all([
+      this.articleModelTransformationService.deleteTransformationsByModelId(
+        articleModel.toJSON()._id
+      ),
+      this.articleModelService.deleteArticleModel(articleModel.toJSON()._id),
+      this.uploadGltfService.deleteAssociatedFiles(articleModel.toJSON()._id)
+    ])
   }
 }

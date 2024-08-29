@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsNotEmpty, IsString, Length, Matches } from 'class-validator'
+import { Transform } from 'class-transformer'
 
 export class CreateUserDto {
+  private _username: string
+
   @ApiProperty({
     description: 'Nombre único de usuario, debe ser único en el sistema',
     example: 'john_doe'
   })
   @IsNotEmpty({ message: 'El nombre de usuario es obligatorio.' })
   @IsString({ message: 'El nombre de usuario debe ser una cadena.' })
+  @Transform(({ value }) => value.toLowerCase())
   username: string
 
   @ApiProperty({

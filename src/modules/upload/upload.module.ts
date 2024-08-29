@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { MulterModule } from '@nestjs/platform-express'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -31,7 +31,7 @@ import { GltfValidationService } from './services/gltf-validation.service'
       imports: [ConfigModule],
       useClass: MulterConfigService
     }),
-    ArticleModelModule
+    forwardRef(() => ArticleModelModule)
   ],
   controllers: [GltfUploaderController, ModelController],
   providers: [
@@ -40,6 +40,6 @@ import { GltfValidationService } from './services/gltf-validation.service'
     UploadGltfService,
     ArticleModelCompositeService
   ],
-  exports: [MongooseModule]
+  exports: [MongooseModule, UploadGltfService]
 })
 export class UploadModule {}

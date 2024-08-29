@@ -9,6 +9,7 @@ import { Model, Types } from 'mongoose'
 // Importing DTOs
 import { CreateArticleDto } from '../../../dtos/article/article-base/create-article.dto'
 import { UpdateArticleDto } from '../../../dtos/article/article-base/update-article.dto'
+import { QueryOptionsDto } from '../../../dtos/article-query/query-options.dto'
 
 // Importar esquema de artículo
 import { Article } from '../../../schemas/article.schema'
@@ -21,8 +22,7 @@ export class ArticleBaseService {
     @InjectModel(User.name) private userModel: Model<User>
   ) {}
 
-  // ! POST - create
-
+  // ! createArticle - Crea un nuevo artículo con datos mínimos
   async creatArticle(createArticleDto: CreateArticleDto): Promise<Article> {
     /* 
     * Crea un nuevo artículo con los datos proporcionados
@@ -70,14 +70,24 @@ export class ArticleBaseService {
     return await this.articleModel.findById(article_id).exec()
   }
 
-  // // Busca un artículo compuesto por su ID y retorna null si no existe
-  // async findCompositeArticleById(id: string): Promise<Article> {
-  //   const article = await this.articleModel.findById(id).exec()
-  //   if (!article) {
-  //     return null
-  //   }
-  //   return article
-  // }
+  async getArticlesByUserAndPage(
+    userId: string,
+    queryOptions: QueryOptionsDto
+  ): Promise<any[]> {
+    const { page, pageSize, order } = queryOptions
+
+    const sortOrder = order === 'ascendant' ? 'asc' : 'desc'
+
+    const articles = await this.articleModel
+      .find({ users: userId })
+      .sort({ createdAt: sortOrder }) // Asumiendo que quieres ordenar por fecha de creación
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .lean()
+      .exec()
+
+    return articles
+  }
 
   async updateBaseArticle(
     id: string,
@@ -91,11 +101,19 @@ export class ArticleBaseService {
     }
   }
 
-  async deleteArticle(id: string): Promise<Article> {
-    const deletedArticle = await this.articleModel.findByIdAndDelete(id).exec()
-    if (!deletedArticle) {
+  async deleteArticle(id: Types.ObjectId): Promise<void> {
+    /*
+     * Elimina un artículo por ID
+     @ Param id ID del artículo a eliminar
+     */
+
+    // * Validar que el artículo exista
+    const article = await this.articleModel.findById(id).exec()
+
+    if (!article) {
       throw new NotFoundException(`Article with ID ${id} not found`)
     }
-    return deletedArticle
+
+    await this.articleModel.deleteOne({ _id: id })
   }
 }

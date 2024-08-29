@@ -1,37 +1,31 @@
 import {
   Controller,
   Post,
-  Put,
   Body,
   Get,
-  Param
-  // Query,
-  // NotFoundException
+  Param,
+  Delete,
+  BadRequestException,
+  Query
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
 
 // * importar Servicios
 import { ArticleCompositeService } from '../services/article-composite.service'
-import { ArticleBaseService } from '../services/article-services/article-base/article-base.service'
 
 // * importar DTOs
-import { CreateArticleCompleteDto } from '../dtos/article/create-article-complete.dto'
-import { UpdateArticleCompleteDto } from '../dtos/article/update-article-complete.dto'
-
+import { QueryOptionsDto } from '../dtos/article-query/query-options.dto'
 import { ArticleCompositeResponseDto } from '../dtos/response/article-composite-response.dto'
-
 import { CreateArticleDto } from '../dtos/article/article-base/create-article.dto'
 
 @ApiTags('articles')
 @Controller('articles')
 export class ArticleController {
   constructor(
-    private readonly articleCompositeService: ArticleCompositeService,
-    private readonly articleBaseService: ArticleBaseService
+    private readonly articleCompositeService: ArticleCompositeService
   ) {}
 
-  // ! POST - Crear un artículo base
-
+  // * Crear un nuevo artículo base
   @Post()
   @ApiOperation({ summary: 'Create a new base article' })
   @ApiResponse({
@@ -46,20 +40,7 @@ export class ArticleController {
     return article
   }
 
-  // ! GET
-
-  @Get()
-  @ApiOperation({ summary: 'Get all articles' })
-  @ApiResponse({
-    status: 200,
-    description: 'All articles have been successfully obtained.',
-    type: CreateArticleCompleteDto,
-    isArray: true
-  })
-  async getAllArticles() {
-    return this.articleCompositeService.getAllArticlesDetails()
-  }
-
+  // * Obtener una lista de artículos basada en parámetros de consulta por usuario
   @Get('details/:id')
   @ApiOperation({ summary: 'Get an article by ID' })
   @ApiResponse({
@@ -81,69 +62,75 @@ export class ArticleController {
     return await this.articleCompositeService.getArticleDetails(article_id)
   }
 
-  @Get('details/:id/model')
-  @ApiOperation({ summary: 'Get an article by ID with model included' })
+  // * Obtener una lista de artículos basada en parámetros de consulta por usuario
+  @Get('u/:user_id')
+  @ApiOperation({
+    summary:
+      'Obtiene una lista de artículos filtrada por usuario y opciones de consulta',
+    description:
+      'Este endpoint devuelve una lista de artículos basada en el ID de usuario proporcionado y parámetros adicionales de consulta como paginación y orden.'
+  })
+  @ApiParam({
+    name: 'user_id',
+    description:
+      'Identificador único del usuario para el cual se recuperan los artículos',
+    type: String
+  })
   @ApiResponse({
     status: 200,
-    description: 'The article has been successfully obtained with model data.',
-    type: UpdateArticleCompleteDto
+    description: 'Lista de artículos devuelta exitosamente',
+    type: ArticleCompositeResponseDto,
+    isArray: true
+  })
+  @ApiResponse({ status: 403, description: 'Acceso prohibido' })
+  @ApiResponse({ status: 400, description: 'Datos de consulta inválidos' })
+  getArticlesbyUserAndLimit(
+    @Param('user_id') user_id: string,
+    @Query() queryOptionsDto: QueryOptionsDto
+  ): Promise<ArticleCompositeResponseDto[]> {
+    try {
+      return this.articleCompositeService.findArticlesByUser(
+        user_id,
+        queryOptionsDto
+      )
+    } catch (error) {
+      throw new BadRequestException('Error en la consulta: ' + error.message)
+    }
+  }
+
+  // * Eliminar un artículo por completo basado en su ID
+  @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar un articulo por completo.' })
+  @ApiResponse({
+    status: 200,
+    description: 'El articulo ha sido eliminado con exito.'
   })
   @ApiResponse({
     status: 404,
-    description: 'Article not found.'
+    description: 'Articulo no encontrado.'
   })
-  async getArticleDetailWithModel(@Param('id') article_id: string) {
-    return await this.articleCompositeService.getArticleDetailsWithModel(
-      article_id
-    )
+  async deleteArticle(@Param('id') article_id: string) {
+    try {
+      return await this.articleCompositeService.deleteArticle(article_id)
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
-  // // ! Get - Obtiene los artículos de un usuario con paginación
-  // @Get('user/:id/articles')
-  // @ApiOperation({ summary: 'Get articles of a user with pagination' })
+  // // ! PUT
+
+  // // * Actualizar un artículo base existente
+  // @Put(':id')
+  // @ApiOperation({ summary: 'Update an existing base article' })
   // @ApiResponse({
   //   status: 200,
-  //   description: 'The articles of the user have been successfully obtained.',
-  //   type: UpdateArticleCompleteDto,
-  //   isArray: true
+  //   description: 'The base article has been successfully updated.'
   // })
-  // async getArticles(
-  //   @Param('id') userId: string,
-  //   @Query('limit') limit: number = 10,
-  //   @Query('offset') offset: number = 0
-  // ): Promise<UpdateArticleCompleteDto[]> {
-  //   /*
-  //     * Obtiene los artículos de un usuario con paginación
-  //     @ Param userId ID del usuario cuyos artículos se van a recuperar
-  //     @ Param limit Número de artículos a recuperar
-  //     @ Param offset Número de artículos para omitir
-  //   */
-
-  //   try {
-  //     return this.articleCompositeService.getArticlesByUser(
-  //       userId,
-  //       limit,
-  //       offset
-  //     )
-  //   } catch (error) {
-  //     throw new NotFoundException(error.message)
-  //   }
+  // @ApiBody({ type: UpdateArticleCompleteDto })
+  // async updateArticleBase(
+  //   @Param('id') id: string,
+  //   @Body() updateArticleDto: UpdateArticleCompleteDto
+  // ) {
+  //   await this.articleCompositeService.updateArticle(id, updateArticleDto)
   // }
-
-  // ! PUT
-
-  // * Actualizar un artículo base existente
-  @Put(':id')
-  @ApiOperation({ summary: 'Update an existing base article' })
-  @ApiResponse({
-    status: 200,
-    description: 'The base article has been successfully updated.'
-  })
-  @ApiBody({ type: UpdateArticleCompleteDto })
-  async updateArticleBase(
-    @Param('id') id: string,
-    @Body() updateArticleDto: UpdateArticleCompleteDto
-  ) {
-    await this.articleCompositeService.updateArticle(id, updateArticleDto)
-  }
 }

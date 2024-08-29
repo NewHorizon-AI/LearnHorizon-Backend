@@ -110,13 +110,7 @@ export class ArticleModelService {
 
   // ! DELETE - Remove
 
-  async remove(id: string): Promise<ArticleModel> {
-    const deletedArticleModel = await this.articleModelModel
-      .findByIdAndDelete(id)
-      .exec()
-    if (!deletedArticleModel) {
-      throw new NotFoundException(`ArticleModel with ID ${id} not found`)
-    }
-    return deletedArticleModel
+  async deleteArticleModel(modelId: Types.ObjectId): Promise<void> {
+    await this.articleModelModel.deleteMany({ article_model_id: modelId })
   }
 }

@@ -3,22 +3,19 @@ import {
   Injectable,
   NotFoundException
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model, Types } from 'mongoose'
+import { Types } from 'mongoose'
 
 // * (1) Importar Los Esquemas
 import { Article } from '../schemas/article.schema'
 
 // * (2) Importar Los Dtos
 import { CreateArticleDto } from '../dtos/article/article-base/create-article.dto'
-import { UpdateArticleCompleteDto } from '../dtos/article/update-article-complete.dto'
+// import { UpdateArticleCompleteDto } from '../dtos/article/update-article-complete.dto'
 
 // * (3) Importar los Servicios
 import { ArticleBaseService } from './article-services/article-base/article-base.service'
 import { ArticleDataService } from '../services/article-services/article-data/article-data.service'
 import { ArticleMarkdownService } from '../services/article-services/article-markdown/article-markdown.service'
-
-import { ArticleAggregatorService } from './aggregators/article-aggregator.service'
 
 // * (4) Importar los servicios externos
 import { ArticleModelCompositeService } from 'src/modules/article-model/services/article-model-composite.service'
@@ -27,8 +24,6 @@ import { ArticleModelCompositeService } from 'src/modules/article-model/services
 @Injectable()
 export class ArticleCompositeService {
   constructor(
-    @InjectModel(Article.name) private articleModel: Model<Article>,
-    private readonly articleAggregatorService: ArticleAggregatorService,
     private articleBaseService: ArticleBaseService,
     private articleDataService: ArticleDataService,
     private articleMarkdownService: ArticleMarkdownService,
@@ -37,8 +32,7 @@ export class ArticleCompositeService {
     private articleModelCompositeService: ArticleModelCompositeService
   ) {}
 
-  // ! POST - create
-
+  // ! createArticleDraft - Crea la base de un artículo con datos mínimos
   async createArticleDraft(createArticleDto: CreateArticleDto): Promise<any> {
     /*
      * Crea un nuevo artículo sin datos adicionales
@@ -79,12 +73,12 @@ export class ArticleCompositeService {
     }
   }
 
-  // ! GET
+  // // ! getAllArticlesDetails - Obtiene todos los artículos con todos sus datos
+  // async getAllArticlesDetails(): Promise<any[]> {
+  //   return this.articleAggregatorService.getAllArticlesDetails()
+  // }
 
-  async getAllArticlesDetails(): Promise<any[]> {
-    return this.articleAggregatorService.getAllArticlesDetails()
-  }
-
+  // ! getArticleDetails - Obtiene un artículo por ID con todos sus datos
   async getArticleById(article_id: Types.ObjectId): Promise<Article> {
     try {
       return this.articleBaseService.getArticleById(article_id)
@@ -93,6 +87,7 @@ export class ArticleCompositeService {
     }
   }
 
+  // ! getArticleDetails - Obtiene un artículo por ID con todos sus datos
   async getArticleDetails(article_id: string): Promise<any> {
     /*
       * Busca un artículo por ID y devuelve todos los datos relacionados con él
@@ -123,84 +118,99 @@ export class ArticleCompositeService {
     }
   }
 
-  async getArticleDetailsWithModel(article_id: string): Promise<any> {
-    return await this.getArticleDetails(article_id)
-  }
-
-  // // ! Get - Obtiene los artículos de un usuario con paginación
-  // async getArticlesByUser(
-  //   userId: string,
-  //   limit: number,
-  //   offset: number
-  // ): Promise<UpdateArticleCompleteDto[]> {
-  //   const articles = await this.articleModel
-  //     .find({ user_id: userId })
-  //     .sort({ updatedAt: -1 }) // Ordena por la última actualización, de más reciente a más antiguo
-  //     .skip(offset)
-  //     .limit(limit)
-  //     .exec()
-
-  //   return articles.map((article) => this.mapToDto(article)) // mapToDto es un método que mapea el modelo a un DTO
-  // }
-
-  // ! UPDATE
-
-  async updateArticle(
-    id: string,
-    updateArticleDto: UpdateArticleCompleteDto
-  ): Promise<void> {
-    if (!updateArticleDto) {
-      throw new BadRequestException('updateArticleDto is required')
-    }
-    if (!id) {
-      throw new BadRequestException('id is required')
-    }
-
-    const { article, articleData, articleMarkdown } = updateArticleDto
+  // ! findArticlesByUser - Obtiene una lista de artículos por usuario y opciones de consulta de paginación y orden
+  async findArticlesByUser(
+    user_id: string,
+    queryOptionsDto: any
+  ): Promise<any[]> {
+    /*
+      * Obtiene una lista de artículos por usuario y opciones de consulta
+      @ Param user_id ID del usuario para el cual se recuperan los artículos
+      @ Param queryOptionsDto DTO que contiene opciones de consulta como paginación y orden
+    */
 
     try {
-      await this.articleBaseService.updateBaseArticle(id, article)
-    } catch (error) {
-      throw new NotFoundException(
-        `Failed to update base article: ${error.message}`
-      )
-    }
+      const articleBaseArray =
+        await this.articleBaseService.getArticlesByUserAndPage(
+          user_id,
+          queryOptionsDto
+        )
 
-    try {
-      await this.articleDataService.updateCompleteArticleData(id, articleData)
-    } catch (error) {
-      throw new NotFoundException(
-        `Failed to update article articleData: ${error.message}`
+      // Obtener todos los datos de los artículos
+      const articleWithDataArray = await Promise.all(
+        articleBaseArray.map(async (article) => {
+          const data =
+            await this.articleDataService.findCompositeArticleDataById(
+              article._id
+            )
+          return { ...article, data }
+        })
       )
-    }
 
-    try {
-      await this.articleMarkdownService.updateCompleteArticleMarkdown(
-        id,
-        articleMarkdown
-      )
+      return articleWithDataArray
     } catch (error) {
-      throw new NotFoundException(
-        `Failed to update article articleMarkdown: ${error.message}`
-      )
+      throw new BadRequestException('Error en la consulta: ' + error.message)
     }
   }
 
-  // async getFullArticleDetails(id: string): Promise<any> {}
+  // // ! UPDATE
 
-  // findOneComplete(id: string) {
-  //   return this.articleGetService.findOneComplete(id)
+  // async updateArticle(
+  //   id: string,
+  //   updateArticleDto: UpdateArticleCompleteDto
+  // ): Promise<void> {
+  //   if (!updateArticleDto) {
+  //     throw new BadRequestException('updateArticleDto is required')
+  //   }
+  //   if (!id) {
+  //     throw new BadRequestException('id is required')
+  //   }
+
+  //   const { article, articleData, articleMarkdown } = updateArticleDto
+
+  //   try {
+  //     await this.articleBaseService.updateBaseArticle(id, article)
+  //   } catch (error) {
+  //     throw new NotFoundException(
+  //       `Failed to update base article: ${error.message}`
+  //     )
+  //   }
+
+  //   try {
+  //     await this.articleDataService.updateCompleteArticleData(id, articleData)
+  //   } catch (error) {
+  //     throw new NotFoundException(
+  //       `Failed to update article articleData: ${error.message}`
+  //     )
+  //   }
+
+  //   try {
+  //     await this.articleMarkdownService.updateCompleteArticleMarkdown(
+  //       id,
+  //       articleMarkdown
+  //     )
+  //   } catch (error) {
+  //     throw new NotFoundException(
+  //       `Failed to update article articleMarkdown: ${error.message}`
+  //     )
+  //   }
   // }
 
-  // createComplete(dto: any) {
-  //   return this.articlePostService.createComplete(dto)
-  // }
+  // ! deleteArticle - Elimina un artículo por completo
+  async deleteArticle(article_id: string): Promise<void> {
+    try {
+      const object_id = new Types.ObjectId(article_id)
 
-  // updateComplete(id: string, dto: any) {
-  //   return this.articlePutService.updateComplete(id, dto)
-  // }
-
-  // remove(id: string) {
-  //   return this.articleDeleteService.remove(id)
-  // }
+      await Promise.all([
+        this.articleBaseService.deleteArticle(object_id),
+        this.articleDataService.deleteArticleData(object_id),
+        this.articleMarkdownService.deleteArticleMarkdown(object_id),
+        this.articleModelCompositeService.deleteArticleModelCascade(object_id)
+      ])
+    } catch (error) {
+      throw new Error(
+        `Error deleting article and related resources: ${error.message}`
+      )
+    }
+  }
 }

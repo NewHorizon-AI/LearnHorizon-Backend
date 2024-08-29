@@ -67,16 +67,6 @@ export class ArticleMarkdownService {
     return updatedArticleMarkdown
   }
 
-  async deleteArticleMarkdown(id: string): Promise<ArticleMarkdown> {
-    const deletedArticleMarkdown = await this.articleMarkdownModel
-      .findByIdAndDelete(id)
-      .exec()
-    if (!deletedArticleMarkdown) {
-      throw new NotFoundException(`ArticleMarkdown with ID ${id} not found`)
-    }
-    return deletedArticleMarkdown
-  }
-
   async updateCompleteArticleMarkdown(
     articleId: string,
     updateArticleMarkdownDto: UpdateArticleMarkdownDto
@@ -112,5 +102,14 @@ export class ArticleMarkdownService {
         `Failed to update ArticleMarkdown: ${error.message}`
       )
     }
+  }
+
+  async deleteArticleMarkdown(id: Types.ObjectId): Promise<void> {
+    /*
+     * Elimina un artículo por ID
+     @ Param id ID del artículo a eliminar
+     */
+
+    await this.articleMarkdownModel.deleteOne({ _id: id })
   }
 }

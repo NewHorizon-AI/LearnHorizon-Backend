@@ -71,50 +71,50 @@ export class UserController {
     }
   }
 
-  // ! READ - GET /users
+  // // ! READ - GET /users
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Obtener un usuario por su _id' })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'Identificador unico de un usuario'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuario encontrado exitosamente.',
-    type: CreateUserCompleteDto
-  })
-  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
-    return await this.userCompositeService.findUserById(id)
-  }
+  // @Get(':id')
+  // @ApiOperation({ summary: 'Obtener un usuario por su _id' })
+  // @ApiParam({
+  //   name: 'id',
+  //   type: String,
+  //   description: 'Identificador unico de un usuario'
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Usuario encontrado exitosamente.',
+  //   type: CreateUserCompleteDto
+  // })
+  // @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  // async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
+  //   return await this.userCompositeService.findUserById(id)
+  // }
 
-  @Put(':id')
-  @ApiOperation({ summary: 'Update a user' })
-  @ApiParam({ name: 'id', type: String, description: 'The user ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The user has been successfully updated.',
-    type: UpdateUserCompleteDto
-  })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  async updateUser(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserCompleteDto
-  ) {
-    return await this.userCompositeService.updateUser(id, updateUserDto)
-  }
+  // @Put(':id')
+  // @ApiOperation({ summary: 'Update a user' })
+  // @ApiParam({ name: 'id', type: String, description: 'The user ID' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'The user has been successfully updated.',
+  //   type: UpdateUserCompleteDto
+  // })
+  // @ApiResponse({ status: 404, description: 'User not found.' })
+  // async updateUser(
+  //   @Param('id') id: string,
+  //   @Body() updateUserDto: UpdateUserCompleteDto
+  // ) {
+  //   return await this.userCompositeService.updateUser(id, updateUserDto)
+  // }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a user' })
-  @ApiParam({ name: 'id', type: String, description: 'The user ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The user has been successfully deleted.'
-  })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  async deleteUser(@Param('id') id: string) {
-    return await this.userCompositeService.deleteUser(id)
-  }
+  // @Delete(':id')
+  // @ApiOperation({ summary: 'Delete a user' })
+  // @ApiParam({ name: 'id', type: String, description: 'The user ID' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'The user has been successfully deleted.'
+  // })
+  // @ApiResponse({ status: 404, description: 'User not found.' })
+  // async deleteUser(@Param('id') id: string) {
+  //   return await this.userCompositeService.deleteUser(id)
+  // }
 }

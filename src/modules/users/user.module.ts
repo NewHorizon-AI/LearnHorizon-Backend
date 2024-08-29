@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { UserController } from './controllers/user.controller'
 import { MongooseModule } from '@nestjs/mongoose'
 
 // Importacion de los modelos de la base de datos
@@ -9,6 +8,10 @@ import { UserContact, UserContactSchema } from './schemas/user-contact.schema'
 import { UserData, UserDataSchema } from './schemas/user-data.schema'
 import { Role, RoleSchema } from './schemas/role.schema'
 import { UserRole, UserRoleSchema } from './schemas/user-role.schema'
+
+// * Importar controladores
+import { UserController } from './controllers/user.controller'
+import { UserGetController } from './controllers/get/get-user.controller'
 
 // Importacion de los servicios
 import { UserCompositeService } from './services/user-composite.service'
@@ -25,7 +28,7 @@ import { UserService } from './services/user-services/user.service'
       { name: UserRole.name, schema: UserRoleSchema }
     ])
   ], // Importar el modelo de la base de datos
-  controllers: [UserController],
+  controllers: [UserController, UserGetController],
   providers: [UserService, UserCompositeService],
   exports: [MongooseModule, UserService, UserCompositeService] // Exportar el módulo de Mongoose
 })

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
 // * (1) Importar Esquemas
@@ -19,6 +19,10 @@ import {
 import { ArticleModelCompositeService } from './services/article-model-composite.service'
 import { ArticleModelService } from './services/article-model-services/article-model/article-model.service'
 import { ArticleModelTransformationService } from './services/article-model-services/article-model-transformation/article-model-transformation.service'
+// import { UploadGltfService } from 'src/modules/upload/services/upload-gltf/upload-gltf.service'
+
+// * Importar Modulos
+import { UploadModule } from 'src/modules/upload/upload.module'
 
 @Module({
   imports: [
@@ -32,7 +36,8 @@ import { ArticleModelTransformationService } from './services/article-model-serv
         name: ArticleModelTransformation.name,
         schema: ArticleModelTransformationSchema
       }
-    ])
+    ]),
+    forwardRef(() => UploadModule)
   ],
   // controllers: [ArticleModelController],
   providers: [
