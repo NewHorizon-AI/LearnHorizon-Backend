@@ -63,6 +63,28 @@ export class ArticleController {
   }
 
   // * Obtener una lista de artículos basada en parámetros de consulta por usuario
+  @Get('e/:id')
+  @ApiOperation({ summary: 'Get an article by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'The article has been successfully obtained.',
+    type: ArticleCompositeResponseDto
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Article not found.'
+  })
+  async getEditableArticle(@Param('id') article_id: string) {
+    /* 
+      * Obtiene un artículo completo por ID
+      @ Param article_id ID del artículo a recuperar
+
+    */
+
+    return await this.articleCompositeService.getArticleDetails(article_id)
+  }
+
+  // * Obtener una lista de artículos basada en parámetros de consulta por usuario
   @Get('u/:user_id')
   @ApiOperation({
     summary:

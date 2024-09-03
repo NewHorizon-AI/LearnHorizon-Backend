@@ -94,21 +94,16 @@ export class ArticleModelCompositeService {
      * Obtiene un ArticleModel por article_id
      @ Param article_id ID del artículo a recuperar
     */
-    try {
-      // * (1) Buscar el ArticleModel usando article_id
 
-      const articleModel =
-        await this.articleModelService.getByArticleId(article_id)
+    const articleModel =
+      await this.articleModelService.getModelByArticleId(article_id)
 
-      if (!articleModel) {
-        throw new NotFoundException(
-          `ArticleModel with ID ${article_id} not found`
-        )
-      }
-      return articleModel
-    } catch (error) {
-      throw new NotFoundException(error.message)
+    if (!articleModel) {
+      throw new NotFoundException(
+        `ArticleModel with ID ${article_id} not found`
+      )
     }
+    return articleModel
   }
 
   // ! Delete

@@ -37,10 +37,10 @@ export class ArticleBaseService {
     }
 
     // * (3) Verifica que todos los usuarios en el DTO existan en la base de datos
-    for (const userId of createArticleDto.users) {
-      const userExists = await this.userModel.findById(userId).exec()
+    for (const user_id of createArticleDto.users) {
+      const userExists = await this.userModel.findById(user_id).exec()
       if (!userExists) {
-        throw new BadRequestException(`User with ID ${userId} does not exist`)
+        throw new BadRequestException(`User with ID ${user_id} does not exist`)
       }
     }
 
@@ -71,7 +71,7 @@ export class ArticleBaseService {
   }
 
   async getArticlesByUserAndPage(
-    userId: string,
+    user_id: string,
     queryOptions: QueryOptionsDto
   ): Promise<any[]> {
     const { page, pageSize, order } = queryOptions
@@ -79,7 +79,7 @@ export class ArticleBaseService {
     const sortOrder = order === 'ascendant' ? 'asc' : 'desc'
 
     const articles = await this.articleModel
-      .find({ users: userId })
+      .find({ users: user_id })
       .sort({ createdAt: sortOrder }) // Asumiendo que quieres ordenar por fecha de creación
       .skip((page - 1) * pageSize)
       .limit(pageSize)

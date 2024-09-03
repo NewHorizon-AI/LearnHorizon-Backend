@@ -28,17 +28,16 @@ import { join } from 'path'
 
 // * Importacion de schemas
 // import { File } from '../../schemas/file.schema'
-import { FileGltf } from '../../schemas/file-gltf.schema'
+// import { FileGltf } from '../../schemas/file-gltf.schema'
 
 // * Importacion de servicios
 import { GltfValidationService } from '../../services/gltf-validation.service'
 import { UploadCompositeService } from '../../services/upload-composite.service'
 
 // * Importacion de dtos
-import { UpdateFileGltfDto } from '../../dtos/update-file-gltf.dto'
-import { CreateFileGltfDto } from '../../dtos/create-file-gltf.dto'
+// import { UpdateFileGltfDto } from '../../dtos/update-file-gltf.dto'
+// import { CreateFileGltfDto } from '../../dtos/create-file-gltf.dto'
 
-import { Types } from 'mongoose'
 @ApiTags('model')
 @Controller('model')
 export class ModelController {
@@ -66,12 +65,12 @@ export class ModelController {
   //   }
   // }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Obtener un archivo subido por ID' })
+  @Get(':articleId')
+  @ApiOperation({ summary: 'Obtener un archivo subido por el articleId' })
   @ApiResponse({ status: 200, description: 'Archivo obtenido exitosamente.' })
   @ApiResponse({ status: 404, description: 'Archivo no encontrado.' })
   async findOne(
-    @Param('id') articleId: string,
+    @Param('articleId') articleId: string,
     @Res() res: Response
   ): Promise<void> {
     try {

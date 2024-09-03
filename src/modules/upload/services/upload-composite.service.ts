@@ -80,9 +80,13 @@ export class UploadCompositeService {
 
   // ! GET - Obtener un archivo sub
 
-  async getModel(article_id: string): Promise<FileGltf> {
+  async getModel(articleId: string): Promise<FileGltf> {
     const articleModel =
-      await this.articleModelService.getArticleModelByArticleId(article_id)
+      await this.articleModelService.getArticleModelByArticleId(articleId)
+
+    console.log(articleModel)
+
+    console.log(articleModel.toJSON())
 
     const article_model_id = articleModel.toJSON()._id
 
