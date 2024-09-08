@@ -22,13 +22,9 @@ export class AuthService {
      TODO: Implementar la comparacion de contraseñas encriptadas
      */
 
-    console.log(login)
-
     const user = await this.userModel.findOne({
       $or: [{ email: login.email }, { username: login.username }]
     })
-
-    console.log(user)
 
     // * Verificar si existe el usuario y si la contraseña es correcta
     if (user && login.password === user.password) {

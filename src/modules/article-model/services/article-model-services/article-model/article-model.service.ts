@@ -77,13 +77,9 @@ export class ArticleModelService {
       @ Param article_id ID del artículo para recuperar el Article
     */
 
-    console.log(articleId)
-
     const articleModel = await this.articleModelModel
       .findOne({ article_id: new Types.ObjectId(articleId) })
       .exec()
-
-    console.log(articleModel)
 
     if (!articleModel) {
       throw new NotFoundException(`ArticleModel with ID ${articleId} not found`)

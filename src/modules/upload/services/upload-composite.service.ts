@@ -84,10 +84,6 @@ export class UploadCompositeService {
     const articleModel =
       await this.articleModelService.getArticleModelByArticleId(articleId)
 
-    console.log(articleModel)
-
-    console.log(articleModel.toJSON())
-
     const article_model_id = articleModel.toJSON()._id
 
     const model = this.uploadGltfModel.findOne({
