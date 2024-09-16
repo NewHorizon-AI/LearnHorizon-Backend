@@ -1,4 +1,4 @@
-export class ArticleDataDocs {
+export class DataDocs {
   static article_id = {
     description: 'ID del artículo',
     example: '60d2f77bcf86cd799439012'

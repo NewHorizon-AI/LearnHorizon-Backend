@@ -2,17 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Post,
-  Put
+  Post
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
 // * Importar Dtos para consultas
-import { CreateUserCompleteDto } from '../dtos/user/create-user-complete.dto'
-import { UpdateUserCompleteDto } from '../dtos/user/update-user-complete.dto'
+// import { CreateUserCompleteDto } from '../dtos/user/create-user-complete.dto'
+// import { UpdateUserCompleteDto } from '../dtos/user/update-user-complete.dto'
 import { CreateUserDto } from '../dtos/user/user/create-user.dto'
 
 // * Importar Dtos para respuestas

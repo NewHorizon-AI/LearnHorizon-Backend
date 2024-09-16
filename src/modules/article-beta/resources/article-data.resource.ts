@@ -2,13 +2,11 @@ import { Model } from 'mongoose'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { ArticleData } from '../schema/article-data.schema'
+import { Data } from '../schema/data.schema'
 
 @Injectable()
 export class ArticleDataResource {
-  constructor(
-    @InjectModel(ArticleData.name) private readonly model: Model<ArticleData>
-  ) {}
+  constructor(@InjectModel(Data.name) private readonly model: Model<Data>) {}
 
   // ? Método para obtener todos los artículos
   async findAll() {
@@ -21,13 +19,13 @@ export class ArticleDataResource {
   }
 
   // ? Método para crear un nuevo artículo
-  async create(articleData: ArticleData) {
+  async create(articleData: Data) {
     const newArticleData = new this.model(articleData)
     return await newArticleData.save()
   }
 
   // ? Método para actualizar un artículo
-  async update(id: string, articleData: ArticleData) {
+  async update(id: string, articleData: Data) {
     return await this.model.findByIdAndUpdate(id, articleData, { new: true })
   }
 

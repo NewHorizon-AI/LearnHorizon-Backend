@@ -120,6 +120,30 @@ export class ArticleController {
     }
   }
 
+  // // * Actualizar un artículo detallado existente
+  // @Patch('p/:id')
+  // @ApiOperation({ summary: 'Update an existing detailed article' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'The detailed article has been successfully updated.'
+  // })
+  // @ApiParam({
+  //   name: 'id',
+  //   description: 'ID del artículo a actualizar',
+  //   type: String
+  // })
+  // @ApiParam({
+  //   name: 'user_id',
+  //   description: 'ID del usuario que actualiza el artículo',
+  //   type: String
+  // })
+  // @ApiBody({ type: CreateArticleDto })
+  // async updateArticleDetails(
+  //   @Param('id') id: string,
+  //   @Body() updateArticleDto: CreateArticleDto
+  // ) {
+  //   await this.articleCompositeService.updateArticle(id, updateArticleDto)
+
   // * Eliminar un artículo por completo basado en su ID
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un articulo por completo.' })

@@ -2,13 +2,13 @@ import { Model } from 'mongoose'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { ArticleMarkdown } from '../schema/article-markdown.schema'
+import { Markdown } from '../schema/markdown.schema'
 
 @Injectable()
-export class ArticleMarkdownResource {
+export class MarkdownResource {
   constructor(
-    @InjectModel(ArticleMarkdown.name)
-    private readonly model: Model<ArticleMarkdown>
+    @InjectModel(Markdown.name)
+    private readonly model: Model<Markdown>
   ) {}
 
   // ? Método para obtener todos los artículos
@@ -22,13 +22,13 @@ export class ArticleMarkdownResource {
   }
 
   // ? Método para crear un nuevo artículo
-  async create(articleMarkdown: ArticleMarkdown) {
-    const newArticleMarkdown = new this.model(articleMarkdown)
-    return await newArticleMarkdown.save()
+  async create(articleMarkdown: Markdown) {
+    const newMarkdown = new this.model(articleMarkdown)
+    return await newMarkdown.save()
   }
 
   // ? Método para actualizar un artículo
-  async update(id: string, articleMarkdown: ArticleMarkdown) {
+  async update(id: string, articleMarkdown: Markdown) {
     return await this.model.findByIdAndUpdate(id, articleMarkdown, {
       new: true
     })

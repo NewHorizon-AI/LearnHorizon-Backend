@@ -1,15 +1,8 @@
 import {
   Controller,
   Post,
-  Get,
-  Param,
-  Delete,
   UseInterceptors,
   UploadedFile,
-  HttpException,
-  HttpStatus,
-  Res,
-  Put,
   Body,
   NotFoundException
 } from '@nestjs/common'
@@ -22,9 +15,9 @@ import {
   ApiTags
 } from '@nestjs/swagger'
 
-import { Response } from 'express'
-import { createReadStream, existsSync } from 'fs'
-import { join } from 'path'
+// import { Response } from 'express'
+// import { createReadStream, existsSync } from 'fs'
+// import { join } from 'path'
 
 // * Importacion de schemas
 // import { File } from '../../schemas/file.schema'
@@ -35,10 +28,10 @@ import { GltfValidationService } from '../../services/gltf-validation.service'
 import { UploadCompositeService } from '../../services/upload-composite.service'
 
 // * Importacion de dtos
-import { UpdateFileGltfDto } from '../../dtos/update-file-gltf.dto'
-import { CreateFileGltfDto } from '../../dtos/create-file-gltf.dto'
+// import { UpdateFileGltfDto } from '../../dtos/update-file-gltf.dto'
+// import { CreateFileGltfDto } from '../../dtos/create-file-gltf.dto'
 
-import { Types } from 'mongoose'
+// import { Types } from 'mongoose'
 @ApiTags('upload/model')
 @Controller('upload/model')
 export class GltfUploaderController {

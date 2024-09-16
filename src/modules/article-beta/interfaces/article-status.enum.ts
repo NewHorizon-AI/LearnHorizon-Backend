@@ -1,4 +1,4 @@
-export enum ArticleStatus {
+export enum IArticleStatus {
   DRAFT = 'draft',
   PUBLISHED = 'published',
   DELETED = 'deleted',

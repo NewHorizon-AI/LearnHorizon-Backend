@@ -3,9 +3,9 @@ import { Document, Types } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 
 import { User } from 'src/modules/users/schemas/user.schema'
-import { ArticleStatus } from '../interfaces/article-status.enum'
+import { IArticleStatus } from '../interfaces/article-status.enum'
 
-import { ArticleDocs } from '../docs/swagger/article/article-docs'
+import { ArticleDocs } from '../docs/swagger/schemas/article.docs'
 
 @Schema({ timestamps: true })
 export class Article extends Document {
@@ -17,9 +17,9 @@ export class Article extends Document {
   @ApiProperty(ArticleDocs.users)
   users: User[]
 
-  @Prop({ default: ArticleStatus.DRAFT, enum: ArticleStatus })
+  @Prop({ default: IArticleStatus.DRAFT, enum: IArticleStatus })
   @ApiProperty(ArticleDocs.status)
-  status: ArticleStatus
+  status: IArticleStatus
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article)

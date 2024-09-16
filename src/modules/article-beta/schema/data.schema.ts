@@ -3,37 +3,39 @@ import { Document, Types } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { Article } from './article.schema'
 
-import { ArticleDataDocs } from '../docs/swagger/article/article-data.docs'
+import { DataDocs } from '../docs/swagger/schemas/data.docs'
 
 @Schema({ timestamps: true })
-export class ArticleData extends Document {
+export class Data extends Document {
   @Prop({ type: Types.ObjectId, ref: Article.name, required: true })
-  @ApiProperty(ArticleDataDocs.article_id)
+  @ApiProperty(DataDocs.article_id)
   article_id: Article
 
   @Prop({ required: true })
-  @ApiProperty(ArticleDataDocs.photo)
+  @ApiProperty(DataDocs.photo)
   photo: string
 
   @Prop({ required: true })
-  @ApiProperty(ArticleDataDocs.description)
+  @ApiProperty(DataDocs.description)
   description: string
 
   @Prop({ default: 0 })
-  @ApiProperty(ArticleDataDocs.views)
+  @ApiProperty(DataDocs.views)
   views: number
 
   @Prop({ default: 0 })
-  @ApiProperty(ArticleDataDocs.likes)
+  @ApiProperty(DataDocs.likes)
   likes: number
 
   @Prop({ default: 0 })
-  @ApiProperty(ArticleDataDocs.dislikes)
+  @ApiProperty(DataDocs.dislikes)
   dislikes: number
 
   // @Prop({ type: [{ type: Types.ObjectId, ref: ArticleTag.name }] })
-  // @ApiProperty(ArticleDataDocs.tags)
+  // @ApiProperty(DataDocs.tags)
   // tags: ArticleTag[];
 }
 
-export const ArticleDataSchema = SchemaFactory.createForClass(ArticleData)
+export const DataSchema = SchemaFactory.createForClass(Data)
+
+DataSchema.index({ article_id: 1 })

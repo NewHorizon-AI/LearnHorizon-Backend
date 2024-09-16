@@ -1,4 +1,4 @@
-import { ArticleStatus } from '../../../interfaces/article-status.enum'
+import { IArticleStatus } from '../../../interfaces/article-status.enum'
 
 export class ArticleDocs {
   static title = {
@@ -14,7 +14,7 @@ export class ArticleDocs {
 
   static status = {
     description: 'Estado del artículo',
-    example: ArticleStatus.PUBLISHED,
-    default: ArticleStatus.DRAFT
+    example: IArticleStatus.PUBLISHED,
+    default: IArticleStatus.DRAFT
   }
 }
