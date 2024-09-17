@@ -31,18 +31,6 @@ export class User extends Document {
     example: '2024-07-15T08:00:00.000Z'
   })
   last_login: Date
-
-  @ApiProperty({
-    description: 'Fecha de creación',
-    example: '2024-07-15T08:00:00.000Z'
-  })
-  createdAt: Date
-
-  @ApiProperty({
-    description: 'Fecha de última actualización',
-    example: '2024-07-15T08:00:00.000Z'
-  })
-  updatedAt: Date
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

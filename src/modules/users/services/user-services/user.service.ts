@@ -51,7 +51,6 @@ export class UserService {
   }
 
   // ! READ - GET /users
-
   async getUserAccountById(id: string): Promise<UserResponseDto> {
     const user = await this.userModel.findById(id).exec()
     if (!user) {
