@@ -1,13 +1,13 @@
 # Documentación arquitectura de backend
 
-
 ## Introducción
+
 Este documento describe la arquitectura backend para. El backend está diseñado para recibir una unica solicitud por parte del frontend y que el backend se encargue de gestionar la creacion de las tablas en la base de datos, la inserción de los datos y la respuesta al frontend.
 
 ## DTOs (Data Transfer Objects)
 
 ```typescript
-// 
+//
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsNotEmpty, IsString, Length, Matches } from 'class-validator'
 
@@ -41,7 +41,6 @@ export class CreateUserDto {
   })
   password: string
 }
-
 ```
 
 ## Controlador
@@ -103,14 +102,14 @@ async createUser(createUserDto: CreateUserDto): Promise<User> {
 // src/products/services/metadata.service.ts
 @Injectable()
 export class MetadataService {
-    constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(@InjectConnection() private readonly connection: Connection) {}
 
-    async createMetadata(data: any, productId: string, session: ClientSession) {
-        if (!data) return;
-        const metadataCollection = this.connection.collection('metadata');
-        const metadata = { ...data, productId };
-        return await metadataCollection.insertOne(metadata, { session });
-    }
+  async createMetadata(data: any, productId: string, session: ClientSession) {
+    if (!data) return
+    const metadataCollection = this.connection.collection('metadata')
+    const metadata = { ...data, productId }
+    return await metadataCollection.insertOne(metadata, { session })
+  }
 }
 ```
 
@@ -149,45 +148,59 @@ Ahora integramos estos servicios en el controlador principal que maneja la creac
 
 ```typescript
 // src/products/products.service.ts
-import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, ClientSession } from 'mongoose';
-import { ProductService } from './services/product.service';
-import { MetadataService } from './services/metadata.service';
-import { InventoryService } from './services/inventory.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import { Injectable } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/mongoose'
+import { Connection, ClientSession } from 'mongoose'
+import { ProductService } from './services/product.service'
+import { MetadataService } from './services/metadata.service'
+import { InventoryService } from './services/inventory.service'
+import { CreateProductDto } from './dto/create-product.dto'
 
 @Injectable()
 export class ProductsService {
-    constructor(
-        private productService: ProductService,
-        private metadataService: MetadataService,
-        private inventoryService: InventoryService,
-        @InjectConnection() private readonly connection: Connection
-    ) {}
+  constructor(
+    private productService: ProductService,
+    private metadataService: MetadataService,
+    private inventoryService: InventoryService,
+    @InjectConnection() private readonly connection: Connection
+  ) {}
 
-    async createProduct(createProductDto: CreateProductDto) {
-        const session = await this.connection.startSession();
-        session.startTransaction();
-        try {
-            const productResult = await this.productService.createProduct({
-                name: createProductDto.name,
-                description: createProductDto.description,
-                price: createProductDto.price
-            }, session);
+  async createProduct(createProductDto: CreateProductDto) {
+    const session = await this.connection.startSession()
+    session.startTransaction()
+    try {
+      const productResult = await this.productService.createProduct(
+        {
+          name: createProductDto.name,
+          description: createProductDto.description,
+          price: createProductDto.price
+        },
+        session
+      )
 
-            await this.metadataService.createMetadata(createProductDto.metadata, productResult.insertedId, session);
-            await this.inventoryService.createInventory(createProductDto.inventory, productResult.insertedId, session);
+      await this.metadataService.createMetadata(
+        createProductDto.metadata,
+        productResult.insertedId,
+        session
+      )
+      await this.inventoryService.createInventory(
+        createProductDto.inventory,
+        productResult.insertedId,
+        session
+      )
 
-            await session.commitTransaction();
-            return { productId: productResult.insertedId, message: 'Producto creado con éxito' };
-        } catch (error) {
-            await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
-        }
+      await session.commitTransaction()
+      return {
+        productId: productResult.insertedId,
+        message: 'Producto creado con éxito'
+      }
+    } catch (error) {
+      await session.abortTransaction()
+      throw error
+    } finally {
+      session.endSession()
     }
+  }
 }
 ```
 

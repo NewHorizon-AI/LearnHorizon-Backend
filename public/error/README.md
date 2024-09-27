@@ -5,18 +5,18 @@ Primero, definamos algunas clases de error específicas que ayudarán a manejar 
 ```typescript
 // src/common/errors/database.error.ts
 export class DatabaseError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "DatabaseError";
-    }
+  constructor(message: string) {
+    super(message)
+    this.name = 'DatabaseError'
+  }
 }
 
 // src/common/errors/validation.error.ts
 export class ValidationError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "ValidationError";
-    }
+  constructor(message: string) {
+    super(message)
+    this.name = 'ValidationError'
+  }
 }
 ```
 
@@ -26,23 +26,23 @@ En el servicio, vamos a implementar el manejo de errores considerando errores es
 
 ```typescript
 // src/products/services/product.service.ts
-import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, ClientSession } from 'mongoose';
-import { DatabaseError } from '../../common/errors/database.error';
+import { Injectable } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/mongoose'
+import { Connection, ClientSession } from 'mongoose'
+import { DatabaseError } from '../../common/errors/database.error'
 
 @Injectable()
 export class ProductService {
-    constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(@InjectConnection() private readonly connection: Connection) {}
 
-    async createProduct(data: any, session: ClientSession) {
-        const productCollection = this.connection.collection('products');
-        try {
-            return await productCollection.insertOne(data, { session });
-        } catch (error) {
-            throw new DatabaseError('Failed to insert product into database');
-        }
+  async createProduct(data: any, session: ClientSession) {
+    const productCollection = this.connection.collection('products')
+    try {
+      return await productCollection.insertOne(data, { session })
+    } catch (error) {
+      throw new DatabaseError('Failed to insert product into database')
     }
+  }
 }
 ```
 
@@ -52,30 +52,42 @@ El controlador es responsable de capturar estos errores y traducirlos en respues
 
 ```typescript
 // src/products/products.controller.ts
-import { Body, Controller, Post, HttpException, HttpStatus } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsService } from './products.service';
-import { DatabaseError, ValidationError } from '../common/errors';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpException,
+  HttpStatus
+} from '@nestjs/common'
+import { CreateProductDto } from './dto/create-product.dto'
+import { ProductsService } from './products.service'
+import { DatabaseError, ValidationError } from '../common/errors'
 
 @Controller('products')
 export class ProductsController {
-    constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) {}
 
-    @Post()
-    async createProduct(@Body() createProductDto: CreateProductDto) {
-        try {
-            const result = await this.productsService.createProduct(createProductDto);
-            return result;
-        } catch (error) {
-            if (error instanceof DatabaseError) {
-                throw new HttpException('Database operation failed', HttpStatus.INTERNAL_SERVER_ERROR);
-            } else if (error instanceof ValidationError) {
-                throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-            } else {
-                throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+  @Post()
+  async createProduct(@Body() createProductDto: CreateProductDto) {
+    try {
+      const result = await this.productsService.createProduct(createProductDto)
+      return result
+    } catch (error) {
+      if (error instanceof DatabaseError) {
+        throw new HttpException(
+          'Database operation failed',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      } else if (error instanceof ValidationError) {
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+      } else {
+        throw new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      }
     }
+  }
 }
 ```
 

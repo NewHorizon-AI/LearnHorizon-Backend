@@ -31,7 +31,7 @@ export class GetUserController {
 
   @Get(':id')
   async getUser(@Param('id') id: string) {
-    return await this.getUserService.execute(id);
+    return await this.getUserService.execute(id)
   }
 }
 ```
@@ -49,11 +49,11 @@ export class GetUserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(id: string) {
-    const user = await this.userRepository.findOneById(id);
+    const user = await this.userRepository.findOneById(id)
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('User not found')
     }
-    return user;
+    return user
   }
 }
 ```
@@ -68,15 +68,17 @@ El **Repositorio** es la capa que interactúa directamente con la base de datos.
 ```typescript
 @Injectable()
 export class UserRepository {
-  constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>
+  ) {}
 
   async findOneById(id: string): Promise<User | null> {
-    return await this.userModel.findById(id).exec();
+    return await this.userModel.findById(id).exec()
   }
 
   async create(user: User): Promise<User> {
-    const newUser = new this.userModel(user);
-    return await newUser.save();
+    const newUser = new this.userModel(user)
+    return await newUser.save()
   }
 
   // Otras operaciones CRUD
@@ -94,14 +96,14 @@ Los **DTOs** definen los esquemas de datos que se reciben y envían a través de
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name: string
 
   @IsEmail()
-  email: string;
+  email: string
 
   @IsString()
   @MinLength(8)
-  password: string;
+  password: string
 }
 ```
 
@@ -113,22 +115,22 @@ Los **Schemas** definen la estructura de los documentos en MongoDB. En el caso d
 - **Ejemplo**: `user.schema.ts`.
 
 ```typescript
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose'
+import { Document } from 'mongoose'
 
 @Schema()
 export class User extends Document {
   @Prop({ required: true })
-  name: string;
+  name: string
 
   @Prop({ required: true, unique: true })
-  email: string;
+  email: string
 
   @Prop({ required: true })
-  password: string;
+  password: string
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(User)
 ```
 
 ### 6. **`mapper/`**
@@ -142,19 +144,19 @@ El **Mapper** se encarga de transformar los datos entre los diferentes niveles d
 @Injectable()
 export class UserMapper {
   dtoToEntity(createUserDto: CreateUserDto): User {
-    const user = new User();
-    user.name = createUserDto.name;
-    user.email = createUserDto.email;
-    user.password = createUserDto.password;
-    return user;
+    const user = new User()
+    user.name = createUserDto.name
+    user.email = createUserDto.email
+    user.password = createUserDto.password
+    return user
   }
 
   entityToDto(user: User): UserDto {
     return {
       name: user.name,
-      email: user.email,
+      email: user.email
       // Otras conversiones
-    };
+    }
   }
 }
 ```
@@ -181,16 +183,21 @@ export class CreateUserController {
 ## Principios de Diseño Aplicados
 
 ### 1. **Single Responsibility Principle (SRP)**
+
 Cada carpeta y archivo tiene una única responsabilidad. Por ejemplo, los controladores se enfocan únicamente en manejar las solicitudes HTTP, mientras que los servicios contienen la lógica de negocio y los repositorios interactúan con la base de datos.
 
 ### 2. **Open/Closed Principle (OCP)**
+
 El sistema está diseñado para ser fácilmente extensible sin necesidad de modificar el código existente. Nuevas funcionalidades o cambios pueden ser introducidos creando nuevos servicios, controladores, o DTOs sin alterar los existentes.
 
 ### 3. **Liskov Substitution Principle (LSP)**
+
 Se garantiza que cualquier implementación o extensión de la funcionalidad respete las interfaces y contratos definidos, asegurando la intercambiabilidad de las clases.
 
 ### 4. **Interface Segregation Principle (ISP)**
+
 Los DTOs y servicios están separados y no contienen más de lo necesario para cumplir con su objetivo. Cada entidad solo expone lo que necesita, asegurando que no haya dependencias innecesarias.
 
 ### 5. **Dependency Inversion Principle (DIP)**
+
 Las dependencias están inyectadas y gestionadas por **NestJS** a través de la inyección de dependencias, lo que facilita la escalabilidad y el testeo.

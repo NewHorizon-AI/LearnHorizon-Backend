@@ -25,12 +25,14 @@ La misión de **Learn Horizon** es ofrecer una plataforma accesible y poderosa d
 ### Instalación
 
 1. Clona el repositorio:
+
    ```bash
    git clone https://github.com/tu-usuario/learn-horizon-backend.git
    cd learn-horizon-backend
    ```
 
 2. Instala las dependencias:
+
    ```bash
    npm install
    ```
@@ -44,11 +46,13 @@ Para iniciar el entorno de desarrollo:
 1. **En PowerShell**:
 
    Establece la variable de entorno:
+
    ```powershell
    $env:NODE_ENV="development"
    ```
 
    Luego, levanta los servicios con Docker:
+
    ```powershell
    docker-compose up
    ```
@@ -56,11 +60,13 @@ Para iniciar el entorno de desarrollo:
 2. **En Command Prompt (CMD)**:
 
    Establece la variable de entorno:
+
    ```cmd
    set NODE_ENV=development
    ```
 
    Luego, levanta los servicios con Docker:
+
    ```cmd
    docker-compose up
    ```
@@ -72,11 +78,13 @@ Para preparar y ejecutar en producción:
 1. **En PowerShell**:
 
    Establece la variable de entorno:
+
    ```powershell
    $env:NODE_ENV="production"
    ```
 
    Luego, levanta los servicios con Docker:
+
    ```powershell
    docker-compose up
    ```
@@ -84,11 +92,13 @@ Para preparar y ejecutar en producción:
 2. **En Command Prompt (CMD)**:
 
    Establece la variable de entorno:
+
    ```cmd
    set NODE_ENV=production
    ```
 
    Luego, levanta los servicios con Docker:
+
    ```cmd
    docker-compose up
    ```
