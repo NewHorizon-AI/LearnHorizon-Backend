@@ -1,21 +1,10 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  ConflictException,
-  NotFoundException
-} from '@nestjs/common'
-import { CreateCategoryDto } from 'src/modules/categories/dto/create-category.dto'
-import { UpdateCategoryDto } from 'src/modules/categories/dto/update-category.dto'
-import { Category } from 'src/modules/categories/schemas/category.schema'
+import { Controller, Post, Put, Get, Delete, Body, Param } from '@nestjs/common'
 import { CategoryService } from '../services/category.service'
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
+
+import { CreateCategoryCompleteDto } from '../dto/create-category-complete.dto'
+import { UpdateCategoryCompleteDto } from '../dto/update-category-complete.dto'
+import { Category } from '../schemas/category.schema'
 
 @ApiTags('categories')
 @Controller('categories')
@@ -23,94 +12,64 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Crear una nueva categoría' })
+  @ApiOperation({ summary: 'Crear una nueva categoría completa' })
   @ApiResponse({
     status: 201,
-    description: 'La categoría ha sido creada exitosamente.',
-    type: Category
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'La categoría ya existe.'
+    description: 'La categoría completa ha sido creada con éxito.'
   })
   async create(
-    @Body() createCategoryDto: CreateCategoryDto
-  ): Promise<Category> {
-    try {
-      return await this.categoryService.create(createCategoryDto)
-    } catch (error) {
-      throw new ConflictException('Category already exists')
-    }
-  }
-
-  @Get()
-  @ApiOperation({ summary: 'Obtener todas las categorías' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de todas las categorías.',
-    type: [Category]
-  })
-  async findAll(): Promise<Category[]> {
-    return this.categoryService.findAll()
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Obtener una categoría por ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'La categoría ha sido encontrada.',
-    type: Category
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Categoría no encontrada.'
-  })
-  async findOne(@Param('id') id: string): Promise<Category> {
-    const category = await this.categoryService.findOne(id)
-    if (!category) {
-      throw new NotFoundException('Category not found')
-    }
-    return category
+    @Body() createCategoryCompleteDto: CreateCategoryCompleteDto
+  ): Promise<void> {
+    await this.categoryService.createComplete(createCategoryCompleteDto)
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Actualizar una categoría' })
-  @ApiResponse({
-    status: 200,
-    description: 'La categoría ha sido actualizada exitosamente.',
-    type: Category
+  @ApiOperation({ summary: 'Actualizar una categoría completa existente' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la categoría',
+    example: '60d2f77bcf86cd799439013'
   })
   @ApiResponse({
-    status: 404,
-    description: 'Categoría no encontrada.'
+    status: 200,
+    description: 'La categoría completa ha sido actualizada con éxito.',
+    type: Category
   })
   async update(
     @Param('id') id: string,
-    @Body() updateCategoryDto: UpdateCategoryDto
-  ): Promise<Category> {
-    const category = await this.categoryService.update(id, updateCategoryDto)
-    if (!category) {
-      throw new NotFoundException('Category not found')
-    }
-    return category
+    @Body() updateCategoryCompleteDto: UpdateCategoryCompleteDto
+  ): Promise<void> {
+    await this.categoryService.updateComplete(id, updateCategoryCompleteDto)
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener una categoría completa por ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la categoría',
+    example: '60d2f77bcf86cd799439013'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'La categoría completa ha sido encontrada.',
+    type: Category
+  })
+  async findOne(@Param('id') id: string): Promise<any> {
+    return this.categoryService.findOneComplete(id)
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Eliminar una categoría' })
-  @ApiResponse({
-    status: 204,
-    description: 'La categoría ha sido eliminada exitosamente.'
+  @ApiOperation({ summary: 'Eliminar una categoría completa por ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la categoría',
+    example: '60d2f77bcf86cd799439013'
   })
   @ApiResponse({
-    status: 404,
-    description: 'Categoría no encontrada.'
+    status: 200,
+    description: 'La categoría completa ha sido eliminada con éxito.'
   })
-  async delete(@Param('id') id: string): Promise<void> {
-    const category = await this.categoryService.delete(id)
-    if (!category) {
-      throw new NotFoundException('Category not found')
-    }
+  async remove(@Param('id') id: string): Promise<void> {
+    await this.categoryService.remove(id)
   }
 }

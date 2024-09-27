@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  learn-horizon-backend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${NODE_ENV:-development}
+    image: ixyz0/learn-horizon-backend-app:latest
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    environment:
+      - SEED_DB=${SEED_DB}
+      - UPLOAD_PATH=${UPLOAD_PATH}
+      - PORT=${PORT}
+      - MONGO_URI_LOCAL=${MONGO_URI_LOCAL}
+      - MONGO_URI_REMOTE=${MONGO_URI_REMOTE}
+    depends_on:
+      - mongo
+    volumes:
+      - .:/learn-horizon-backend-app
+      - /learn-horizon-backend-app/node_modules
+    networks:
+      - learn-horizon-network
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - learn-horizon-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  learn-horizon-network:
+    driver: bridge

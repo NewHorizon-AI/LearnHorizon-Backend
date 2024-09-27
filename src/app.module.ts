@@ -1,33 +1,50 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
+import { APP_FILTER } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
+// * Importar filtro global de excepciones
+import { AllExceptionsFilter } from 'src/common/filters/all-exceptions.filter'
+
+// * Importar los módulos de la aplicación
 import { UserModule } from './modules/users/user.module'
 import { CategoryModule } from './modules/categories/category.module'
-import { PublicationModule } from './modules/publications/publication.module'
-import { CommentModule } from './modules/comments/comment.module'
+import { ArticleModule } from './modules/articles/article.module'
+import { ArticleModelModule } from './modules/article-model/article-model.module'
+import { UploadModule } from './modules/upload/upload.module'
+import { AuthModule } from './modules/auth/auth.module'
 
-import { SeederService } from './seeder'
+// * Importar segunda edición de módulo de artículos
+import { ArticleModulev2 } from './modules/article-beta/article.module'
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri:
+        uri: configService.get<string>(
           process.env.NODE_ENV === 'production'
-            ? configService.get<string>('MONGO_URI_REMOTE')
-            : configService.get<string>('MONGO_URI_LOCAL')
+            ? 'MONGO_URI_REMOTE'
+            : 'MONGO_URI_LOCAL'
+        )
       }),
       inject: [ConfigService]
     }),
     UserModule,
     CategoryModule,
-    PublicationModule,
-    CommentModule
+    ArticleModule,
+    ArticleModelModule,
+    UploadModule,
+    AuthModule,
+    ArticleModulev2
   ],
   controllers: [],
-  providers: [SeederService]
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter
+    }
+  ]
 })
 export class AppModule {}

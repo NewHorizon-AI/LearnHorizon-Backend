@@ -1,80 +1,31 @@
 import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
-import { CreateCategoryDto } from 'src/modules/categories/dto/create-category.dto'
-import { UpdateCategoryDto } from 'src/modules/categories/dto/update-category.dto'
-import { Category } from 'src/modules/categories/schemas/category.schema'
+import { CategoryGetService } from './get/category-get.service'
+import { CategoryPostService } from './post/category-post.service'
+import { CategoryPutService } from './put/category-put.service'
+import { CategoryDeleteService } from './delete/category-delete.service'
 
 @Injectable()
 export class CategoryService {
   constructor(
-    @InjectModel(Category.name) private categoryModel: Model<Category>
+    private readonly categoryGetService: CategoryGetService,
+    private readonly categoryPostService: CategoryPostService,
+    private readonly categoryPutService: CategoryPutService,
+    private readonly categoryDeleteService: CategoryDeleteService
   ) {}
 
-  // Metodo para crear una categoría
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const createdCategory = new this.categoryModel(createCategoryDto)
-    return createdCategory.save()
+  findOneComplete(id: string) {
+    return this.categoryGetService.findOneComplete(id)
   }
 
-  async findAll(): Promise<Category[]> {
-    return this.categoryModel.find().exec()
+  createComplete(dto: any) {
+    return this.categoryPostService.createComplete(dto)
   }
 
-  async findOne(id: string): Promise<Category> {
-    return this.categoryModel.findById(id).exec()
+  updateComplete(id: string, dto: any) {
+    return this.categoryPutService.updateComplete(id, dto)
   }
 
-  async update(
-    id: string,
-    updateCategoryDto: UpdateCategoryDto
-  ): Promise<Category> {
-    return this.categoryModel
-      .findByIdAndUpdate(id, updateCategoryDto, { new: true })
-      .exec()
-  }
-
-  async delete(id: string): Promise<Category> {
-    return this.categoryModel.findByIdAndDelete(id).exec()
-  }
-
-  // Metodo para incrementar el contador de publicaciones de una categoría
-  async incrementPublicationCount(ids: Category[]): Promise<void> {
-    try {
-      await Promise.all(
-        ids.map((id) =>
-          this.categoryModel.findByIdAndUpdate(
-            id,
-            {
-              $inc: { publicationCount: 1 }
-            },
-            { new: true }
-          )
-        )
-      )
-    } catch (error) {
-      throw new Error('Error incrementing publication count')
-    }
-  }
-
-  // Metodo para decrementar el contador de publicaciones de una categoría
-  async decrementPublicationCount(ids: string[]): Promise<void> {
-    try {
-      await Promise.all(
-        ids.map((id) =>
-          this.categoryModel
-            .findByIdAndUpdate(
-              id,
-              {
-                $inc: { publicationCount: -1 }
-              },
-              { new: true }
-            )
-            .exec()
-        )
-      )
-    } catch (error) {
-      throw new Error('Error decrementing publication count')
-    }
+  remove(id: string) {
+    return this.categoryDeleteService.remove(id)
   }
 }

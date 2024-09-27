@@ -1,21 +1,17 @@
-// main.ts
-import { createApp, seedDatabase } from './bootstrap'
-import * as dotenv from 'dotenv'
+import { createApp } from './bootstrap'
 
-dotenv.config() // Cargar las variables de entorno desde el archivo .env
+async function main() {
+  /*
+   * Crear la aplicación de NestJS y ejecutarla en el puerto 3001.
+   * Si la variable de entorno SEED_DB es 'True', se ejecuta el seeding de la base de datos.
+   */
 
-async function bootstrap() {
-  const app = await createApp()
+  const { app, port } = await createApp()
 
-  await app.listen(3001, async () => {
-    console.log('NestJS server listening on port 3001')
-
-    // Opción para ejecutar el seeding
-    const shouldSeed = process.env.SEED_DB === 'True'
-    if (shouldSeed) {
-      await seedDatabase(app)
-    }
+  // * (1) Iniciar la aplicación en el puerto especificado
+  await app.listen(port, async () => {
+    console.log(`NestJS server listening on port ${port}`)
   })
 }
 
-bootstrap()
+main()
