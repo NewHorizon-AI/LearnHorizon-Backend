@@ -11,14 +11,14 @@ import { ArticleController } from './controllers/article.controllers'
 import { ArticleService } from './services/article.service'
 
 // * Importar Recursos
-import { ArticleResource } from './resources/article.resource'
+import { ArticleResourceService } from './resources/article-resource.sevice'
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }])
   ],
   controllers: [ArticleController],
-  providers: [ArticleService, ArticleResource],
-  exports: [ArticleService, MongooseModule]
+  providers: [ArticleService, ArticleResourceService],
+  exports: [MongooseModule]
 })
 export class ArticleModulev2 {}

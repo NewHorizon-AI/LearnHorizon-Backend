@@ -11,9 +11,6 @@ export class CategoryService {
     private readonly categoryResourceService: CategoryResourceService
   ) {}
 
-  // Lógica de negocios adicional si es necesario
-  // Simplemente delega las operaciones CRUD al servicio recurso
-
   async createCategory(
     createCategoryDto: CreateCategoryDto
   ): Promise<Category> {

@@ -10,28 +10,30 @@ import {
 import { CategoryService } from '../services/category.service'
 import { CreateCategoryDto } from '../dtos/create-category.dto'
 import { UpdateCategoryDto } from '../dtos/update-category.dto'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('categories')
 @Controller('categories/v2')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.createCategory(createCategoryDto)
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.categoryService.getCategories()
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.categoryService.getCategoryById(id)
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto
   ) {
@@ -39,7 +41,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.categoryService.deleteCategory(id)
   }
 }
