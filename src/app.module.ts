@@ -33,8 +33,8 @@ import { ArticleModulev2 } from './modules/articles-v2/article.module'
       inject: [ConfigService]
     }),
     UserModule,
-    CategoryModule,
-    ArticleModule,
+    // CategoryModule,
+    // ArticleModule,
     ArticleModelModule,
     UploadModule,
     AuthModule,

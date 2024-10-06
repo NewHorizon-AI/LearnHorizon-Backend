@@ -11,7 +11,7 @@ export class CategoryResourceService {
     @InjectModel(Category.name) private readonly categoryModel: Model<Category>
   ) {}
 
-  // Crear una nueva categoría
+  // ? Crear una nueva categoría
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const createdCategory = new this.categoryModel(createCategoryDto)
     return createdCategory.save()
