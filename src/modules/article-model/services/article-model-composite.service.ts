@@ -3,7 +3,7 @@ import { Types } from 'mongoose'
 
 // * (1) Importar Esquemas
 import { ArticleModel } from '../schemas/article-model.schema'
-import { ArticleModelTransformation } from '../schemas/article-model-transformation.schema'
+import { ArticleModelTransformation } from '../schemas/transformation.schema'
 
 // * (2) Importar Dtos
 import { CreateArticleModelDto } from '../dtos/article-model/create-article-model.dto'

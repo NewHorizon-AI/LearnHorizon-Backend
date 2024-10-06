@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model, Types } from 'mongoose'
 
 // * (1) Importar Esquemas
-import { ArticleModelTransformation } from '../../../schemas/article-model-transformation.schema'
+import { ArticleModelTransformation } from '../../../schemas/transformation.schema'
 
 // * (2) Importar Dtos
 import { CreateArticleModelTransformationDto } from '../../../dtos/article-model-transformation/create-article-model-transformation.dto'

@@ -1,0 +1,69 @@
+import { forwardRef, Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
+
+// * (1) Importar Esquemas
+import {
+  CameraSettings,
+  CameraSettingsSchema
+} from './schemas/camera-settings.schema'
+import {
+  GridSettings,
+  GridSettingsSchema
+} from './schemas/grid-settings.schema'
+import {
+  TransformationsSettings,
+  TransformationsSettingsSchema
+} from './schemas/transformations-settings.schema'
+import {
+  ModelSettings,
+  ModelSettingsSchema
+} from './schemas/model-settings.schema'
+
+// * (2) Importar Controladores
+import { SceneSettingsController } from './controllers/scene.controller'
+
+// * (3) Importar Recursos
+import { CameraSettingsService } from './resources/camera-settings.resource'
+import { GridSettingsService } from './resources/grid-settings.resource'
+import { ModelSettingsService } from './resources/model-settings.resource'
+import { TransformationsSettingsService } from './resources/transformation-settings.resource'
+
+// * (4) Importar Servicios
+import { SceneService } from './services/scene.service'
+
+// * Importar Modulos
+import { UploadModule } from 'src/modules/upload/upload.module'
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: CameraSettings.name,
+        schema: CameraSettingsSchema
+      },
+      {
+        name: GridSettings.name,
+        schema: GridSettingsSchema
+      },
+      {
+        name: TransformationsSettings.name,
+        schema: TransformationsSettingsSchema
+      },
+      {
+        name: ModelSettings.name,
+        schema: ModelSettingsSchema
+      }
+    ]),
+    forwardRef(() => UploadModule)
+  ],
+  controllers: [SceneSettingsController],
+  providers: [
+    SceneService,
+    CameraSettingsService,
+    GridSettingsService,
+    ModelSettingsService,
+    TransformationsSettingsService
+  ],
+  exports: [MongooseModule]
+})
+export class SceneModule {}

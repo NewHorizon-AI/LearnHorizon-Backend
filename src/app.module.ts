@@ -14,6 +14,8 @@ import { ArticleModelModule } from './modules/article-model/article-model.module
 import { UploadModule } from './modules/upload/upload.module'
 import { AuthModule } from './modules/auth/auth.module'
 
+import { SceneModule } from './modules/scene/scene.module'
+
 // * Importar segunda edición de módulo de artículos
 import { ArticleModulev2 } from './modules/article-beta/article.module'
 
@@ -37,7 +39,8 @@ import { ArticleModulev2 } from './modules/article-beta/article.module'
     ArticleModelModule,
     UploadModule,
     AuthModule,
-    ArticleModulev2
+    ArticleModulev2,
+    SceneModule
   ],
   controllers: [],
   providers: [

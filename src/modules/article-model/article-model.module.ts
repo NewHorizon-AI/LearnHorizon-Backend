@@ -10,7 +10,7 @@ import {
 import {
   ArticleModelTransformation,
   ArticleModelTransformationSchema
-} from './schemas/article-model-transformation.schema'
+} from './schemas/transformation.schema'
 
 // * (2) Importar Controladores
 // import { ArticleModelController } from './controllers/article-model.controller'
