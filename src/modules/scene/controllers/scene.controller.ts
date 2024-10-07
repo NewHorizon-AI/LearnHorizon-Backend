@@ -14,7 +14,8 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { SceneService } from '../services/scene.service'
 
 import { CreateSceneSettingsDto } from '../dtos/scene-dto/create-scene-settings.dto'
-import { UpdateSceneSettingsDto } from '../dtos/scene-dto/update-scene-settings.dto'
+
+import { SceneSettings } from '../schemas/scene-settings.schema'
 
 @ApiTags('Scene Settings') // Este decorador es para agruparlo en la documentación de Swagger
 @Controller('scene-settings') // Ruta base para el controlador
@@ -24,23 +25,21 @@ export class SceneSettingsController {
   // ? Crear un nuevo ajuste de escena
   @Post('/default')
   @ApiOperation({ summary: 'Crear un nuevo ajuste de escena' })
-  async create(
-    @Body() createSceneSettingsDto: CreateSceneSettingsDto
-  ): Promise<CreateSceneSettingsDto> {
-    return this.sceneService.createDefault(createSceneSettingsDto)
+  async create(@Body() createSceneSettingsDto: CreateSceneSettingsDto) {
+    this.sceneService.createDefault(createSceneSettingsDto)
   }
 
-  // @Get()
-  // @ApiOperation({ summary: 'Obtener todos los ajustes de escena' })
-  // async findAll(): Promise<SceneSettings[]> {
-  //   // Cambiado a SceneSettings[]
-  //   return this.sceneService.findAll()
-  // }
+  @Get()
+  @ApiOperation({ summary: 'Obtener todos los ajustes de escena' })
+  async findAll(): Promise<SceneSettings[]> {
+    // Cambiado a SceneSettings[]
+    return this.sceneService.findAll()
+  }
 
   // ? Obtener todos los ajustes de escena dado un ID de escena
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un ajuste de escena por ID' })
-  async findOne(@Param('id') id: string): Promise<UpdateSceneSettingsDto> {
+  async findOne(@Param('id') id: string): Promise<SceneSettings> {
     try {
       return this.sceneService.findOne(id)
     } catch (error) {

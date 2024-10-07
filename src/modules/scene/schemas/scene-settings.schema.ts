@@ -8,16 +8,16 @@ import { TransformationsSettings } from './transformations-settings.schema'
 @Schema()
 export class SceneSettings extends Document {
   @Prop({ type: Types.ObjectId, ref: CameraSettings.name })
-  cameraSettings: CameraSettings
+  cameraSettings: Types.ObjectId
 
   @Prop({ type: Types.ObjectId, ref: GridSettings.name })
-  gridSettings: GridSettings
+  gridSettings: Types.ObjectId
 
   @Prop({ type: Types.ObjectId, ref: ModelSettings.name })
-  modelSettings: ModelSettings
+  modelSettings: Types.ObjectId
 
   @Prop({ type: Types.ObjectId, ref: TransformationsSettings.name })
-  transformationsSettings: TransformationsSettings
+  transformationsSettings: Types.ObjectId
 }
 
 export const SceneSettingsSchema = SchemaFactory.createForClass(SceneSettings)

@@ -18,6 +18,10 @@ import {
   ModelSettings,
   ModelSettingsSchema
 } from './schemas/model-settings.schema'
+import {
+  SceneSettings,
+  SceneSettingsSchema
+} from './schemas/scene-settings.schema'
 
 // * (2) Importar Controladores
 import { SceneSettingsController } from './controllers/scene.controller'
@@ -27,6 +31,7 @@ import { CameraSettingsService } from './resources/camera-settings.resource'
 import { GridSettingsService } from './resources/grid-settings.resource'
 import { ModelSettingsService } from './resources/model-settings.resource'
 import { TransformationsSettingsService } from './resources/transformation-settings.resource'
+import { SceneSettingsService } from './resources/scene-settings.resource'
 
 // * (4) Importar Servicios
 import { SceneService } from './services/scene.service'
@@ -52,6 +57,10 @@ import { UploadModule } from 'src/modules/upload/upload.module'
       {
         name: ModelSettings.name,
         schema: ModelSettingsSchema
+      },
+      {
+        name: SceneSettings.name,
+        schema: SceneSettingsSchema
       }
     ]),
     forwardRef(() => UploadModule)
@@ -62,7 +71,8 @@ import { UploadModule } from 'src/modules/upload/upload.module'
     CameraSettingsService,
     GridSettingsService,
     ModelSettingsService,
-    TransformationsSettingsService
+    TransformationsSettingsService,
+    SceneSettingsService
   ],
   exports: [MongooseModule]
 })

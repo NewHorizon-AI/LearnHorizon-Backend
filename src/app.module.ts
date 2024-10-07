@@ -39,7 +39,7 @@ import { ArticleModulev2 } from './modules/article-beta/article.module'
     ArticleModelModule,
     UploadModule,
     AuthModule,
-    ArticleModulev2,
+    // ArticleModulev2,
     SceneModule
   ],
   controllers: [],
