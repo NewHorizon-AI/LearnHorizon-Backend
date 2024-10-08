@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 
 // * Importar filtro global de excepciones
 import { AllExceptionsFilter } from 'src/common/filters/http-exception.filter'
+import { AllExceptionsFilter } from 'src/common/filters/http-exception.filter'
 
 // * Importar los módulos de la aplicación
 import { UserModule } from './modules/users/user.module'
@@ -33,8 +34,8 @@ import { ArticleModulev2 } from './modules/articles-v2/article.module'
       inject: [ConfigService]
     }),
     UserModule,
-    CategoryModule,
-    ArticleModule,
+    // CategoryModule,
+    // ArticleModule,
     ArticleModelModule,
     UploadModule,
     AuthModule,
