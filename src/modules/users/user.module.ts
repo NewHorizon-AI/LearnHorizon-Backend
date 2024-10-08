@@ -6,7 +6,7 @@ import { User, UserSchema } from './schemas/user.schema'
 import { UserProfile, UserProfileSchema } from './schemas/user-details.schema'
 import { UserContact, UserContactSchema } from './schemas/user-contact.schema'
 import { UserData, UserDataSchema } from './schemas/user-data.schema'
-import { Role, RoleSchema } from './schemas/role.schema'
+import { Role, RoleSchema } from './schemas/user-role.schema'
 import { UserRole, UserRoleSchema } from './schemas/user-role.schema'
 
 // * Importar controladores
