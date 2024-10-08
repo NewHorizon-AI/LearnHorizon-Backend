@@ -16,7 +16,7 @@ import { User } from 'src/modules/users/schemas/user.schema'
 export class UpdateArticleDto extends UpdateArticleDtoSwaggerDocs {
   @IsNotEmpty()
   @IsString()
-  title: string
+  title?: string
 
   @IsArray()
   @ArrayNotEmpty()
@@ -30,15 +30,15 @@ export class UpdateArticleDto extends UpdateArticleDtoSwaggerDocs {
 
   @IsUrl()
   @IsOptional()
-  photo: string
+  photo?: string
 
   @IsString()
   @IsOptional()
-  description: string
+  description?: string
 
   @IsString()
   @IsOptional()
-  content: string
+  content?: string
 
   @IsNotEmpty()
   @IsEnum(IArticleStatus, {

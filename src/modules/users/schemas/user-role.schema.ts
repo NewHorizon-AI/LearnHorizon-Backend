@@ -1,25 +1,39 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document, Types } from 'mongoose'
+import { Document } from 'mongoose'
 import { ApiProperty } from '@nestjs/swagger'
+import { RoleEnum } from '../interfaces/role.enum'
 
-import { User } from './user.schema'
-import { Role } from './role.schema'
-
-@Schema({ timestamps: true })
+@Schema()
 export class UserRole extends Document {
-  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
-  @ApiProperty({
-    description: 'ID del usuario al que se le asigna el rol',
-    example: '607d2f77bcf86cd799439011'
+  @Prop({
+    required: true,
+    enum: RoleEnum
   })
-  user_id: User
+  @ApiProperty({
+    description: 'Rol del usuario dentro de la entidad universitaria',
+    example: RoleEnum.ADMIN
+  })
+  role: RoleEnum
 
-  @Prop({ type: Types.ObjectId, ref: Role.name, required: true })
-  @ApiProperty({
-    description: 'ID del rol asignado',
-    example: '60d2f77bcf86cd799439012'
+  @Prop({
+    required: false,
+    maxlength: 255
   })
-  role_id: Role
+  @ApiProperty({
+    description: 'Descripción del rol, hasta un máximo de 255 caracteres',
+    example: 'Administrador con todos los permisos'
+  })
+  roleDescription?: string
+
+  @Prop({
+    required: true,
+    default: true
+  })
+  @ApiProperty({
+    description: 'Indica si el rol está activo',
+    example: true
+  })
+  isActive: boolean
 }
 
 export const UserRoleSchema = SchemaFactory.createForClass(UserRole)
