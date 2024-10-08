@@ -11,9 +11,14 @@ import { User } from 'src/modules/users/schemas/user.schema'
 import { LoginUserDto } from '../dto/login-user.dto'
 import { UserResponseDto } from '../dto/user-response.dto'
 
+import { UserService } from 'src/modules/users/services/user.service'
+
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    private userService: UserService,
+    @InjectModel(User.name) private userModel: Model<User>
+  ) {}
 
   async login(login: LoginUserDto): Promise<UserResponseDto> {
     /*
@@ -33,5 +38,22 @@ export class AuthService {
 
     // * Si no se encuentra el usuario o la contraseña no coincide
     throw new UnauthorizedException('Credenciales incorrectas.')
+  }
+
+  async validateUser(loginUserDto: LoginUserDto): Promise<User | null> {
+    const user = await this.userService.findUserByIdentifier(loginUserDto.email)
+
+    if (
+      user &&
+      (await this.userService.comparePasswords(
+        loginUserDto.password,
+        user.password
+      ))
+    ) {
+      // Si las contraseñas coinciden, devolver el usuario
+      return user
+    }
+
+    return null // Si no coinciden, devolver null
   }
 }

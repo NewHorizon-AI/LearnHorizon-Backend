@@ -18,7 +18,7 @@ export class UserDetails extends Document {
     description: 'Breve biografía del usuario, hasta 500 caracteres',
     example: 'Desarrollador de software con 10 años de experiencia.'
   })
-  bio: string
+  bio?: string
 
   @Prop({ required: false })
   @ApiProperty({
@@ -35,14 +35,14 @@ export class UserDetails extends Document {
     description: 'Identidad de género del usuario',
     example: GenderEnum.MASCULINO
   })
-  genderIdentity: GenderEnum
+  genderIdentity?: GenderEnum
 
   @Prop({ required: true })
   @ApiProperty({
     description: 'Fecha de nacimiento del usuario',
     example: '1990-01-01'
   })
-  birthDate: Date
+  birthDate?: Date
 
   @Prop({
     required: true,
@@ -52,7 +52,7 @@ export class UserDetails extends Document {
     description: 'Idioma preferido del usuario',
     example: LanguageEnum.ESPANOL
   })
-  preferredLanguage: LanguageEnum
+  preferredLanguage?: LanguageEnum
 
   @Prop({ default: 0, min: 0 })
   @ApiProperty({

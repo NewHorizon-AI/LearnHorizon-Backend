@@ -1,117 +1,83 @@
 import {
-  BadRequestException,
-  Body,
   Controller,
   Get,
-  Post
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete
 } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger'
+import { UserService } from '../services/user.service'
 
-// * Importar Dtos para consultas
-// import { CreateUserCompleteDto } from '../dtos/user/create-user-complete.dto'
-// import { UpdateUserCompleteDto } from '../dtos/user/update-user-complete.dto'
-import { CreateUserDto } from '../dtos/user/user/create-user.dto'
+import { CreateUserDto } from '../dtos/user/create-user.dto'
 
-// * Importar Dtos para respuestas
-import { UserResponseDto } from '../dtos/user/user/res/user-response.dto'
+import { User } from '../schemas/user.schema'
 
-// * Importar servicios necesarios
-import { UserCompositeService } from '../services/user-composite.service'
+import { UpdateUserDto } from '../dtos/user/update-user.dto'
 
-@ApiTags('users')
+@ApiTags('users') // Etiqueta Swagger para agrupar las operaciones relacionadas a usuarios
 @Controller('users')
 export class UserController {
-  constructor(private readonly userCompositeService: UserCompositeService) {}
+  constructor(private readonly userService: UserService) {}
 
+  // Crear un usuario con detalles y rol
+  @ApiOperation({ summary: 'Crear un usuario con sus detalles y rol' })
+  @ApiResponse({ status: 201, description: 'Usuario creado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
   @Post()
-  @ApiOperation({ summary: 'Crear un nuevo usuario.' })
-  @ApiResponse({
-    status: 201,
-    description: 'El usuario ha sido creado exitosamente.',
-    type: UserResponseDto
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Error en la solicitud.'
-  })
-  async createUserController(
-    @Body() createUserDto: CreateUserDto
-  ): Promise<UserResponseDto> {
-    return await this.userCompositeService.createDefaultUser(createUserDto)
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(createUserDto)
   }
 
-  // @Post('/complete')
-  // @ApiOperation({ summary: 'Create a new user' })
-  // @ApiResponse({
-  //   status: 201,
-  //   description: 'The user has been successfully created.',
-  //   type: CreateUserCompleteDto
-  // })
-  // @ApiResponse({ status: 400, description: 'Bad request.' })
-  // async createCompleteUser(@Body() createUserDto: CreateUserCompleteDto) {
-  //   return await this.userCompositeService.createCompleteUser(createUserDto)
-  // }
-
-  @Get()
-  @ApiOperation({ summary: 'Obtener todos los usuarios registrados.' })
+  // Obtener todos los usuarios con detalles y roles
+  @ApiOperation({
+    summary: 'Obtener todos los usuarios con sus detalles y roles'
+  })
   @ApiResponse({
     status: 200,
-    description: 'Retorno exitoso de todos los usuarios.',
-    type: UserResponseDto,
-    isArray: true
+    description: 'Listado de usuarios obtenido exitosamente.'
   })
-  async getAllUsersController() {
-    try {
-      return await this.userCompositeService.getAllUsers()
-    } catch (error) {
-      throw new BadRequestException(error.message)
-    }
+  @Get()
+  async findAllUsers(): Promise<User[]> {
+    return this.userService.findAllUsers()
   }
 
-  // // ! READ - GET /users
+  // Obtener un usuario por ID, incluyendo detalles y rol
+  @ApiOperation({
+    summary: 'Obtener un usuario por su ID, incluyendo detalles y rol'
+  })
+  @ApiParam({ name: 'id', description: 'ID del usuario a obtener' })
+  @ApiResponse({ status: 200, description: 'Usuario encontrado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  @Get(':id')
+  async findUserById(@Param('id') id: string) {
+    return this.userService.findUserById(id)
+  }
 
-  // @Get(':id')
-  // @ApiOperation({ summary: 'Obtener un usuario por su _id' })
-  // @ApiParam({
-  //   name: 'id',
-  //   type: String,
-  //   description: 'Identificador unico de un usuario'
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Usuario encontrado exitosamente.',
-  //   type: CreateUserCompleteDto
-  // })
-  // @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  // async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
-  //   return await this.userCompositeService.findUserById(id)
-  // }
+  // Actualizar un usuario, detalles y rol
+  @ApiOperation({ summary: 'Actualizar un usuario, incluyendo detalles y rol' })
+  @ApiParam({ name: 'id', description: 'ID del usuario a actualizar' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario actualizado exitosamente.'
+  })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  @Patch(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<User> {
+    return this.userService.updateUser(id, updateUserDto)
+  }
 
-  // @Put(':id')
-  // @ApiOperation({ summary: 'Update a user' })
-  // @ApiParam({ name: 'id', type: String, description: 'The user ID' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'The user has been successfully updated.',
-  //   type: UpdateUserCompleteDto
-  // })
-  // @ApiResponse({ status: 404, description: 'User not found.' })
-  // async updateUser(
-  //   @Param('id') id: string,
-  //   @Body() updateUserDto: UpdateUserCompleteDto
-  // ) {
-  //   return await this.userCompositeService.updateUser(id, updateUserDto)
-  // }
-
-  // @Delete(':id')
-  // @ApiOperation({ summary: 'Delete a user' })
-  // @ApiParam({ name: 'id', type: String, description: 'The user ID' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'The user has been successfully deleted.'
-  // })
-  // @ApiResponse({ status: 404, description: 'User not found.' })
-  // async deleteUser(@Param('id') id: string) {
-  //   return await this.userCompositeService.deleteUser(id)
-  // }
+  // Eliminar un usuario junto con sus detalles y rol
+  @ApiOperation({ summary: 'Eliminar un usuario, incluyendo detalles y rol' })
+  @ApiParam({ name: 'id', description: 'ID del usuario a eliminar' })
+  @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  @Delete(':id')
+  async removeUser(@Param('id') id: string) {
+    return this.userService.removeUser(id)
+  }
 }

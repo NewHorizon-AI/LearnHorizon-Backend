@@ -3,33 +3,27 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 // Importacion de los modelos de la base de datos
 import { User, UserSchema } from './schemas/user.schema'
-import { UserProfile, UserProfileSchema } from './schemas/user-details.schema'
-import { UserContact, UserContactSchema } from './schemas/user-contact.schema'
-import { UserData, UserDataSchema } from './schemas/user-data.schema'
-import { Role, RoleSchema } from './schemas/user-role.schema'
-import { UserRole, UserRoleSchema } from './schemas/user-role.schema'
+import { UserDetails, UserDetailsSchema } from './schemas/user-details.schema'
 
 // * Importar controladores
 import { UserController } from './controllers/user.controller'
-import { UserGetController } from './controllers/get/get-user.controller'
 
-// Importacion de los servicios
-import { UserCompositeService } from './services/user-composite.service'
-import { UserService } from './services/user-services/user.service'
+// * Importar servicios
+import { UserService } from './services/user.service'
+
+// Importacion de los recursos
+import { UserResourceService } from './resources/user-resource.service'
+import { UserDetailsResourceService } from './resources/user-details-resource.service'
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
-      { name: UserProfile.name, schema: UserProfileSchema },
-      { name: UserContact.name, schema: UserContactSchema },
-      { name: UserData.name, schema: UserDataSchema },
-      { name: Role.name, schema: RoleSchema },
-      { name: UserRole.name, schema: UserRoleSchema }
+      { name: UserDetails.name, schema: UserDetailsSchema }
     ])
   ], // Importar el modelo de la base de datos
-  controllers: [UserController, UserGetController],
-  providers: [UserService, UserCompositeService],
-  exports: [MongooseModule, UserService, UserCompositeService] // Exportar el módulo de Mongoose
+  controllers: [UserController],
+  providers: [UserService, UserResourceService, UserDetailsResourceService],
+  exports: [MongooseModule, UserService] // Exportar el módulo de Mongoose
 })
 export class UserModule {}

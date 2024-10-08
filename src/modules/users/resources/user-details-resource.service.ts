@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { UserDetails } from './schemas/user-details.schema'
-import { CreateUserDetailsDto } from './dto/create-user-details.dto'
-import { UpdateUserDetailsDto } from './dto/update-user-details.dto'
+
+import { UserDetails } from '../schemas/user-details.schema'
+
+import { CreateUserDetailsDto } from '../dtos/user-details/create-user-details.dto'
+import { UpdateUserDetailsDto } from '../dtos/user-details/update-user-details.dto'
 
 @Injectable()
-export class UserDetailsService {
+export class UserDetailsResourceService {
   constructor(
     @InjectModel(UserDetails.name)
     private readonly userDetailsModel: Model<UserDetails>
@@ -34,20 +36,13 @@ export class UserDetailsService {
     return userDetails
   }
 
-  // Actualizar UserDetails por ID
   async update(
     id: string,
     updateUserDetailsDto: UpdateUserDetailsDto
   ): Promise<UserDetails> {
-    const updatedUserDetails = await this.userDetailsModel
+    return this.userDetailsModel
       .findByIdAndUpdate(id, updateUserDetailsDto, { new: true })
       .exec()
-
-    if (!updatedUserDetails) {
-      throw new NotFoundException(`UserDetails with ID ${id} not found`)
-    }
-
-    return updatedUserDetails
   }
 
   // Eliminar UserDetails por ID

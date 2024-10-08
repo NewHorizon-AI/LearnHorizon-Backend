@@ -47,6 +47,8 @@ export class SceneService {
         createSceneSettingsDto.transformationsSettings
       )
 
+    // new Types.ObjectId(createdRole._id as string)
+
     const sceneSettings = this.sceneSettings.create({
       gridSettings: createdGridSettings,
       modelSettings: createdModelSettings,
