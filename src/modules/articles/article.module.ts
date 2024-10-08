@@ -23,7 +23,7 @@ import { ArticleMarkdownService } from './services/article-services/article-mark
 // * (4) Importar Módulos
 import { CategoryModule } from '../categories/category.module'
 import { UserModule } from 'src/modules/users/user.module'
-import { ArticleModelModule } from 'src/modules/article-model/article-model.module'
+// import { ArticleModelModule } from 'src/modules/article-model/article-model.module'
 
 @Module({
   imports: [
@@ -33,8 +33,8 @@ import { ArticleModelModule } from 'src/modules/article-model/article-model.modu
       { name: ArticleMarkdown.name, schema: ArticleMarkdownSchema }
     ]),
     CategoryModule,
-    UserModule,
-    ArticleModelModule
+    UserModule
+    // ArticleModelModule
   ],
   controllers: [ArticleController],
   providers: [

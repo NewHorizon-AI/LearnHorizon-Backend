@@ -5,14 +5,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 
 // * Importar filtro global de excepciones
 import { AllExceptionsFilter } from 'src/common/filters/http-exception.filter'
-import { AllExceptionsFilter } from 'src/common/filters/http-exception.filter'
 
 // * Importar los módulos de la aplicación
 import { UserModule } from './modules/users/user.module'
-import { CategoryModule } from './modules/categories/category.module'
-import { ArticleModule } from './modules/articles/article.module'
-import { ArticleModelModule } from './modules/article-model/article-model.module'
-import { UploadModule } from './modules/upload/upload.module'
+// import { CategoryModule } from './modules/categories/category.module'
+// import { ArticleModule } from './modules/articles/article.module'
+
+// import { UploadModule } from './modules/upload/upload.module'
 import { AuthModule } from './modules/auth/auth.module'
 
 import { SceneModule } from './modules/scene/scene.module'
@@ -36,12 +35,11 @@ import { ArticleModulev2 } from './modules/articles-v2/article.module'
     UserModule,
     // CategoryModule,
     // ArticleModule,
-    ArticleModelModule,
-    UploadModule,
+    // UploadModule,
     AuthModule,
-    SceneModule
-    // // ArticleModulev2,
-    // // CategoryModuleV2
+    SceneModule,
+    ArticleModulev2,
+    CategoryModuleV2
   ],
   controllers: [],
   providers: [

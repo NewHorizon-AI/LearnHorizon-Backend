@@ -18,7 +18,7 @@ import { ArticleDataService } from '../services/article-services/article-data/ar
 import { ArticleMarkdownService } from '../services/article-services/article-markdown/article-markdown.service'
 
 // * (4) Importar los servicios externos
-import { ArticleModelCompositeService } from 'src/modules/article-model/services/article-model-composite.service'
+// import { ArticleModelCompositeService } from 'src/modules/article-model/services/article-model-composite.service'
 // import { CreateArticleModelDto } from 'src/modules/article-model/dtos/article-model/create-article-model.dto'
 
 @Injectable()
@@ -26,10 +26,10 @@ export class ArticleCompositeService {
   constructor(
     private articleBaseService: ArticleBaseService,
     private articleDataService: ArticleDataService,
-    private articleMarkdownService: ArticleMarkdownService,
+    private articleMarkdownService: ArticleMarkdownService
 
     // * Servicios de cada tabla de article model
-    private articleModelCompositeService: ArticleModelCompositeService
+    // private articleModelCompositeService: ArticleModelCompositeService
   ) {}
 
   // ! createArticleDraft - Crea la base de un artículo con datos mínimos
@@ -50,21 +50,21 @@ export class ArticleCompositeService {
         await this.articleBaseService.creatArticle(createArticleDto)
 
       // * (3) Creación de datos del modelo del artículo
-      const articleModel =
-        await this.articleModelCompositeService.createArticleModel(
-          article.toJSON()._id
-        )
+      // const articleModel =
+      //   await this.articleModelCompositeService.createArticleModel(
+      //     article.toJSON()._id
+      //   )
 
       // * (3) Creación de datos extra del modelo del artículo
-      const transformation =
-        await this.articleModelCompositeService.createArticleModelTransformation(
-          articleModel.toJSON()._id
-        )
+      // const transformation =
+      //   await this.articleModelCompositeService.createArticleModelTransformation(
+      //     articleModel.toJSON()._id
+      //   )
 
       // * (4) Union de los datos del artículo
       const articleDetails = {
-        article,
-        transformation
+        article
+        // transformation
       }
       return articleDetails
     } catch (error) {
@@ -97,19 +97,24 @@ export class ArticleCompositeService {
     const object_id = new Types.ObjectId(article_id)
 
     try {
-      const [article, data, markdown, transformation] = await Promise.all([
+      const [
+        article,
+        data,
+        markdown
+        // , transformation
+      ] = await Promise.all([
         this.articleBaseService.getArticleById(object_id),
         this.articleDataService.findCompositeArticleDataById(object_id),
-        this.articleMarkdownService.findCompositeArticleMarkdownById(object_id),
-        this.articleModelCompositeService.getTransformationById(object_id)
+        this.articleMarkdownService.findCompositeArticleMarkdownById(object_id)
+        // this.articleModelCompositeService.getTransformationById(object_id)
       ])
 
       // * (4) Union de los datos del artículo
       const articleDetails = {
         article,
         data,
-        markdown,
-        transformation
+        markdown
+        // transformation
       }
 
       return articleDetails
@@ -204,8 +209,8 @@ export class ArticleCompositeService {
       await Promise.all([
         this.articleBaseService.deleteArticle(object_id),
         this.articleDataService.deleteArticleData(object_id),
-        this.articleMarkdownService.deleteArticleMarkdown(object_id),
-        this.articleModelCompositeService.deleteArticleModelCascade(object_id)
+        this.articleMarkdownService.deleteArticleMarkdown(object_id)
+        // this.articleModelCompositeService.deleteArticleModelCascade(object_id)
       ])
     } catch (error) {
       throw new Error(

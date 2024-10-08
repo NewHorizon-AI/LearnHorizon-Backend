@@ -1,13 +1,9 @@
-import { IsNotEmpty, IsString, MaxLength, IsInt, Min } from 'class-validator'
-import { CategorySwaggerDocs } from '../documentation/category.swagger'
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator'
+import { CategorySwaggerDocs } from '../documentation/category.swagger.dto'
 
-export class CreateCategoryDto implements CategorySwaggerDocs {
+export class CreateCategoryDto extends CategorySwaggerDocs {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
   name: string
-
-  @IsInt()
-  @Min(0)
-  numberOfArticles: number
 }

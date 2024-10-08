@@ -6,7 +6,7 @@ import { Type } from 'class-transformer'
 import { CreateArticleDto } from '../article/article-base/create-article.dto'
 import { CreateArticleDataDto } from '../article/article-data/create-article-data.dto'
 import { CreateArticleMarkdownDto } from '../article/article-markdown/create-article-markdown.dto'
-import { CreateArticleModelTransformationDto } from 'src/modules/article-model/dtos/article-model-transformation/create-article-model-transformation.dto'
+// import { CreateArticleModelTransformationDto } from 'src/modules/article-model/dtos/article-model-transformation/create-article-model-transformation.dto'
 
 export class ArticleCompositeResponseDto {
   @ApiProperty({
@@ -36,12 +36,12 @@ export class ArticleCompositeResponseDto {
   @Type(() => CreateArticleMarkdownDto)
   markdown?: CreateArticleMarkdownDto
 
-  @ApiProperty({
-    description: 'Contenido en de transformaciones del artículo',
-    type: CreateArticleModelTransformationDto
-  })
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => CreateArticleMarkdownDto)
-  transformation?: CreateArticleModelTransformationDto
+  // @ApiProperty({
+  //   description: 'Contenido en de transformaciones del artículo',
+  //   type: CreateArticleModelTransformationDto
+  // })
+  // @IsOptional()
+  // @ValidateNested()
+  // @Type(() => CreateArticleMarkdownDto)
+  // transformation?: CreateArticleModelTransformationDto
 }

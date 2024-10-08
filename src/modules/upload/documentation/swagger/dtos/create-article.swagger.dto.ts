@@ -1,11 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IArticleStatus } from 'src/modules/articles-v2/interfaces/article-status.enum'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
-import { User } from 'src/modules/users/schemas/user.schema'
 
 // *  Importar los esquemas necesarios
+import { User } from 'src/modules/users/schemas/user.schema'
+import { Category } from 'src/modules/categories-v2/schemas/category.schema'
 
-export class UpdateArticleDtoSwaggerDocs {
+export class CreateArticleDtoSwaggerDocs {
   @ApiProperty({
     description: 'Título del artículo',
     example: 'Cómo usar NestJS con MongoDB',
@@ -43,11 +42,4 @@ export class UpdateArticleDtoSwaggerDocs {
     example: '# Título\n\nContenido del artículo'
   })
   content: string
-
-  @ApiProperty({
-    description: 'Estado del artículo',
-    example: IArticleStatus.PUBLISHED,
-    default: IArticleStatus.DRAFT
-  })
-  status: IArticleStatus
 }

@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IArticleStatus } from 'src/modules/articles-v2/interfaces/article-status.enum'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
-import { User } from 'src/modules/users/schemas/user.schema'
 
 // *  Importar los esquemas necesarios
+import { User } from 'src/modules/users/schemas/user.schema'
+import { Category } from 'src/modules/categories-v2/schemas/category.schema'
 
-export class UpdateArticleDtoSwaggerDocs {
+export class ArticleSwaggerDocs {
   @ApiProperty({
     description: 'Título del artículo',
     example: 'Cómo usar NestJS con MongoDB',
@@ -37,6 +37,20 @@ export class UpdateArticleDtoSwaggerDocs {
     example: 'Este es un artículo sobre NestJS y MongoDB.'
   })
   description: string
+
+  @ApiProperty({
+    description: 'Número de vistas del artículo',
+    example: 100,
+    default: 0
+  })
+  views: number
+
+  @ApiProperty({
+    description: 'Número de likes del artículo',
+    example: 50,
+    default: 0
+  })
+  likes: number
 
   @ApiProperty({
     description: 'Contenido del artículo en formato Markdown',

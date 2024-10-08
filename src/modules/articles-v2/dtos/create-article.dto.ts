@@ -12,7 +12,7 @@ import { User } from 'src/modules/users/schemas/user.schema'
 import { Category } from 'src/modules/categories-v2/schemas/category.schema'
 import { CreateArticleDtoSwaggerDocs } from '../documentation/swagger/dtos/create-article.swagger.dto'
 
-export class CreateArticleDto implements CreateArticleDtoSwaggerDocs {
+export class CreateArticleDto extends CreateArticleDtoSwaggerDocs {
   @IsNotEmpty()
   @IsString()
   title: string

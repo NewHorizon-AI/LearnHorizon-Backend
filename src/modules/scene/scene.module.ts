@@ -37,7 +37,7 @@ import { SceneSettingsService } from './resources/scene-settings.resource'
 import { SceneService } from './services/scene.service'
 
 // * Importar Modulos
-import { UploadModule } from 'src/modules/upload/upload.module'
+// import { UploadModule } from 'src/modules/upload/upload.module'
 
 @Module({
   imports: [
@@ -62,8 +62,7 @@ import { UploadModule } from 'src/modules/upload/upload.module'
         name: SceneSettings.name,
         schema: SceneSettingsSchema
       }
-    ]),
-    forwardRef(() => UploadModule)
+    ])
   ],
   controllers: [SceneSettingsController],
   providers: [
