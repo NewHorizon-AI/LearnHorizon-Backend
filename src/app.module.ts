@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { APP_FILTER } from '@nestjs/core'
+// import { APP_FILTER } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
 // * Importar filtro global de excepciones
@@ -11,7 +11,7 @@ import { UserModule } from './modules/users/user.module'
 // import { CategoryModule } from './modules/categories/category.module'
 // import { ArticleModule } from './modules/articles/article.module'
 
-// import { UploadModule } from './modules/upload/upload.module'
+import { DigitalAssetModule } from './modules/digital-asset/digital-asset.module'
 import { AuthModule } from './modules/auth/auth.module'
 
 import { SceneModule } from './modules/scene/scene.module'
@@ -35,7 +35,7 @@ import { ArticleModulev2 } from './modules/articles-v2/article.module'
     UserModule,
     // CategoryModule,
     // ArticleModule,
-    // UploadModule,
+    DigitalAssetModule,
     AuthModule,
     SceneModule,
     ArticleModulev2,

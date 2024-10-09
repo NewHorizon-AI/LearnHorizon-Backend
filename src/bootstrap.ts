@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { AppModule } from './app.module'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
-import { SeederService } from './seeder'
+// import { SeederService } from './seeder'
 
 export async function createApp() {
   // * (1) Crear la aplicación de NestJS
@@ -54,7 +54,7 @@ export async function setupEnvDependencies(
     // * (1) Sembrar la base de datos si la variable de entorno SEED_DB es 'True'
     const shouldSeed = configService.get('SEED_DB') === 'True'
     if (shouldSeed) {
-      await seedDatabase(app)
+      // await seedDatabase(app)
     }
 
     // * (3) Configurar la ruta de carga de archivos
@@ -70,21 +70,21 @@ export async function setupEnvDependencies(
   }
 }
 
-export async function seedDatabase(app: INestApplication<any>) {
-  /*
-   * Obtener el servicio SeederService de la aplicación y ejecutar el método seedDatabase().
-   * Este método se encarga de sembrar la base de datos con datos de prueba.
-   * Si ocurre un error durante la siembra, se captura y se muestra en la consola.
-   */
+// export async function seedDatabase(app: INestApplication<any>) {
+//   /*
+//    * Obtener el servicio SeederService de la aplicación y ejecutar el método seedDatabase().
+//    * Este método se encarga de sembrar la base de datos con datos de prueba.
+//    * Si ocurre un error durante la siembra, se captura y se muestra en la consola.
+//    */
 
-  // * (1) Obtener el servicio SeederService de la aplicación
-  const seeder = app.get(SeederService)
-  try {
-    // * (2) Sembrar la base de datos
-    await seeder.seedDatabase()
-    console.log('Database seeding completed.')
-  } catch (error) {
-    // * (3) Mostrar un mensaje de error si ocurre un error durante la siembra
-    console.error('Error seeding database:', error)
-  }
-}
+//   // * (1) Obtener el servicio SeederService de la aplicación
+//   // const seeder = app.get(SeederService)
+//   try {
+//     // * (2) Sembrar la base de datos
+//     await seeder.seedDatabase()
+//     console.log('Database seeding completed.')
+//   } catch (error) {
+//     // * (3) Mostrar un mensaje de error si ocurre un error durante la siembra
+//     console.error('Error seeding database:', error)
+//   }
+// }

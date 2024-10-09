@@ -72,4 +72,4 @@ export class DigitalAsset extends Document {
   isDeleted: boolean
 }
 
-export const FileSchema = SchemaFactory.createForClass(File)
+export const DigitalAssetSchema = SchemaFactory.createForClass(DigitalAsset)

@@ -13,7 +13,11 @@ export class GltfModelAsset extends DigitalAsset {
     default: 'model/gltf+json',
     validate: {
       validator: (value: string) => {
-        const allowedTypes = ['model/gltf+json', 'model/gltf-binary']
+        const allowedTypes = [
+          'model/gltf+json',
+          'model/gltf-binary',
+          'application/octet-stream'
+        ]
         return allowedTypes.includes(value)
       },
       message: 'Tipo de archivo no permitido'
@@ -34,7 +38,7 @@ export class GltfModelAsset extends DigitalAsset {
 
   @Prop({
     enum: ['validando', 'validado', 'rechazado'],
-    default: 'draft',
+    default: 'validando',
     index: true
   })
   status: string
