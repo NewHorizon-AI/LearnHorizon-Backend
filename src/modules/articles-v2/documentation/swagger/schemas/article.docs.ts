@@ -2,8 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IArticleStatus } from 'src/modules/articles-v2/interfaces/article-status.enum'
 
 // *  Importar los esquemas necesarios
-import { User } from 'src/modules/users/schemas/user.schema'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
+import { Types } from 'mongoose'
 
 export class ArticleSwaggerDocs {
   @ApiProperty({
@@ -18,13 +17,13 @@ export class ArticleSwaggerDocs {
     description: 'Autores del artículo',
     example: '[UserObjectId1, UserObjectId2]'
   })
-  users: User[]
+  users: Types.ObjectId[]
 
   @ApiProperty({
     description: 'Categorías del artículo',
     example: '[CategoryObjectId1, CategoryObjectId2]'
   })
-  categories: Category[]
+  categories: Types.ObjectId[]
 
   @ApiProperty({
     description: 'URL de la foto del artículo',

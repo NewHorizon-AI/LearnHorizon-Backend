@@ -14,6 +14,8 @@ export class ArticleResourceService {
 
   // ? Método para crear un nuevo artículo
   async create(createArticle: CreateArticleDto) {
+    // * Por cada usuario en el array de usuarios, se verifica si el usuario existe
+
     const createdArticle = new this.model(createArticle)
     return await createdArticle.save()
   }

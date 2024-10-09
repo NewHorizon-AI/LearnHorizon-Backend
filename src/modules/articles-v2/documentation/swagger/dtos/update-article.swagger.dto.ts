@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { Types } from 'mongoose'
 import { IArticleStatus } from 'src/modules/articles-v2/interfaces/article-status.enum'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
-import { User } from 'src/modules/users/schemas/user.schema'
 
 // *  Importar los esquemas necesarios
 
@@ -18,13 +17,13 @@ export class UpdateArticleDtoSwaggerDocs {
     description: 'Autores del artículo',
     example: '[UserObjectId1, UserObjectId2]'
   })
-  users?: User[]
+  users?: Types.ObjectId[]
 
   @ApiProperty({
     description: 'Categorías del artículo',
     example: '[CategoryObjectId1, CategoryObjectId2]'
   })
-  categories?: Category[]
+  categories?: Types.ObjectId[]
 
   @ApiProperty({
     description: 'URL de la foto del artículo',

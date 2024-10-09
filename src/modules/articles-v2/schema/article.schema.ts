@@ -10,23 +10,23 @@ import { Category } from 'src/modules/categories-v2/schemas/category.schema'
 import { User } from 'src/modules/users/schemas/user.schema'
 
 @Schema({ timestamps: true })
-export class Article extends Document implements ArticleSwaggerDocs {
+export class Article extends Document {
   @Prop()
   title: string
 
   @Prop({ type: [{ type: Types.ObjectId, ref: User.name }], required: true })
-  users: User[]
+  users: Types.ObjectId[]
 
   @Prop({
     type: [{ type: Types.ObjectId, ref: Category.name }]
   })
-  categories: Category[]
+  categories?: Types.ObjectId[]
 
   @Prop()
-  photo: string
+  photo?: string
 
   @Prop()
-  description: string
+  description?: string
 
   @Prop({ default: 0 })
   views: number

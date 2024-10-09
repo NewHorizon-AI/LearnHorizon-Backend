@@ -8,9 +8,8 @@ import {
   IsUrl
 } from 'class-validator'
 
-import { User } from 'src/modules/users/schemas/user.schema'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
 import { CreateArticleDtoSwaggerDocs } from '../documentation/swagger/dtos/create-article.swagger.dto'
+import { Types } from 'mongoose'
 
 export class CreateArticleDto extends CreateArticleDtoSwaggerDocs {
   @IsNotEmpty()
@@ -20,12 +19,11 @@ export class CreateArticleDto extends CreateArticleDtoSwaggerDocs {
   @IsArray()
   @ArrayNotEmpty()
   @IsMongoId({ each: true })
-  users: User[]
+  users: Types.ObjectId[]
 
   @IsArray()
-  @ArrayNotEmpty()
   @IsMongoId({ each: true })
-  categories: Category[]
+  categories?: Types.ObjectId[]
 
   @IsUrl()
   @IsOptional()

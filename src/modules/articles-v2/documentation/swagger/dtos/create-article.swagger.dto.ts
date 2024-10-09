@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 // *  Importar los esquemas necesarios
-import { User } from 'src/modules/users/schemas/user.schema'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
+
+import { IsOptional } from 'class-validator'
+import { Types } from 'mongoose'
 
 export class CreateArticleDtoSwaggerDocs {
   @ApiProperty({
@@ -15,31 +16,35 @@ export class CreateArticleDtoSwaggerDocs {
 
   @ApiProperty({
     description: 'Autores del artículo',
-    example: '[UserObjectId1, UserObjectId2]'
+    example: '["6705c5e6a32ebafb45d0f14e"]'
   })
-  users: User[]
+  users: Types.ObjectId[]
 
   @ApiProperty({
     description: 'Categorías del artículo',
-    example: '[CategoryObjectId1, CategoryObjectId2]'
+    example: '["6705c5e6a32ebafb45d0f14e"]'
   })
-  categories: Category[]
+  @IsOptional()
+  categories?: Types.ObjectId[]
 
   @ApiProperty({
     description: 'URL de la foto del artículo',
     example: 'https://example.com/photo.jpg'
   })
-  photo: string
+  @IsOptional()
+  photo?: string
 
   @ApiProperty({
     description: 'Descripción del artículo',
     example: 'Este es un artículo sobre NestJS y MongoDB.'
   })
-  description: string
+  @IsOptional()
+  description?: string
 
   @ApiProperty({
     description: 'Contenido del artículo en formato Markdown',
     example: '# Título\n\nContenido del artículo'
   })
-  content: string
+  @IsOptional()
+  content?: string
 }

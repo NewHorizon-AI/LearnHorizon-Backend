@@ -1,32 +1,30 @@
 import {
   IsOptional,
   IsEnum,
-  IsNotEmpty,
   IsString,
-  ArrayNotEmpty,
   IsMongoId,
   IsArray,
   IsUrl
 } from 'class-validator'
 import { IArticleStatus } from '../interfaces/article-status.enum'
 import { UpdateArticleDtoSwaggerDocs } from '../documentation/swagger/dtos/update-article.swagger.dto'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
-import { User } from 'src/modules/users/schemas/user.schema'
+
+import { Types } from 'mongoose'
 
 export class UpdateArticleDto extends UpdateArticleDtoSwaggerDocs {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   title?: string
 
   @IsArray()
-  @ArrayNotEmpty()
+  @IsOptional()
   @IsMongoId({ each: true })
-  users: User[]
+  users?: Types.ObjectId[]
 
   @IsArray()
-  @ArrayNotEmpty()
+  @IsOptional()
   @IsMongoId({ each: true })
-  categories: Category[]
+  categories?: Types.ObjectId[]
 
   @IsUrl()
   @IsOptional()
@@ -40,7 +38,7 @@ export class UpdateArticleDto extends UpdateArticleDtoSwaggerDocs {
   @IsOptional()
   content?: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(IArticleStatus, {
     message:
       'El estado debe ser uno de los valores permitidos en IArticleStatus'
