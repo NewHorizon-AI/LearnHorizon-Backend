@@ -8,7 +8,9 @@ import {
   Delete,
   Patch,
   Body,
-  HttpCode
+  HttpCode,
+  NotFoundException,
+  Res
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 
@@ -23,6 +25,10 @@ import {
   ApiParam
 } from '@nestjs/swagger'
 import { Express } from 'express'
+import path from 'path'
+import { Response } from 'express'
+
+import * as fsSync from 'fs'
 
 @ApiTags('Gltf Model Assets')
 @Controller('gltf-model-assets')
@@ -83,6 +89,33 @@ export class GltfModelAssetController {
     @Body() updateGltfModelAssetDto: UpdateGltfModelAssetDto
   ) {
     return this.gltfModelAssetService.update(id, updateGltfModelAssetDto)
+  }
+
+  // Endpoint para devolver un archivo GLTF por ID
+  @Get(':id/file')
+  @ApiOperation({ summary: 'Obtener archivo GLTF por ID' })
+  @ApiParam({ name: 'id', description: 'ID del modelo GLTF' })
+  @ApiResponse({ status: 200, description: 'Archivo GLTF devuelto.' })
+  @ApiResponse({ status: 404, description: 'Modelo GLTF no encontrado.' })
+  async getFile(@Param('id') id: string, @Res() res: Response) {
+    const gltfModelAsset = await this.gltfModelAssetService.findOne(id)
+
+    if (!gltfModelAsset) {
+      throw new NotFoundException(`Modelo GLTF con id ${id} no encontrado`)
+    }
+
+    // Define the file path
+    const filePath = path.join(__dirname, 'path_to_gltf_files', `${id}.gltf`)
+
+    // Verifica si el archivo existe en la ruta especificada
+    if (!fsSync.existsSync(filePath)) {
+      throw new NotFoundException(
+        `Archivo GLTF no encontrado en la ruta ${filePath}`
+      )
+    }
+
+    // Devuelve el archivo como respuesta
+    res.sendFile(filePath)
   }
 
   @Delete(':id')
