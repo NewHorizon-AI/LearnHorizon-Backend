@@ -18,8 +18,8 @@ import { QueryOptionsDto } from '../dtos/article-query/query-options.dto'
 import { ArticleCompositeResponseDto } from '../dtos/response/article-composite-response.dto'
 import { CreateArticleDto } from '../dtos/article/article-base/create-article.dto'
 
-@ApiTags('articles')
-@Controller('articles')
+@ApiTags('article')
+@Controller('article')
 export class ArticleController {
   constructor(
     private readonly articleCompositeService: ArticleCompositeService
@@ -35,13 +35,17 @@ export class ArticleController {
   async createArticleBase(
     @Body() createArticleDto: CreateArticleDto
   ): Promise<CreateArticleDto> {
-    const article =
-      await this.articleCompositeService.createArticleDraft(createArticleDto)
-    return article
+    try {
+      return await this.articleCompositeService.createArticleDraft(
+        createArticleDto
+      )
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   // * Obtener una lista de artículos basada en parámetros de consulta por usuario
-  @Get('details/:id')
+  @Get('/e/:id')
   @ApiOperation({ summary: 'Get an article by ID' })
   @ApiResponse({
     status: 200,
@@ -53,17 +57,20 @@ export class ArticleController {
     description: 'Article not found.'
   })
   async getArticleDetails(@Param('id') article_id: string) {
-    /* 
+    /*
       * Obtiene un artículo completo por ID
       @ Param article_id ID del artículo a recuperar
 
     */
 
-    return await this.articleCompositeService.getArticleDetails(article_id)
+    try {
+      return await this.articleCompositeService.getArticleDetails(article_id)
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
-  // * Obtener una lista de artículos basada en parámetros de consulta por usuario
-  @Get('e/:id')
+  @Get('/a/:id')
   @ApiOperation({ summary: 'Get an article by ID' })
   @ApiResponse({
     status: 200,
@@ -75,17 +82,11 @@ export class ArticleController {
     description: 'Article not found.'
   })
   async getEditableArticle(@Param('id') article_id: string) {
-    /* 
-      * Obtiene un artículo completo por ID
-      @ Param article_id ID del artículo a recuperar
-
-    */
-
     return await this.articleCompositeService.getArticleDetails(article_id)
   }
 
   // * Obtener una lista de artículos basada en parámetros de consulta por usuario
-  @Get('u/:user_id')
+  @Get('/u/:user_id')
   @ApiOperation({
     summary:
       'Obtiene una lista de artículos filtrada por usuario y opciones de consulta',
