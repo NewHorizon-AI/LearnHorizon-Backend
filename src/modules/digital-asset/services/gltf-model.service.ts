@@ -59,13 +59,16 @@ export class GltfModelService {
   async getModelByArticleId(articleId: string): Promise<GltfModelAsset> {
     const article = await this.articleService.getArticleById(articleId)
 
-    if (!article) {
-      throw new NotFoundException(`El Artículo con ID ${articleId} no existe`)
+    if (!article.models || article.models.length === 0) {
+      throw new NotFoundException(
+        `El Artículo con ID ${articleId} no tiene modelos`
+      )
     }
 
-    const models = await this.gltfModelAssetResourceService.findByArticleId(
-      article.models[0].toString()
-    )
+    const articleModels = article.models[0].toString()
+
+    const models =
+      await this.gltfModelAssetResourceService.findByArticleId(articleModels)
 
     return models
   }

@@ -80,7 +80,11 @@ export class GltfModelAssetResourceService {
   }
 
   async findByArticleId(id: string): Promise<GltfModelAsset> {
-    return this.gltfModelAssetModel.findById(id).exec()
+    try {
+      return this.gltfModelAssetModel.findById(id).exec()
+    } catch (error) {
+      throw new NotFoundException(`Modelo GLTF con id ${id} no encontrado`)
+    }
   }
 
   async update(
