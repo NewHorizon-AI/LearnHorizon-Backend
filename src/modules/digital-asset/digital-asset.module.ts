@@ -3,11 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { MulterModule } from '@nestjs/platform-express'
 import { MongooseModule } from '@nestjs/mongoose'
 
-// * Importacion de schemas
-// import {
-//   DigitalAsset,
-//   DigitalAssetSchema
-// } from './schemas/digital-asset.schema'
+import { ArticleModulev2 } from '../articles-v2/article.module'
 
 import {
   GltfModelAsset,
@@ -34,7 +30,8 @@ import { GltfModelAssetResourceService } from './resources/gltf-model-asset-reso
     MulterModule.registerAsync({
       imports: [ConfigModule],
       useClass: MulterConfigService
-    })
+    }),
+    ArticleModulev2
   ],
   controllers: [GltfModelAssetController],
   providers: [GltfModelAssetResourceService, GltfModelService],

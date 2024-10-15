@@ -19,6 +19,6 @@ import { ArticleResourceService } from './resources/article-resource.sevice'
   ],
   controllers: [ArticleController],
   providers: [ArticleService, ArticleResourceService],
-  exports: [MongooseModule]
+  exports: [MongooseModule, ArticleService, ArticleResourceService]
 })
 export class ArticleModulev2 {}

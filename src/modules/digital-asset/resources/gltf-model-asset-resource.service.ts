@@ -79,6 +79,10 @@ export class GltfModelAssetResourceService {
     return gltfModelAsset
   }
 
+  async findByArticleId(id: string): Promise<GltfModelAsset> {
+    return this.gltfModelAssetModel.findById(id).exec()
+  }
+
   async update(
     id: string,
     updateGltfModelAssetDto: UpdateGltfModelAssetDto

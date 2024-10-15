@@ -1,4 +1,4 @@
-import { Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
@@ -21,6 +21,25 @@ export class ArticleResourceService {
     return await createdArticle.save()
   }
 
+  async assignModelsToArticle(articleId: string, modelsIds: string[]) {
+    const article = await this.model.findById(articleId).exec()
+
+    if (!article) {
+      throw new NotFoundException(
+        `El Artículo con ID ${articleId} no se le puede asignar modelos`
+      )
+    }
+
+    article.models = [
+      ...new Set([
+        ...article.models,
+        ...modelsIds.map((id) => new mongoose.Types.ObjectId(id))
+      ])
+    ]
+
+    return await article.save()
+  }
+
   async findAll(): Promise<Article[]> {
     return await this.model.find().exec()
   }
@@ -29,21 +48,19 @@ export class ArticleResourceService {
     const article = await this.model.findById(id).exec()
 
     if (!article) {
-      throw new NotFoundException(`Article with ID ${id} not found`)
+      throw new NotFoundException(`El Articulo con ID ${id} no fue encontrado`)
     }
 
     return article
   }
 
-  async findByUserId(usersIds: string[]): Promise<Article[]> {
+  async findByUserId(usersId: string[]): Promise<Article[]> {
     try {
-      const articles = await this.model
-        .find({ users: { $in: usersIds } })
-        .exec()
+      const articles = await this.model.find({ users: { $in: usersId } }).exec()
 
       if (!articles || articles.length === 0) {
         throw new NotFoundException(
-          `Los artículos del usuario ${usersIds} no fueron encontrados`
+          `Los artículos del usuario ${usersId} no fueron encontrados`
         )
       }
 

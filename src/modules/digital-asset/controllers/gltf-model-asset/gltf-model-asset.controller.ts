@@ -11,8 +11,11 @@ import {
   NotFoundException,
   Res,
   HttpException,
-  HttpStatus
+  HttpStatus,
+  UseInterceptors,
+  BadRequestException
 } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 import { GltfModelService } from '../../services/gltf-model.service'
 import { UpdateGltfModelAssetDto } from '../../dtos/gltf-model-asset/update-gltf-model-asset.dto'
@@ -35,7 +38,7 @@ import { Response } from 'express'
 export class GltfModelAssetController {
   constructor(private readonly modelService: GltfModelService) {}
 
-  @Post('upload')
+  @Post('upload/:articleId')
   @ApiOperation({ summary: 'Subir un modelo GLTF' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -54,8 +57,16 @@ export class GltfModelAssetController {
     status: 400,
     description: 'Tipo de archivo no permitido o datos inválidos.'
   })
-  async createModelFromFile(@UploadedFile() file: Express.Multer.File) {
-    return this.modelService.createModelFromFile(file)
+  @UseInterceptors(FileInterceptor('file'))
+  async createModelFromFile(
+    @Param('articleId') articleId: string,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    if (!file) {
+      throw new BadRequestException('File not provided')
+    }
+
+    return this.modelService.createModelFromFile(articleId, file)
   }
 
   @Get()
@@ -124,6 +135,46 @@ export class GltfModelAssetController {
 
     fileStream.pipe(res)
   }
+
+  // Endpoint para devolver un archivo GLTF por ID
+  @Get('model/article/:id')
+  @ApiOperation({ summary: 'Obtener archivo GLTF por ID' })
+  @ApiParam({ name: 'id', description: 'ID del modelo GLTF' })
+  @ApiResponse({ status: 200, description: 'Archivo GLTF devuelto.' })
+  @ApiResponse({ status: 404, description: 'Modelo GLTF no encontrado.' })
+  async getFileByArticleId(@Param('id') id: string, @Res() res: Response) {
+    const gltfModelAsset = await this.modelService.getModelByArticleId(id)
+
+    if (!gltfModelAsset) {
+      throw new NotFoundException(`Modelo GLTF con id ${id} no encontrado`)
+    }
+
+    const filePath = join(process.cwd(), gltfModelAsset.path)
+
+    if (!existsSync(filePath)) {
+      throw new HttpException('Archivo no encontrado', HttpStatus.NOT_FOUND)
+    }
+
+    const fileStream = createReadStream(filePath)
+
+    fileStream.on('error', () => {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Error al leer el archivo.'
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    })
+
+    res.set({
+      'Content-Type': gltfModelAsset.mimetype || 'model/gltf+json', // Mimetype basado en el modelo
+      'Content-Disposition': `attachment; filename="${gltfModelAsset.filename || 'model.gltf'}"` // Nombre del archivo GLTF
+    })
+
+    fileStream.pipe(res)
+  }
+
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ summary: 'Eliminar un modelo GLTF' })

@@ -14,6 +14,13 @@ export class ArticleService {
     return await this.articleResourceService.create(createArticleDto)
   }
 
+  async assignModelsToArticle(articleId: string, modelsIds: string[]) {
+    return await this.articleResourceService.assignModelsToArticle(
+      articleId,
+      modelsIds
+    )
+  }
+
   async getArticles(): Promise<Article[]> {
     return await this.articleResourceService.findAll()
   }
@@ -22,8 +29,8 @@ export class ArticleService {
     return await this.articleResourceService.findOne(id)
   }
 
-  async getAllArticlesByUserId(usersIds: string[]): Promise<Article[]> {
-    return await this.articleResourceService.findByUserId(usersIds)
+  async getAllArticlesByUserId(usersId: string[]): Promise<Article[]> {
+    return await this.articleResourceService.findByUserId(usersId)
   }
 
   async getAllModelsByArticleId(articleId: string): Promise<GltfModelAsset[]> {

@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { GltfModelAssetResourceService } from '../resources/gltf-model-asset-resource.service'
 import { CreateGltfModelAssetDto } from '../dtos/gltf-model-asset/create-gltf-model-asset.dto'
 import { UpdateGltfModelAssetDto } from '../dtos/gltf-model-asset/update-gltf-model-asset.dto'
 import { Express } from 'express'
 import { GltfModelAsset } from '../schemas/gltf-model-asset.schema'
 
+import { ArticleService } from 'src/modules/articles-v2/services/article.service'
+
 @Injectable()
 export class GltfModelService {
   constructor(
+    private readonly articleService: ArticleService,
     private readonly gltfModelAssetResourceService: GltfModelAssetResourceService
   ) {}
 
@@ -20,9 +23,27 @@ export class GltfModelService {
 
   // Crear un nuevo modelo GLTF desde un archivo
   async createModelFromFile(
+    articleId: string,
     file: Express.Multer.File
   ): Promise<GltfModelAsset> {
-    return this.gltfModelAssetResourceService.createFromFile(file)
+    const article = await this.articleService.getArticleById(articleId)
+
+    if (!article) {
+      throw new NotFoundException(`El Artículo con ID ${articleId} no existe`)
+    }
+
+    const createdModel =
+      await this.gltfModelAssetResourceService.createFromFile(file)
+
+    if (!createdModel) {
+      throw new NotFoundException('El Modelo no pudo ser creado')
+    }
+
+    // Agregar el ID del modelo al artículo
+
+    this.articleService.assignModelsToArticle(articleId, [createdModel.id])
+
+    return createdModel
   }
 
   // Obtener todos los modelos GLTF
@@ -33,6 +54,20 @@ export class GltfModelService {
   // Obtener un modelo GLTF por ID
   async getModelById(id: string): Promise<GltfModelAsset> {
     return this.gltfModelAssetResourceService.findOne(id)
+  }
+
+  async getModelByArticleId(articleId: string): Promise<GltfModelAsset> {
+    const article = await this.articleService.getArticleById(articleId)
+
+    if (!article) {
+      throw new NotFoundException(`El Artículo con ID ${articleId} no existe`)
+    }
+
+    const models = await this.gltfModelAssetResourceService.findByArticleId(
+      article.models[0].toString()
+    )
+
+    return models
   }
 
   // Actualizar un modelo GLTF por ID
