@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
@@ -17,12 +22,19 @@ export class UserResourceService {
 
   // Crear un nuevo usuario
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10)
-    createUserDto.password = hashedPassword
+    try {
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10)
+      createUserDto.password = hashedPassword
 
-    const createdUser = new this.userModel(createUserDto).save()
-
-    return createdUser
+      const createdUser = new this.userModel(createUserDto)
+      return await createdUser.save()
+    } catch (error) {
+      if (error.code === 11000) {
+        // Error de clave duplicada en MongoDB
+        throw new ConflictException('El nombre de usuario ya está en uso')
+      }
+      throw new BadRequestException({ message: error.message })
+    }
   }
 
   // Obtener todos los usuarios
@@ -31,11 +43,16 @@ export class UserResourceService {
   }
 
   // Obtener un usuario por ID
-  async findOne(id: string): Promise<User> {
-    const user = await this.userModel.findById(id).populate('details').exec()
+  async findOne(username: string): Promise<User> {
+    const user = await this.userModel
+      .findOne({ username: username })
+      .populate('details')
+      .exec()
 
     if (!user) {
-      throw new NotFoundException(`User with ID "${id}" not found`)
+      throw new NotFoundException(
+        `El usuario con el username: "${username}" no existe`
+      )
     }
     return user
   }

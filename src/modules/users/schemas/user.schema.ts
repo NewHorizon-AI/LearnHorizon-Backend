@@ -17,8 +17,7 @@ export class User extends Document {
 
   @Prop({
     required: true,
-    unique: true,
-    match: /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/
+    unique: true
   })
   @ApiProperty({
     description: 'Correo electrónico del usuario, debe tener un formato válido',

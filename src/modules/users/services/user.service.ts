@@ -27,9 +27,9 @@ export class UserService {
     return this.userResourceService.findAll()
   }
 
-  // Obtener un usuario por ID, incluyendo detalles y rol
-  async findUserById(id: string) {
-    return this.userResourceService.findOne(id)
+  // Obtener un usuario por username, incluyendo detalles y rol
+  async findUserByUsername(username: string) {
+    return this.userResourceService.findOne(username)
   }
 
   async findUserByIdentifier(identifier: string) {

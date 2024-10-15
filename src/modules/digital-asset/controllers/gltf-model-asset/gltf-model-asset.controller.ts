@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  UseInterceptors,
   UploadedFile,
   Get,
   Param,
@@ -10,11 +9,12 @@ import {
   Body,
   HttpCode,
   NotFoundException,
-  Res
+  Res,
+  HttpException,
+  HttpStatus
 } from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
 
-import { GltfModelAssetResourceService } from '../../resources/gltf-model-asset-resource.service'
+import { GltfModelService } from '../../services/gltf-model.service'
 import { UpdateGltfModelAssetDto } from '../../dtos/gltf-model-asset/update-gltf-model-asset.dto'
 import {
   ApiTags,
@@ -25,25 +25,20 @@ import {
   ApiParam
 } from '@nestjs/swagger'
 import { Express } from 'express'
-import path from 'path'
-import { Response } from 'express'
 
-import * as fsSync from 'fs'
+import { createReadStream, existsSync } from 'fs'
+import { join } from 'path'
+import { Response } from 'express'
 
 @ApiTags('Gltf Model Assets')
 @Controller('gltf-model-assets')
 export class GltfModelAssetController {
-  constructor(
-    private readonly gltfModelAssetService: GltfModelAssetResourceService
-  ) {}
+  constructor(private readonly modelService: GltfModelService) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiOperation({ summary: 'Subir un archivo GLTF' })
+  @ApiOperation({ summary: 'Subir un modelo GLTF' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'Archivo GLTF a subir',
-    type: 'multipart/form-data',
     schema: {
       type: 'object',
       properties: {
@@ -59,15 +54,15 @@ export class GltfModelAssetController {
     status: 400,
     description: 'Tipo de archivo no permitido o datos inválidos.'
   })
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return this.gltfModelAssetService.createFromFile(file)
+  async createModelFromFile(@UploadedFile() file: Express.Multer.File) {
+    return this.modelService.createModelFromFile(file)
   }
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los modelos GLTF' })
   @ApiResponse({ status: 200, description: 'Lista de modelos GLTF.' })
-  async findAll() {
-    return this.gltfModelAssetService.findAll()
+  async getAllModels() {
+    return this.modelService.getAllModels()
   }
 
   @Get(':id')
@@ -76,7 +71,7 @@ export class GltfModelAssetController {
   @ApiResponse({ status: 200, description: 'Modelo GLTF encontrado.' })
   @ApiResponse({ status: 404, description: 'Modelo GLTF no encontrado.' })
   async findOne(@Param('id') id: string) {
-    return this.gltfModelAssetService.findOne(id)
+    return this.modelService.getModelById(id)
   }
 
   @Patch(':id')
@@ -88,36 +83,47 @@ export class GltfModelAssetController {
     @Param('id') id: string,
     @Body() updateGltfModelAssetDto: UpdateGltfModelAssetDto
   ) {
-    return this.gltfModelAssetService.update(id, updateGltfModelAssetDto)
+    return this.modelService.updateModel(id, updateGltfModelAssetDto)
   }
 
   // Endpoint para devolver un archivo GLTF por ID
-  @Get(':id/file')
+  @Get('model/:id')
   @ApiOperation({ summary: 'Obtener archivo GLTF por ID' })
   @ApiParam({ name: 'id', description: 'ID del modelo GLTF' })
   @ApiResponse({ status: 200, description: 'Archivo GLTF devuelto.' })
   @ApiResponse({ status: 404, description: 'Modelo GLTF no encontrado.' })
   async getFile(@Param('id') id: string, @Res() res: Response) {
-    const gltfModelAsset = await this.gltfModelAssetService.findOne(id)
+    const gltfModelAsset = await this.modelService.getModelById(id)
 
     if (!gltfModelAsset) {
       throw new NotFoundException(`Modelo GLTF con id ${id} no encontrado`)
     }
 
-    // Define the file path
-    const filePath = path.join(__dirname, 'path_to_gltf_files', `${id}.gltf`)
+    const filePath = join(process.cwd(), gltfModelAsset.path)
 
-    // Verifica si el archivo existe en la ruta especificada
-    if (!fsSync.existsSync(filePath)) {
-      throw new NotFoundException(
-        `Archivo GLTF no encontrado en la ruta ${filePath}`
-      )
+    if (!existsSync(filePath)) {
+      throw new HttpException('Archivo no encontrado', HttpStatus.NOT_FOUND)
     }
 
-    // Devuelve el archivo como respuesta
-    res.sendFile(filePath)
-  }
+    const fileStream = createReadStream(filePath)
 
+    fileStream.on('error', () => {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Error al leer el archivo.'
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    })
+
+    res.set({
+      'Content-Type': gltfModelAsset.mimetype || 'model/gltf+json', // Mimetype basado en el modelo
+      'Content-Disposition': `attachment; filename="${gltfModelAsset.filename || 'model.gltf'}"` // Nombre del archivo GLTF
+    })
+
+    fileStream.pipe(res)
+  }
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ summary: 'Eliminar un modelo GLTF' })
@@ -125,6 +131,6 @@ export class GltfModelAssetController {
   @ApiResponse({ status: 204, description: 'Modelo GLTF eliminado.' })
   @ApiResponse({ status: 404, description: 'Modelo GLTF no encontrado.' })
   async remove(@Param('id') id: string) {
-    await this.gltfModelAssetService.remove(id)
+    await this.modelService.deleteModel(id)
   }
 }

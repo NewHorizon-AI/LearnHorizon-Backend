@@ -72,6 +72,7 @@ export class GltfModelAssetResourceService {
 
   async findOne(id: string): Promise<GltfModelAsset> {
     const gltfModelAsset = await this.gltfModelAssetModel.findById(id).exec()
+
     if (!gltfModelAsset) {
       throw new NotFoundException(`Modelo GLTF con id ${id} no encontrado`)
     }

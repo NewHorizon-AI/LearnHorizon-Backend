@@ -33,6 +33,11 @@ export class ArticleController {
     return await this.articleService.getArticleById(id)
   }
 
+  @Get('models/:articleId')
+  async getAllModelsByArticleId(@Param('articleId') articleId: string) {
+    return await this.articleService.getAllModelsByArticleId(articleId) // Pasamos el arreglo de IDs al servicio
+  }
+
   @Patch(':id')
   async updateArticle(
     @Param('id') id: string,

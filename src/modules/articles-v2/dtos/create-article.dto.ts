@@ -4,7 +4,6 @@ import {
   ArrayNotEmpty,
   IsMongoId,
   IsOptional,
-  IsNotEmpty,
   IsUrl
 } from 'class-validator'
 
@@ -12,7 +11,7 @@ import { CreateArticleDtoSwaggerDocs } from '../documentation/swagger/dtos/creat
 import { Types } from 'mongoose'
 
 export class CreateArticleDto extends CreateArticleDtoSwaggerDocs {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   title: string
 
@@ -22,6 +21,7 @@ export class CreateArticleDto extends CreateArticleDtoSwaggerDocs {
   users: Types.ObjectId[]
 
   @IsArray()
+  @IsOptional()
   @IsMongoId({ each: true })
   categories?: Types.ObjectId[]
 

@@ -6,13 +6,14 @@ import { Article } from '../schema/article.schema'
 import { CreateArticleDto } from '../dtos/create-article.dto'
 import { UpdateArticleDto } from '../dtos/update-article.dto'
 
+import { GltfModelAsset } from 'src/modules/digital-asset/schemas/gltf-model-asset.schema'
+
 @Injectable()
 export class ArticleResourceService {
   constructor(
     @InjectModel(Article.name) private readonly model: Model<Article>
   ) {}
 
-  // ? Método para crear un nuevo artículo
   async create(createArticle: CreateArticleDto) {
     // * Por cada usuario en el array de usuarios, se verifica si el usuario existe
 
@@ -20,12 +21,10 @@ export class ArticleResourceService {
     return await createdArticle.save()
   }
 
-  // ? Método para obtener todos los artículos
   async findAll(): Promise<Article[]> {
     return await this.model.find().exec()
   }
 
-  // ? Método para obtener un artículo por su ID
   async findOne(id: string): Promise<Article> {
     const article = await this.model.findById(id).exec()
 
@@ -34,6 +33,39 @@ export class ArticleResourceService {
     }
 
     return article
+  }
+
+  async findByUserId(usersIds: string[]): Promise<Article[]> {
+    try {
+      const articles = await this.model
+        .find({ users: { $in: usersIds } })
+        .exec()
+
+      if (!articles || articles.length === 0) {
+        throw new NotFoundException(
+          `Los artículos del usuario ${usersIds} no fueron encontrados`
+        )
+      }
+
+      return articles
+    } catch (error) {
+      throw new NotFoundException(error.message)
+    }
+  }
+
+  async findGltfModelsByArticleId(
+    articleId: string
+  ): Promise<GltfModelAsset[]> {
+    const article = await this.model
+      .findById(articleId)
+      .populate('models')
+      .exec()
+
+    if (!article) {
+      throw new NotFoundException(`Article with ID ${articleId} not found`)
+    }
+
+    return article.models as unknown as GltfModelAsset[]
   }
 
   // ? Método para actualizar un artículo

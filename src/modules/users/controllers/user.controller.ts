@@ -25,6 +25,10 @@ export class UserController {
   @ApiOperation({ summary: 'Crear un usuario con sus detalles y rol' })
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente.' })
   @ApiResponse({ status: 400, description: 'Solicitud incorrecta.' })
+  @ApiResponse({
+    status: 409,
+    description: 'Nombre de usuario ya está en uso.'
+  })
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto)
@@ -47,12 +51,12 @@ export class UserController {
   @ApiOperation({
     summary: 'Obtener un usuario por su ID, incluyendo detalles y rol'
   })
-  @ApiParam({ name: 'id', description: 'ID del usuario a obtener' })
+  @ApiParam({ name: 'username', description: 'username del usuario a obtener' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado exitosamente.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  @Get(':id')
-  async findUserById(@Param('id') id: string) {
-    return this.userService.findUserById(id)
+  @Get('/:username')
+  async findUserById(@Param('username') username: string) {
+    return this.userService.findUserByUsername(username)
   }
 
   // Actualizar un usuario, detalles y rol

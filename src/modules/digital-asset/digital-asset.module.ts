@@ -20,6 +20,7 @@ import { ImageAsset, ImageAssetSchema } from './schemas/image-asset.schema'
 import { GltfModelAssetController } from './controllers/gltf-model-asset/gltf-model-asset.controller'
 // * Importacion de servicios
 import { MulterConfigService } from './config/multer-config.service'
+import { GltfModelService } from './services/gltf-model.service'
 
 // * Importacion de recursos
 import { GltfModelAssetResourceService } from './resources/gltf-model-asset-resource.service'
@@ -36,7 +37,7 @@ import { GltfModelAssetResourceService } from './resources/gltf-model-asset-reso
     })
   ],
   controllers: [GltfModelAssetController],
-  providers: [GltfModelAssetResourceService],
+  providers: [GltfModelAssetResourceService, GltfModelService],
   exports: [MongooseModule]
 })
 export class DigitalAssetModule {}
