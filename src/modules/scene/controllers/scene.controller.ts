@@ -26,7 +26,7 @@ export class SceneSettingsController {
   @Post('/default')
   @ApiOperation({ summary: 'Crear un nuevo ajuste de escena' })
   async create(@Body() createSceneSettingsDto: CreateSceneSettingsDto) {
-    this.sceneService.createDefault(createSceneSettingsDto)
+    return this.sceneService.createDefault(createSceneSettingsDto)
   }
 
   @Get()

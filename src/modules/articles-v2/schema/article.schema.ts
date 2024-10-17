@@ -9,6 +9,7 @@ import { ArticleSwaggerDocs } from '../documentation/swagger/schemas/article.doc
 import { Category } from 'src/modules/categories-v2/schemas/category.schema'
 import { User } from 'src/modules/users/schemas/user.schema'
 import { GltfModelAsset } from 'src/modules/digital-asset/schemas/gltf-model-asset.schema'
+import { SceneSettings } from 'src/modules/scene/schemas/scene-settings.schema'
 
 @Schema({ timestamps: true })
 export class Article extends Document {
@@ -46,6 +47,9 @@ export class Article extends Document {
 
   @Prop({ type: [{ type: Types.ObjectId, ref: GltfModelAsset.name }] })
   models?: Types.ObjectId[]
+
+  @Prop({ type: Types.ObjectId, ref: SceneSettings.name })
+  sceneSettings?: Types.ObjectId
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article)

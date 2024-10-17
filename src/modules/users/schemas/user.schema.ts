@@ -6,8 +6,6 @@ import { RoleEnum } from '../interfaces/role.enum'
 
 @Schema({ timestamps: true })
 export class User extends Document {
-  user: unknown;
-  [x: string]: unknown
   @Prop({ required: true, unique: true, minlength: 3, maxlength: 30 })
   @ApiProperty({
     description: 'Nombre único de usuario, entre 3 y 30 caracteres',

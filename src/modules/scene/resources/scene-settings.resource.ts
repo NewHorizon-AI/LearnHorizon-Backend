@@ -2,8 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { SceneSettings } from '../schemas/scene-settings.schema'
-import { CreateSceneSettingsDto } from '../dtos/scene-dto/create-scene-settings.dto'
+
 import { UpdateSceneSettingsDto } from '../dtos/scene-dto/update-scene-settings.dto'
+
+import { SceneSettingsDto } from '../dtos/scene-dto/scene-settings.dto'
 
 @Injectable()
 export class SceneSettingsService {
@@ -13,12 +15,8 @@ export class SceneSettingsService {
   ) {}
 
   // Crear un nuevo ajuste de escena
-  async create(
-    createSceneSettingsDto: CreateSceneSettingsDto
-  ): Promise<SceneSettings> {
-    const createdSceneSettings = new this.sceneSettingsModel(
-      createSceneSettingsDto
-    )
+  async create(sceneSettingsDto: SceneSettingsDto): Promise<SceneSettings> {
+    const createdSceneSettings = new this.sceneSettingsModel(sceneSettingsDto)
     return createdSceneSettings.save()
   }
 

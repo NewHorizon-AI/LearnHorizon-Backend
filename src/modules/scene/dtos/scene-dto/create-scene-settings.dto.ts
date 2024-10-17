@@ -3,8 +3,17 @@ import { CreateCameraSettingsDto } from '../camera-dto/create-camera-settings.dt
 import { CreateGridSettingsDto } from '../grid-dto/create-grid-settings.dto'
 import { CreateModelSettingsDto } from '../model-dto/create-model-settings.dto'
 import { CreateTransformationsSettingsDto } from '../transformation-dto/create-transformations-settings.dto'
+import { IsNotEmpty, IsString } from 'class-validator'
 
 export class CreateSceneSettingsDto {
+  @ApiProperty({
+    example: '670d81e23c090bdc343c9eba',
+    description: 'ID del articulo'
+  })
+  @IsString()
+  @IsNotEmpty()
+  articleId: string
+
   @ApiProperty({ description: 'Camera settings for the scene' })
   cameraSettings: CreateCameraSettingsDto
 

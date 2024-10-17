@@ -21,6 +21,16 @@ export class ArticleService {
     )
   }
 
+  async assignSceneSettingsToArticle(
+    articleId: string,
+    sceneSettingsId: string
+  ) {
+    return await this.articleResourceService.assignSceneSettingsToArticle(
+      articleId,
+      sceneSettingsId
+    )
+  }
+
   async getArticles(): Promise<Article[]> {
     return await this.articleResourceService.findAll()
   }

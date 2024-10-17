@@ -40,12 +40,42 @@ export class ArticleResourceService {
     return await article.save()
   }
 
+  async assignSceneSettingsToArticle(
+    articleId: string,
+    sceneSettingsId: string
+  ) {
+    const article = await this.model.findById(articleId).exec()
+
+    if (!article) {
+      throw new NotFoundException(
+        `El Artículo con ID ${articleId} no se le puede asignar ajustes de escena`
+      )
+    }
+
+    article.sceneSettings = new mongoose.Types.ObjectId(sceneSettingsId)
+
+    return await article.save()
+  }
+
   async findAll(): Promise<Article[]> {
     return await this.model.find().exec()
   }
 
   async findOne(id: string): Promise<Article> {
-    const article = await this.model.findById(id).exec()
+    const article = await this.model
+      .findById(id)
+      // .populate('users')
+      // .populate('categories')
+      .populate({
+        path: 'sceneSettings',
+        populate: [
+          { path: 'cameraSettings' },
+          { path: 'gridSettings' },
+          { path: 'modelSettings' },
+          { path: 'transformationsSettings' }
+        ]
+      })
+      .exec()
 
     if (!article) {
       throw new NotFoundException(`El Articulo con ID ${id} no fue encontrado`)
