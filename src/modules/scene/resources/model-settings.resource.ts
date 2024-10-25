@@ -23,6 +23,11 @@ export class ModelSettingsService {
     return createdModelSettings.save()
   }
 
+  async createDefault(): Promise<ModelSettings> {
+    const defaultModelSettings = new this.modelSettingsModel({})
+    return defaultModelSettings.save()
+  }
+
   // Obtener todos los ajustes de modelo
   async findAll(): Promise<ModelSettings[]> {
     return this.modelSettingsModel.find().exec()

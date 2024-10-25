@@ -1,48 +1,53 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { IsArray, IsNumber, IsString } from 'class-validator'
 
 export class CreateCameraSettingsDto {
-  @ApiProperty({ example: 60, description: 'Field of View of the camera' })
+  @ApiProperty({ example: 60, description: 'Campo de visión de la cámara' })
+  @IsNumber()
   fov: number
 
-  @ApiProperty({ example: 0.5, description: 'Near clipping plane distance' })
+  @ApiProperty({
+    example: 0.5,
+    description: 'Distancia al plano de recorte cercano'
+  })
+  @IsNumber()
   near: number
 
-  @ApiProperty({ example: 500, description: 'Far clipping plane distance' })
+  @ApiProperty({
+    example: 500,
+    description: 'Distancia al plano de recorte lejano'
+  })
+  @IsNumber()
   far: number
 
   @ApiProperty({
-    example: { x: 10, y: 5, z: 15 },
-    description: 'Position of the camera in 3D space'
+    example: [10, 5, 15],
+    description: 'Posición de la cámara en el espacio 3D (x, y, z)'
   })
-  position: {
-    x: number
-    y: number
-    z: number
-  }
+  @IsArray()
+  @IsNumber({}, { each: true })
+  position: [number, number, number]
 
   @ApiProperty({
-    example: { x: 0, y: 0, z: 0 },
-    description: 'LookAt vector for camera orientation'
+    example: [0, 0, 0],
+    description: 'Vector LookAt para la orientación de la cámara (x, y, z)'
   })
-  lookAt: {
-    x: number
-    y: number
-    z: number
-  }
+  @IsArray()
+  @IsNumber({}, { each: true })
+  lookAt: [number, number, number]
 
   @ApiProperty({
-    example: { x: 0, y: 0, z: 0 },
-    description: 'Rotation of the camera in 3D space'
+    example: [0, 0, 0],
+    description: 'Rotación de la cámara en el espacio 3D (x, y, z)'
   })
-  rotation: {
-    x: number
-    y: number
-    z: number
-  }
+  @IsArray()
+  @IsNumber({}, { each: true })
+  rotation: [number, number, number]
 
   @ApiProperty({
-    example: 'perspective',
-    description: 'Type of the camera (e.g., perspective, orthographic)'
+    example: 'perspectiva',
+    description: 'Tipo de cámara (por ejemplo, perspectiva, ortográfica)'
   })
+  @IsString()
   cameraType: string
 }

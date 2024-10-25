@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Types } from 'mongoose'
 import { IArticleStatus } from 'src/modules/articles-v2/interfaces/article-status.enum'
 
-// *  Importar los esquemas necesarios
+// * Importar los esquemas necesarios
 
 export class UpdateArticleDtoSwaggerDocs {
   @ApiProperty({
@@ -49,4 +49,25 @@ export class UpdateArticleDtoSwaggerDocs {
     default: IArticleStatus.DRAFT
   })
   status?: IArticleStatus
+
+  @ApiProperty({
+    description: 'Número de vistas del artículo',
+    example: 150,
+    default: 0
+  })
+  views?: number
+
+  @ApiProperty({
+    description: 'Número de likes del artículo',
+    example: 30,
+    default: 0
+  })
+  likes?: number
+
+  @ApiProperty({
+    description: 'Número de dislikes del artículo',
+    example: 5,
+    default: 0
+  })
+  dislikes?: number
 }

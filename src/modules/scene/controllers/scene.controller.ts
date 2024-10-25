@@ -1,19 +1,20 @@
 import {
   Controller,
   Get,
-  Post,
+  // Post,
   Patch,
-  Delete,
+  // Delete,
   Param,
   Body,
   NotFoundException
+  // BadRequestException
 } from '@nestjs/common'
 
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 
 import { SceneService } from '../services/scene.service'
 
-import { CreateSceneSettingsDto } from '../dtos/scene-dto/create-scene-settings.dto'
+import { PatchSceneSettingsDto } from '../dtos/patch-scene.dto'
 
 import { SceneSettings } from '../schemas/scene-settings.schema'
 
@@ -22,12 +23,12 @@ import { SceneSettings } from '../schemas/scene-settings.schema'
 export class SceneSettingsController {
   constructor(private readonly sceneService: SceneService) {}
 
-  // ? Crear un nuevo ajuste de escena
-  @Post('/default')
-  @ApiOperation({ summary: 'Crear un nuevo ajuste de escena' })
-  async create(@Body() createSceneSettingsDto: CreateSceneSettingsDto) {
-    return this.sceneService.createDefault(createSceneSettingsDto)
-  }
+  // // ? Crear un nuevo ajuste de escena
+  // @Post('/default')
+  // @ApiOperation({ summary: 'Crear un nuevo ajuste de escena' })
+  // async create(@Body() createSceneSettingsDto: CreateSceneSettingsDto) {
+  //   return this.sceneService.createDefault(createSceneSettingsDto)
+  // }
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los ajustes de escena' })
@@ -49,15 +50,15 @@ export class SceneSettingsController {
     }
   }
 
-  // @Patch(':id')
-  // @ApiOperation({ summary: 'Actualizar un ajuste de escena por ID' })
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() updateSceneSettingsDto: UpdateSceneSettingsDto
-  // ): Promise<SceneSettings> {
-  //   // Cambiado a SceneSettings
-  //   return this.sceneService.update(id, updateSceneSettingsDto)
-  // }
+  // * Actualizar escena por Id del artículo
+  @Patch(':articleId')
+  @ApiOperation({ summary: 'Actualizar un ajuste de escena por ID' })
+  async update(
+    @Param('articleId') articleId: string,
+    @Body() updateScene: PatchSceneSettingsDto
+  ): Promise<SceneSettings> {
+    return this.sceneService.updatepPatchScene(articleId, updateScene)
+  }
 
   // @Delete(':id')
   // @ApiOperation({ summary: 'Eliminar un ajuste de escena por ID' })

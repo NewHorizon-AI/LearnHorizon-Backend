@@ -1,4 +1,4 @@
-import mongoose, { Model } from 'mongoose'
+import mongoose, { Model, Types } from 'mongoose'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
@@ -15,8 +15,6 @@ export class ArticleResourceService {
   ) {}
 
   async create(createArticle: CreateArticleDto) {
-    // * Por cada usuario en el array de usuarios, se verifica si el usuario existe
-
     const createdArticle = new this.model(createArticle)
     return await createdArticle.save()
   }
@@ -52,9 +50,22 @@ export class ArticleResourceService {
       )
     }
 
-    article.sceneSettings = new mongoose.Types.ObjectId(sceneSettingsId)
+    article.sceneSettings = new Types.ObjectId(sceneSettingsId)
 
     return await article.save()
+  }
+
+  async findById(id: string): Promise<Article> {
+    const article = await this.model
+      .findById(id)
+      .populate('sceneSettings')
+      .exec()
+
+    if (!article) {
+      throw new NotFoundException(`El Artículo con ID ${id} no fue encontrado`)
+    }
+
+    return article
   }
 
   async findAll(): Promise<Article[]> {
@@ -66,15 +77,7 @@ export class ArticleResourceService {
       .findById(id)
       // .populate('users')
       // .populate('categories')
-      .populate({
-        path: 'sceneSettings',
-        populate: [
-          { path: 'cameraSettings' },
-          { path: 'gridSettings' },
-          { path: 'modelSettings' },
-          { path: 'transformationsSettings' }
-        ]
-      })
+      .populate('sceneSettings')
       .exec()
 
     if (!article) {

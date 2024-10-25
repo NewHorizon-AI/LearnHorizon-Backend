@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
 // * Importar Esquemas
@@ -13,9 +13,13 @@ import { ArticleService } from './services/article.service'
 // * Importar Recursos
 import { ArticleResourceService } from './resources/article-resource.sevice'
 
+// * Importar Modulos
+import { SceneModule } from '../scene/scene.module'
+
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }])
+    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
+    forwardRef(() => SceneModule)
   ],
   controllers: [ArticleController],
   providers: [ArticleService, ArticleResourceService],

@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose'
 
 import { IArticleStatus } from '../interfaces/article-status.enum'
 
-import { ArticleSwaggerDocs } from '../documentation/swagger/schemas/article.docs'
+// import { ArticleSwaggerDocs } from '../documentation/swagger/schemas/article.docs'
 
 // * Importar los esquemas necesarios
 import { Category } from 'src/modules/categories-v2/schemas/category.schema'

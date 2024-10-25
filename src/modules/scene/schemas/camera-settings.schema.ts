@@ -5,58 +5,46 @@ import { ApiProperty } from '@nestjs/swagger'
 @Schema()
 export class CameraSettings extends Document {
   @ApiProperty({ example: 60, description: 'Field of View of the camera' })
-  @Prop({ required: true })
+  @Prop({ default: 60 })
   fov: number
 
   @ApiProperty({ example: 0.5, description: 'Near clipping plane distance' })
-  @Prop({ required: true })
+  @Prop({ default: 0.5 })
   near: number
 
   @ApiProperty({ example: 500, description: 'Far clipping plane distance' })
-  @Prop({ required: true })
+  @Prop({ default: 500 })
   far: number
 
   @ApiProperty({
-    example: { x: 10, y: 5, z: 15 },
+    example: [10, 5, 15],
     description: 'Position of the camera in 3D space',
-    type: Object
+    type: Array
   })
-  @Prop({ required: true, type: Object })
-  position: {
-    x: number
-    y: number
-    z: number
-  }
+  @Prop({ type: Array, default: [0, 0, 0] })
+  position: [number, number, number]
 
   @ApiProperty({
-    example: { x: 0, y: 0, z: 0 },
+    example: [0, 0, 0],
     description: 'LookAt vector for camera orientation',
-    type: Object
+    type: Array
   })
-  @Prop({ required: true, type: Object })
-  lookAt: {
-    x: number
-    y: number
-    z: number
-  }
+  @Prop({ type: Array, default: [0, 0, 0] })
+  lookAt: [number, number, number]
 
   @ApiProperty({
-    example: { x: 0, y: 0, z: 0 },
+    example: [0, 0, 0],
     description: 'Rotation of the camera in 3D space',
-    type: Object
+    type: Array
   })
-  @Prop({ required: true, type: Object })
-  rotation: {
-    x: number
-    y: number
-    z: number
-  }
+  @Prop({ type: Array, default: [0, 0, 0] })
+  rotation: [number, number, number]
 
   @ApiProperty({
     example: 'perspective',
     description: 'Type of the camera (e.g., perspective, orthographic)'
   })
-  @Prop({ required: true })
+  @Prop({ default: 'perspective' })
   cameraType: string
 }
 

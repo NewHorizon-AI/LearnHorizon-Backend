@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { ArticleResourceService } from '../resources/article-resource.sevice'
+import { SceneService } from 'src/modules/scene/services/scene.service'
 
 import { CreateArticleDto } from '../dtos/create-article.dto'
 import { UpdateArticleDto } from '../dtos/update-article.dto'
@@ -8,10 +14,21 @@ import { GltfModelAsset } from 'src/modules/digital-asset/schemas/gltf-model-ass
 
 @Injectable()
 export class ArticleService {
-  constructor(private articleResourceService: ArticleResourceService) {}
+  constructor(
+    private articleResourceService: ArticleResourceService,
+    @Inject(forwardRef(() => SceneService))
+    private sceneService: SceneService
+  ) {}
 
   async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
-    return await this.articleResourceService.create(createArticleDto)
+    // ! Validar al usuario
+
+    const createdArticle =
+      await this.articleResourceService.create(createArticleDto)
+
+    await this.sceneService.createDefault(createdArticle._id.toString())
+
+    return this.getArticleById(createdArticle._id.toString())
   }
 
   async assignModelsToArticle(articleId: string, modelsIds: string[]) {
@@ -36,7 +53,7 @@ export class ArticleService {
   }
 
   async getArticleById(id: string): Promise<Article> {
-    return await this.articleResourceService.findOne(id)
+    return await this.articleResourceService.findById(id)
   }
 
   async getAllArticlesByUserId(usersId: string[]): Promise<Article[]> {
@@ -50,10 +67,18 @@ export class ArticleService {
   }
 
   async updateArticle(
-    id: string,
+    articleId: string,
     updateArticleDto: UpdateArticleDto
   ): Promise<Article> {
-    return await this.articleResourceService.update(id, updateArticleDto)
+    const article = await this.articleResourceService.findOne(articleId)
+
+    if (!article) {
+      throw new NotFoundException(
+        `El artículo a actualizar ${articleId} no existe`
+      )
+    }
+
+    return await this.articleResourceService.update(articleId, updateArticleDto)
   }
 
   async deleteArticle(id: string): Promise<Article> {

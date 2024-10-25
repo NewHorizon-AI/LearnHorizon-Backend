@@ -22,6 +22,11 @@ export class CameraSettingsService {
     return createdCameraSettings.save()
   }
 
+  async createDefault(): Promise<CameraSettings> {
+    const defaultCameraSettings = new this.cameraSettingsModel()
+    return defaultCameraSettings.save()
+  }
+
   // Obtener todos los ajustes de cámara
   async findAll(): Promise<CameraSettings[]> {
     return this.cameraSettingsModel.find().exec()

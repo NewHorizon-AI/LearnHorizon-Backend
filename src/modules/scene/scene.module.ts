@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
 // * (1) Importar Esquemas
@@ -65,7 +65,7 @@ import { ArticleModulev2 } from '../articles-v2/article.module'
         schema: SceneSettingsSchema
       }
     ]),
-    ArticleModulev2
+    forwardRef(() => ArticleModulev2)
   ],
   controllers: [SceneSettingsController],
   providers: [
@@ -76,6 +76,14 @@ import { ArticleModulev2 } from '../articles-v2/article.module'
     TransformationsSettingsService,
     SceneSettingsService
   ],
-  exports: [MongooseModule]
+  exports: [
+    MongooseModule,
+    SceneService,
+    CameraSettingsService,
+    GridSettingsService,
+    ModelSettingsService,
+    TransformationsSettingsService,
+    SceneSettingsService
+  ]
 })
 export class SceneModule {}
