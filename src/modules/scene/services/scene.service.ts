@@ -12,23 +12,15 @@ import { SceneSettings } from '../schemas/scene-settings.schema'
 
 // * Importar Servicios
 import { SceneSettingsService } from '../resources/scene-settings.resource'
-import { CameraSettingsService } from '../resources/camera-settings.resource'
-import { TransformationsSettingsService } from '../resources/transformation-settings.resource'
-import { GridSettingsService } from '../resources/grid-settings.resource'
-import { ModelSettingsService } from '../resources/model-settings.resource'
 
-import { ArticleService } from 'src/modules/articles-v2/services/article.service'
+import { ArticleService } from 'src/modules/articles/services/article.service'
 
 @Injectable()
 export class SceneService {
   constructor(
     @Inject(forwardRef(() => ArticleService))
     private readonly articleService: ArticleService,
-    private readonly sceneSettings: SceneSettingsService,
-    private readonly cameraSettingsService: CameraSettingsService,
-    private readonly transformationService: TransformationsSettingsService,
-    private readonly gridSettingsService: GridSettingsService,
-    private readonly modelSettingsService: ModelSettingsService
+    private readonly sceneSettings: SceneSettingsService
   ) {}
 
   // Crear un nuevo ajuste de escena utilizando el DTO combinado
@@ -61,6 +53,19 @@ export class SceneService {
   // Obtener un ajuste de escena por su ID
   async findOne(id: string): Promise<SceneSettings> {
     return await this.sceneSettings.findOne(id)
+  }
+
+  // Obtener un ajuste de escena por el ID del artículo
+  async findOneByArticleId(articleId: string): Promise<SceneSettings> {
+    const article = await this.articleService.getArticleById(articleId)
+
+    if (!article || !article.sceneSettings) {
+      throw new NotFoundException(
+        `No se ha encontrado un artículo con el ID: ${articleId} o no tiene ajustes de escena`
+      )
+    }
+
+    return this.sceneSettings.findById(article.sceneSettings.id.toString())
   }
 
   async updatepPatchScene(

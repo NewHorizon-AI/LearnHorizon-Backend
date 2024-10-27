@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { MulterModule } from '@nestjs/platform-express'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { ArticleModulev2 } from '../articles-v2/article.module'
+import { ArticleModulev2 } from '../articles/article.module'
 
 import {
   GltfModelAsset,

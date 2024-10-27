@@ -22,11 +22,12 @@ export class SceneSettingsService {
     return createdSceneSettings.save()
   }
 
-  async findById(id: string): Promise<SceneSettings> {
-    const sceneSettings = await this.sceneSettingsModel.findById(id).exec()
+  async findById(sceneId: string): Promise<SceneSettings> {
+    const sceneSettings = await this.sceneSettingsModel.findById(sceneId).exec()
+
     if (!sceneSettings) {
       throw new NotFoundException(
-        `La escena con el ID: ${id} no se ha encontrado`
+        `La escena con el ID: ${sceneId} no se ha encontrado`
       )
     }
     return sceneSettings
@@ -50,7 +51,9 @@ export class SceneSettingsService {
       .exec()
 
     if (!sceneSetting) {
-      throw new NotFoundException(`SceneSetting with ID ${id} not found`)
+      throw new NotFoundException(
+        `Ajustes de escena con Id ${id} no encontrados`
+      )
     }
     return sceneSetting
   }

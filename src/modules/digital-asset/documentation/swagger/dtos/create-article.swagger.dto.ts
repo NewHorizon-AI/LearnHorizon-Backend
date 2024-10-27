@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 // *  Importar los esquemas necesarios
 import { User } from 'src/modules/users/schemas/user.schema'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
+import { Category } from 'src/modules/categories/schemas/category.schema'
 
 export class CreateArticleDtoSwaggerDocs {
   @ApiProperty({

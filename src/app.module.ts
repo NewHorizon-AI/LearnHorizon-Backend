@@ -16,8 +16,8 @@ import { AuthModule } from './modules/auth/auth.module'
 
 import { SceneModule } from './modules/scene/scene.module'
 // * Importar Segunda version de los módulos
-import { CategoryModuleV2 } from './modules/categories-v2/category.module'
-import { ArticleModulev2 } from './modules/articles-v2/article.module'
+import { CategoryModuleV2 } from './modules/categories/category.module'
+import { ArticleModulev2 } from './modules/articles/article.module'
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

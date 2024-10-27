@@ -36,7 +36,7 @@ import { SceneSettingsService } from './resources/scene-settings.resource'
 // * (4) Importar Servicios
 import { SceneService } from './services/scene.service'
 
-import { ArticleModulev2 } from '../articles-v2/article.module'
+import { ArticleModulev2 } from '../articles/article.module'
 
 // * Importar Modulos
 // import { UploadModule } from 'src/modules/upload/upload.module'

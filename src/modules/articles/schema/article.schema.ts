@@ -6,7 +6,7 @@ import { IArticleStatus } from '../interfaces/article-status.enum'
 // import { ArticleSwaggerDocs } from '../documentation/swagger/schemas/article.docs'
 
 // * Importar los esquemas necesarios
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
+import { Category } from 'src/modules/categories/schemas/category.schema'
 import { User } from 'src/modules/users/schemas/user.schema'
 import { GltfModelAsset } from 'src/modules/digital-asset/schemas/gltf-model-asset.schema'
 import { SceneSettings } from 'src/modules/scene/schemas/scene-settings.schema'

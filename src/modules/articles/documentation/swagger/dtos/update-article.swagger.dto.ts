@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Types } from 'mongoose'
-import { IArticleStatus } from 'src/modules/articles-v2/interfaces/article-status.enum'
+import { IArticleStatus } from 'src/modules/articles/interfaces/article-status.enum'
 
 // * Importar los esquemas necesarios
 

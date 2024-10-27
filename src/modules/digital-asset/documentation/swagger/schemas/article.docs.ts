@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IArticleStatus } from 'src/modules/articles-v2/interfaces/article-status.enum'
+import { IArticleStatus } from 'src/modules/articles/interfaces/article-status.enum'
 
 // *  Importar los esquemas necesarios
 import { User } from 'src/modules/users/schemas/user.schema'
-import { Category } from 'src/modules/categories-v2/schemas/category.schema'
+import { Category } from 'src/modules/categories/schemas/category.schema'
 
 export class ArticleSwaggerDocs {
   @ApiProperty({

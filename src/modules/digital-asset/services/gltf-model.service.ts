@@ -5,7 +5,7 @@ import { UpdateGltfModelAssetDto } from '../dtos/gltf-model-asset/update-gltf-mo
 import { Express } from 'express'
 import { GltfModelAsset } from '../schemas/gltf-model-asset.schema'
 
-import { ArticleService } from 'src/modules/articles-v2/services/article.service'
+import { ArticleService } from 'src/modules/articles/services/article.service'
 
 @Injectable()
 export class GltfModelService {
