@@ -1,24 +1,23 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { APP_FILTER } from '@nestjs/core'
+// import { APP_FILTER } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
 // * Importar filtro global de excepciones
-import { AllExceptionsFilter } from 'src/common/filters/all-exceptions.filter'
+// import { AllExceptionsFilter } from 'src/common/filters/http-exception.filter'
 
 // * Importar los módulos de la aplicación
 import { UserModule } from './modules/users/user.module'
-import { CategoryModule } from './modules/categories/category.module'
-import { ArticleModule } from './modules/articles/article.module'
-import { ArticleModelModule } from './modules/article-model/article-model.module'
-import { UploadModule } from './modules/upload/upload.module'
+// import { CategoryModule } from './modules/categories/category.module'
+// import { ArticleModule } from './modules/articles/article.module'
+
+import { DigitalAssetModule } from './modules/digital-asset/digital-asset.module'
 import { AuthModule } from './modules/auth/auth.module'
 
 import { SceneModule } from './modules/scene/scene.module'
-
-// * Importar segunda edición de módulo de artículos
-import { ArticleModulev2 } from './modules/article-beta/article.module'
-
+// * Importar Segunda version de los módulos
+import { CategoryModuleV2 } from './modules/categories/category.module'
+import { ArticleModulev2 } from './modules/articles/article.module'
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -34,20 +33,20 @@ import { ArticleModulev2 } from './modules/article-beta/article.module'
       inject: [ConfigService]
     }),
     UserModule,
-    CategoryModule,
-    ArticleModule,
-    ArticleModelModule,
-    UploadModule,
+    // CategoryModule,
+    // ArticleModule,
+    DigitalAssetModule,
     AuthModule,
-    // ArticleModulev2,
-    SceneModule
+    SceneModule,
+    ArticleModulev2,
+    CategoryModuleV2
   ],
-  controllers: [],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: AllExceptionsFilter
-    }
-  ]
+  controllers: []
+  // providers: [
+  //   {
+  //     provide: APP_FILTER,
+  //     useClass: AllExceptionsFilter
+  //   }
+  // ]
 })
 export class AppModule {}

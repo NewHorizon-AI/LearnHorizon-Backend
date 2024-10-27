@@ -8,7 +8,7 @@ export class ModelSettings extends Document {
     example: true,
     description: 'Defines if the setting is visible or not'
   })
-  @Prop({ required: true })
+  @Prop({ default: true })
   visible: boolean
 }
 

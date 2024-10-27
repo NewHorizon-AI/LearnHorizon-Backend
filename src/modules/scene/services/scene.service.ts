@@ -1,58 +1,46 @@
-import { Injectable } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 
-import { CreateSceneSettingsDto } from '../dtos/scene-dto/create-scene-settings.dto'
-import { UpdateSceneSettingsDto } from '../dtos/scene-dto/update-scene-settings.dto'
+// * Impotar DTOs
+import { PatchSceneSettingsDto } from '../dtos/patch-scene.dto'
 
-// * Importar Recursos de la Escena
-import { CameraSettingsService } from '../resources/camera-settings.resource'
-import { GridSettingsService } from '../resources/grid-settings.resource'
-import { ModelSettingsService } from '../resources/model-settings.resource'
-import { TransformationsSettingsService } from '../resources/transformation-settings.resource'
+import { SceneSettings } from '../schemas/scene-settings.schema'
 
-// * Importart Esquema de Ajustes de Escena
-import { GridSettings } from '../schemas/grid-settings.schema'
-
+// * Importar Servicios
 import { SceneSettingsService } from '../resources/scene-settings.resource'
 
-import { ModelSettings } from '../schemas/model-settings.schema'
-import { CameraSettings } from '../schemas/camera-settings.schema'
-import { TransformationsSettings } from '../schemas/transformations-settings.schema'
-import { SceneSettings } from '../schemas/scene-settings.schema'
+import { ArticleService } from 'src/modules/articles/services/article.service'
 
 @Injectable()
 export class SceneService {
   constructor(
-    private readonly modelSettings: ModelSettingsService,
-    private readonly cameraSettings: CameraSettingsService,
-    private readonly transformationSettings: TransformationsSettingsService,
-    private readonly gridSettings: GridSettingsService,
+    @Inject(forwardRef(() => ArticleService))
+    private readonly articleService: ArticleService,
     private readonly sceneSettings: SceneSettingsService
   ) {}
 
   // Crear un nuevo ajuste de escena utilizando el DTO combinado
-  async createDefault(createSceneSettingsDto: CreateSceneSettingsDto) {
+  async createDefault(articleId: string) {
     // TODO: Implementar Transacciones
 
-    const createdGridSettings: GridSettings = await this.gridSettings.create(
-      createSceneSettingsDto.gridSettings
-    )
+    const article = await this.articleService.getArticleById(articleId)
 
-    const createdModelSettings: ModelSettings = await this.modelSettings.create(
-      createSceneSettingsDto.modelSettings
-    )
-    const createdCameraSettings: CameraSettings =
-      await this.cameraSettings.create(createSceneSettingsDto.cameraSettings)
-    const createdTransformationSettings: TransformationsSettings =
-      await this.transformationSettings.create(
-        createSceneSettingsDto.transformationsSettings
+    if (!article || article.sceneSettings) {
+      throw new NotFoundException(
+        `No se ha encontrado un artículo con el ID: ${articleId} o ya tiene ajustes de escena`
       )
+    }
 
-    const sceneSettings = this.sceneSettings.create({
-      gridSettings: createdGridSettings,
-      modelSettings: createdModelSettings,
-      cameraSettings: createdCameraSettings,
-      transformationsSettings: createdTransformationSettings
-    })
+    const sceneSettings = await this.sceneSettings.create()
+
+    this.articleService.assignSceneSettingsToArticle(
+      articleId,
+      sceneSettings.id
+    )
 
     return sceneSettings
   }
@@ -67,19 +55,55 @@ export class SceneService {
     return await this.sceneSettings.findOne(id)
   }
 
-  // // Actualizar un ajuste de escena por su ID
-  // async update(
-  //   id: string,
-  //   updateSceneSettingsDto: UpdateSceneSettingsDto
-  // ): Promise<GridSettings> {
-  //   const updatedGridSetting = await this.gridSettingsModel
-  //     .findByIdAndUpdate(id, updateSceneSettingsDto.gridSettings, { new: true })
-  //     .exec()
-  //   if (!updatedGridSetting) {
-  //     throw new NotFoundException(`Scene setting with ID ${id} not found`)
+  // Obtener un ajuste de escena por el ID del artículo
+  async findOneByArticleId(articleId: string): Promise<SceneSettings> {
+    const article = await this.articleService.getArticleById(articleId)
+
+    if (!article || !article.sceneSettings) {
+      throw new NotFoundException(
+        `No se ha encontrado un artículo con el ID: ${articleId} o no tiene ajustes de escena`
+      )
+    }
+
+    return this.sceneSettings.findById(article.sceneSettings.id.toString())
+  }
+
+  async updatepPatchScene(
+    articleId: string,
+    updateScene: PatchSceneSettingsDto
+  ) {
+    const article = await this.articleService.getArticleById(articleId)
+
+    if (!article || !article.sceneSettings) {
+      throw new NotFoundException(
+        `No se ha encontrado un artículo con el ID: ${articleId} o no tiene ajustes de escena`
+      )
+    }
+
+    const sceneSettingsId = article.sceneSettings._id.toString()
+    const sceneSettings = await this.sceneSettings.findById(sceneSettingsId)
+
+    if (!sceneSettings) {
+      throw new NotFoundException(
+        `No se encontró configuración de escena con el ID: ${sceneSettingsId}`
+      )
+    }
+
+    await this.sceneSettings.update(sceneSettingsId, updateScene)
+
+    return this.sceneSettings.findById(sceneSettingsId)
+  }
+
+  // async updateScene(articleId: string, updateScene: UpdateSceneSettingsDto) {
+  //   const article = await this.articleService.getArticleById(articleId)
+
+  //   if (!article || !article.sceneSettings) {
+  //     throw new NotFoundException(
+  //       `No se ha encontrado un artículo con el ID: ${articleId} o no tiene ajustes de escena`
+  //     )
   //   }
-  //   // Puedes agregar lógica aquí para actualizar otros aspectos de la escena
-  //   return updatedGridSetting
+
+  //   this.sceneSettings.update(article.sceneSettings.toString(), updateScene)
   // }
 
   // // Eliminar un ajuste de escena por su ID

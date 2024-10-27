@@ -21,6 +21,12 @@ export class TransformationsSettingsService {
     return createdTransformationsSettings.save()
   }
 
+  async createDefault(): Promise<TransformationsSettings> {
+    const defaultTransformationsSettings =
+      new this.transformationsSettingsModel()
+    return defaultTransformationsSettings.save()
+  }
+
   // Obtener todos los ajustes de transformación
   async findAll(): Promise<TransformationsSettings[]> {
     return this.transformationsSettingsModel.find().exec()

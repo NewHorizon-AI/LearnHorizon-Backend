@@ -1,31 +1,38 @@
 import { Injectable } from '@nestjs/common'
-import { CategoryGetService } from './get/category-get.service'
-import { CategoryPostService } from './post/category-post.service'
-import { CategoryPutService } from './put/category-put.service'
-import { CategoryDeleteService } from './delete/category-delete.service'
+
+import { CategoryResourceService } from '../resources/category-resource.service'
+import { CreateCategoryDto } from '../dtos/create-category.dto'
+import { UpdateCategoryDto } from '../dtos/update-category.dto'
+import { Category } from '../schemas/category.schema'
 
 @Injectable()
 export class CategoryService {
   constructor(
-    private readonly categoryGetService: CategoryGetService,
-    private readonly categoryPostService: CategoryPostService,
-    private readonly categoryPutService: CategoryPutService,
-    private readonly categoryDeleteService: CategoryDeleteService
+    private readonly categoryResourceService: CategoryResourceService
   ) {}
 
-  findOneComplete(id: string) {
-    return this.categoryGetService.findOneComplete(id)
+  async createCategory(
+    createCategoryDto: CreateCategoryDto
+  ): Promise<Category> {
+    return this.categoryResourceService.create(createCategoryDto)
   }
 
-  createComplete(dto: any) {
-    return this.categoryPostService.createComplete(dto)
+  async getCategories(): Promise<Category[]> {
+    return this.categoryResourceService.findAll()
   }
 
-  updateComplete(id: string, dto: any) {
-    return this.categoryPutService.updateComplete(id, dto)
+  async getCategoryById(id: string): Promise<Category> {
+    return this.categoryResourceService.findOne(id)
   }
 
-  remove(id: string) {
-    return this.categoryDeleteService.remove(id)
+  async updateCategory(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto
+  ): Promise<Category> {
+    return this.categoryResourceService.update(id, updateCategoryDto)
+  }
+
+  async deleteCategory(id: string): Promise<Category> {
+    return this.categoryResourceService.remove(id)
   }
 }

@@ -36,8 +36,10 @@ import { SceneSettingsService } from './resources/scene-settings.resource'
 // * (4) Importar Servicios
 import { SceneService } from './services/scene.service'
 
+import { ArticleModulev2 } from '../articles/article.module'
+
 // * Importar Modulos
-import { UploadModule } from 'src/modules/upload/upload.module'
+// import { UploadModule } from 'src/modules/upload/upload.module'
 
 @Module({
   imports: [
@@ -63,7 +65,7 @@ import { UploadModule } from 'src/modules/upload/upload.module'
         schema: SceneSettingsSchema
       }
     ]),
-    forwardRef(() => UploadModule)
+    forwardRef(() => ArticleModulev2)
   ],
   controllers: [SceneSettingsController],
   providers: [
@@ -74,6 +76,14 @@ import { UploadModule } from 'src/modules/upload/upload.module'
     TransformationsSettingsService,
     SceneSettingsService
   ],
-  exports: [MongooseModule]
+  exports: [
+    MongooseModule,
+    SceneService,
+    CameraSettingsService,
+    GridSettingsService,
+    ModelSettingsService,
+    TransformationsSettingsService,
+    SceneSettingsService
+  ]
 })
 export class SceneModule {}

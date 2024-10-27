@@ -1,19 +1,46 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { UpdateCameraSettingsDto } from '../camera-dto/update-camera-settings.dto'
-import { UpdateGridSettingsDto } from '../grid-dto/update-grid-settings.dto'
-import { UpdateModelSettingsDto } from '../model-dto/update-model-settings.dto'
-import { UpdateTransformationsSettingsDto } from '../transformation-dto/update-transformations-settings.dto'
+
+import { IsMongoId, IsOptional } from 'class-validator'
+import { Types } from 'mongoose'
 
 export class UpdateSceneSettingsDto {
-  @ApiProperty({ description: 'Camera settings for the scene' })
-  cameraSettings: UpdateCameraSettingsDto
+  @ApiProperty({
+    description: 'Id del articulo al que pertenece la escena',
+    example: '670d81e23c090bdc343c9eba'
+  })
+  @IsMongoId()
+  @IsOptional()
+  articleId: string
 
-  @ApiProperty({ description: 'Grid settings for the scene' })
-  gridSettings: UpdateGridSettingsDto
+  @ApiProperty({
+    description: 'Id de las configuraciones de la camara de la escena',
+    example: '670d81e23c090bdc343c9eba'
+  })
+  @IsMongoId()
+  @IsOptional()
+  cameraSettings: Types.ObjectId
 
-  @ApiProperty({ description: 'Model settings for the scene' })
-  modelSettings: UpdateModelSettingsDto
+  @ApiProperty({
+    description: 'Id de las configuraciones del grid',
+    example: '670d81e23c090bdc343c9eba'
+  })
+  @IsMongoId()
+  @IsOptional()
+  gridSettings: Types.ObjectId
 
-  @ApiProperty({ description: 'Transformations settings for the scene' })
-  transformationsSettings: UpdateTransformationsSettingsDto
+  @ApiProperty({
+    description: 'Id de las configuraciones del modelo',
+    example: '670d81e23c090bdc343c9eba'
+  })
+  @IsMongoId()
+  @IsOptional()
+  modelSettings: Types.ObjectId
+
+  @ApiProperty({
+    description: 'Id de las configuraciones de las transformaciones',
+    example: '670d81e23c090bdc343c9eba'
+  })
+  @IsMongoId()
+  @IsOptional()
+  transformationsSettings: Types.ObjectId
 }

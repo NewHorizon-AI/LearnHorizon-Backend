@@ -27,4 +27,19 @@ export class AuthController {
   async login(@Body() login: LoginUserDto) {
     return await this.authService.login(login)
   }
+
+  @Post('login/v2')
+  @ApiOperation({ summary: 'Loggearse.' })
+  @ApiResponse({
+    status: 201,
+    description: 'El usuario ha sido loggeado exitosamente.',
+    type: UserResponseDto
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error en la solicitud.'
+  })
+  async loginv2(@Body() login: LoginUserDto) {
+    return await this.authService.validateUser(login)
+  }
 }

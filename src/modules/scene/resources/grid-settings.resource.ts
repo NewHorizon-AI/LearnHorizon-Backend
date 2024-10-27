@@ -22,6 +22,11 @@ export class GridSettingsService {
     return createdGridSettings.save()
   }
 
+  async createDefault(): Promise<GridSettings> {
+    const defaultGridSettings = new this.gridSettingsModel()
+    return defaultGridSettings.save()
+  }
+
   // Obtener todos los ajustes de cuadrícula
   async findAll(): Promise<GridSettings[]> {
     return this.gridSettingsModel.find().exec()

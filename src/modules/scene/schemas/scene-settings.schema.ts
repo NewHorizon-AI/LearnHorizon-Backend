@@ -1,23 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document, Types } from 'mongoose'
-import { CameraSettings } from './camera-settings.schema'
-import { GridSettings } from './grid-settings.schema'
-import { ModelSettings } from './model-settings.schema'
-import { TransformationsSettings } from './transformations-settings.schema'
+import { Document } from 'mongoose'
+import { CameraSettings, CameraSettingsSchema } from './camera-settings.schema'
+import { GridSettings, GridSettingsSchema } from './grid-settings.schema'
+import { ModelSettings, ModelSettingsSchema } from './model-settings.schema'
+import {
+  TransformationsSettings,
+  TransformationsSettingsSchema
+} from './transformations-settings.schema'
 
 @Schema()
 export class SceneSettings extends Document {
-  @Prop({ type: Types.ObjectId, ref: CameraSettings.name })
-  cameraSettings: Types.ObjectId
+  // * Todos los subdocumentos embebidos directamente en SceneSettings con valores por defecto
+  @Prop({ type: CameraSettingsSchema, default: () => ({}) })
+  cameraSettings: CameraSettings
 
-  @Prop({ type: Types.ObjectId, ref: GridSettings.name })
-  gridSettings: Types.ObjectId
+  @Prop({ type: GridSettingsSchema, default: () => ({}) })
+  gridSettings: GridSettings
 
-  @Prop({ type: Types.ObjectId, ref: ModelSettings.name })
-  modelSettings: Types.ObjectId
+  @Prop({ type: ModelSettingsSchema, default: () => ({}) })
+  modelSettings: ModelSettings
 
-  @Prop({ type: Types.ObjectId, ref: TransformationsSettings.name })
-  transformationsSettings: Types.ObjectId
+  @Prop({
+    type: TransformationsSettingsSchema,
+    default: () => ({})
+  })
+  transformationsSettings: TransformationsSettings
 }
 
 export const SceneSettingsSchema = SchemaFactory.createForClass(SceneSettings)
