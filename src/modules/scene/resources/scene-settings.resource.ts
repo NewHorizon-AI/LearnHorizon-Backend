@@ -70,4 +70,17 @@ export class SceneSettingsService {
     }
     return updatedSceneSetting
   }
+
+  async deleteScene(sceneId: string) {
+    const sceneSettings = await this.sceneSettingsModel.findById(sceneId)
+
+    if (!sceneSettings) {
+      throw new NotFoundException(
+        `No se ha encontrado un ajuste de escena con el ID: ${sceneId}`
+      )
+    }
+
+    // Elimina el documento principal `SceneSettings` y, con él, todos los subdocumentos embebidos
+    await this.sceneSettingsModel.findByIdAndDelete(sceneId).exec()
+  }
 }

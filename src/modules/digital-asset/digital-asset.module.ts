@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { MulterModule } from '@nestjs/platform-express'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -31,10 +31,10 @@ import { GltfModelAssetResourceService } from './resources/gltf-model-asset-reso
       imports: [ConfigModule],
       useClass: MulterConfigService
     }),
-    ArticleModulev2
+    forwardRef(() => ArticleModulev2)
   ],
   controllers: [GltfModelAssetController],
   providers: [GltfModelAssetResourceService, GltfModelService],
-  exports: [MongooseModule]
+  exports: [MongooseModule, GltfModelAssetResourceService, GltfModelService]
 })
 export class DigitalAssetModule {}

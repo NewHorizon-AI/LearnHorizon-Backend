@@ -76,8 +76,8 @@ export class ArticleController {
     return await this.articleService.updateArticle(id, updateArticleDto)
   }
 
-  @Delete(':id')
-  async deleteArticle(@Param('id') id: string) {
-    return await this.articleService.deleteArticle(id)
+  @Delete(':articleId')
+  async deleteArticle(@Param('articleId') articleId: string) {
+    return await this.articleService.deleteArticle(articleId)
   }
 }

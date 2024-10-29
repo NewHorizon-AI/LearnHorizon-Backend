@@ -11,11 +11,15 @@ import { CreateArticleDto } from '../dtos/create-article.dto'
 import { UpdateArticleDto } from '../dtos/update-article.dto'
 import { Article } from '../schema/article.schema'
 import { GltfModelAsset } from 'src/modules/digital-asset/schemas/gltf-model-asset.schema'
+import { GltfModelService } from 'src/modules/digital-asset/services/gltf-model.service'
 
 @Injectable()
 export class ArticleService {
   constructor(
     private articleResourceService: ArticleResourceService,
+    @Inject(forwardRef(() => GltfModelService))
+    private gltfModelService: GltfModelService,
+
     @Inject(forwardRef(() => SceneService))
     private sceneService: SceneService
   ) {}
@@ -81,7 +85,23 @@ export class ArticleService {
     return await this.articleResourceService.update(articleId, updateArticleDto)
   }
 
-  async deleteArticle(id: string): Promise<Article> {
-    return await this.articleResourceService.remove(id)
+  async deleteArticle(articleId: string) {
+    const article = await this.articleResourceService.findById(articleId)
+
+    if (!article) {
+      throw new NotFoundException(
+        `El artículo a eliminar ${articleId} no existe`
+      )
+    }
+
+    if (article.sceneSettings) {
+      await this.sceneService.deleteScene(article.sceneSettings.id.toString())
+    }
+
+    if (article.models && article.models.length > 0) {
+      await this.gltfModelService.deleteModel(article.models[0].toString())
+    }
+
+    await this.articleResourceService.remove(articleId)
   }
 }

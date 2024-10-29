@@ -15,11 +15,13 @@ import { ArticleResourceService } from './resources/article-resource.sevice'
 
 // * Importar Modulos
 import { SceneModule } from '../scene/scene.module'
+import { DigitalAssetModule } from '../digital-asset/digital-asset.module'
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
-    forwardRef(() => SceneModule)
+    forwardRef(() => SceneModule),
+    forwardRef(() => DigitalAssetModule)
   ],
   controllers: [ArticleController],
   providers: [ArticleService, ArticleResourceService],

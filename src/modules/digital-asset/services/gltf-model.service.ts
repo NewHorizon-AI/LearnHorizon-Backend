@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { GltfModelAssetResourceService } from '../resources/gltf-model-asset-resource.service'
 import { CreateGltfModelAssetDto } from '../dtos/gltf-model-asset/create-gltf-model-asset.dto'
 import { UpdateGltfModelAssetDto } from '../dtos/gltf-model-asset/update-gltf-model-asset.dto'
@@ -10,7 +15,8 @@ import { ArticleService } from 'src/modules/articles/services/article.service'
 @Injectable()
 export class GltfModelService {
   constructor(
-    private readonly articleService: ArticleService,
+    @Inject(forwardRef(() => ArticleService))
+    private articleService: ArticleService,
     private readonly gltfModelAssetResourceService: GltfModelAssetResourceService
   ) {}
 

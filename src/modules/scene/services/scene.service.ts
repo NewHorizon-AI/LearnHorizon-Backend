@@ -106,15 +106,16 @@ export class SceneService {
   //   this.sceneSettings.update(article.sceneSettings.toString(), updateScene)
   // }
 
-  // // Eliminar un ajuste de escena por su ID
-  // async remove(id: string): Promise<GridSettings> {
-  //   const deletedGridSetting = await this.gridSettingsModel
-  //     .findByIdAndDelete(id)
-  //     .exec()
-  //   if (!deletedGridSetting) {
-  //     throw new NotFoundException(`Scene setting with ID ${id} not found`)
-  //   }
-  //   // Aquí podrías agregar lógica para eliminar otros elementos relacionados con la escena
-  //   return deletedGridSetting
-  // }
+  // Eliminar un ajuste de escena por su ID
+  async deleteScene(sceneId: string) {
+    const sceneSettings = await this.sceneSettings.findById(sceneId)
+
+    if (!sceneSettings) {
+      throw new NotFoundException(
+        `No se ha encontrado un ajuste de escena con el ID: ${sceneId}`
+      )
+    }
+
+    return await this.sceneSettings.deleteScene(sceneId)
+  }
 }

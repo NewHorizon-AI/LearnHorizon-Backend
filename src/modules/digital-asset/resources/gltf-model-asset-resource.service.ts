@@ -108,6 +108,23 @@ export class GltfModelAssetResourceService {
     if (!deletedGltfModelAsset) {
       throw new NotFoundException(`Modelo GLTF con id ${id} no encontrado`)
     }
+
+    // Llamada al método para eliminar el archivo después de borrar el documento de la base de datos
+    await this.removeFile(deletedGltfModelAsset.path)
+
     return deletedGltfModelAsset
+  }
+
+  // Método para eliminar el archivo
+  private async removeFile(filePath: string): Promise<void> {
+    try {
+      fs.unlinkSync(filePath)
+      console.log(`Archivo ${filePath} eliminado correctamente`)
+    } catch (error) {
+      console.error(`Error al eliminar el archivo ${filePath}:`, error)
+      throw new NotFoundException(
+        `Error al eliminar el archivo en la ruta ${filePath}`
+      )
+    }
   }
 }
