@@ -5,13 +5,23 @@ import {
   Get,
   Param,
   Patch,
-  Post
+  Post,
+  Query
 } from '@nestjs/common'
 
 import { ArticleService } from '../services/article.service'
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiQuery
+} from '@nestjs/swagger'
 import { CreateArticleDto } from '../dtos/create-article.dto'
 import { UpdateArticleDto } from '../dtos/update-article.dto'
+
+import { Article } from '../schema/article.schema'
+import { FiltersDto } from '../dtos/querys/filters.dto'
 
 @ApiTags('articles')
 @Controller('articles/v2')
@@ -56,6 +66,46 @@ export class ArticleController {
   @Get()
   async findAll() {
     return await this.articleService.getArticles()
+  }
+
+  @Post('search')
+  @ApiResponse({
+    status: 200,
+    description: 'Obtiene los artículos paginados y filtrados',
+    type: [Article]
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Número de la página',
+    type: Number,
+    example: 1
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Cantidad de artículos por página',
+    type: Number,
+    example: 10
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    description: 'Campo para ordenar los resultados',
+    example: 'createdAt'
+  })
+  async getPaginatedArticles(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('sort') sort: string = 'createdAt',
+    @Body() filtersDto: FiltersDto
+  ) {
+    return await this.articleService.getPaginatedArticles({
+      page,
+      limit,
+      sort,
+      filters: filtersDto.filters
+    })
   }
 
   @Get(':id')

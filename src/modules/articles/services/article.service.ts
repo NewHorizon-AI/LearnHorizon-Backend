@@ -12,6 +12,7 @@ import { UpdateArticleDto } from '../dtos/update-article.dto'
 import { Article } from '../schema/article.schema'
 import { GltfModelAsset } from 'src/modules/digital-asset/schemas/gltf-model-asset.schema'
 import { GltfModelService } from 'src/modules/digital-asset/services/gltf-model.service'
+import { IPaginationParams } from '../interfaces/pagination-params.interface'
 
 @Injectable()
 export class ArticleService {
@@ -33,6 +34,10 @@ export class ArticleService {
     await this.sceneService.createDefault(createdArticle._id.toString())
 
     return this.getArticleById(createdArticle._id.toString())
+  }
+
+  async getPaginatedArticles(paginationDto: IPaginationParams) {
+    return await this.articleResourceService.getPaginatedArticles(paginationDto)
   }
 
   async assignModelsToArticle(articleId: string, modelsIds: string[]) {

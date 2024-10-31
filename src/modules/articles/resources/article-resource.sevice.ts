@@ -1,4 +1,4 @@
-import mongoose, { Model, Types } from 'mongoose'
+import mongoose, { FilterQuery, Model, Types } from 'mongoose'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
@@ -7,6 +7,8 @@ import { CreateArticleDto } from '../dtos/create-article.dto'
 import { UpdateArticleDto } from '../dtos/update-article.dto'
 
 import { GltfModelAsset } from 'src/modules/digital-asset/schemas/gltf-model-asset.schema'
+import { IPaginationParams } from '../interfaces/pagination-params.interface'
+import { User } from 'src/modules/users/schemas/user.schema'
 
 @Injectable()
 export class ArticleResourceService {
@@ -70,6 +72,47 @@ export class ArticleResourceService {
 
   async findAll(): Promise<Article[]> {
     return await this.model.find().exec()
+  }
+
+  async getPaginatedArticles(paginationDto: IPaginationParams) {
+    const { page, limit, sort, filters } = paginationDto
+
+    let filterQuery: FilterQuery<Article> = {}
+    if (filters) {
+      try {
+        filterQuery = filters // Convertir el string JSON a un objeto
+      } catch (error) {
+        throw new Error('El formato de los filtros es inválido')
+      }
+    }
+
+    // Aplicar la consulta con Mongoose
+    const articles = await this.model
+      .find(filterQuery)
+      .sort(sort ? { [sort]: 1 } : {}) // Ordena ascendente o ajusta a `{ [sort]: -1 }` para descendente
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate({
+        path: 'users', // Nombre del campo que quieres popular
+        model: User.name, // Modelo que quieres popular
+        select: '-password  -createdAt -updatedAt -email -__v ' // Campos que quieres excluir
+      })
+      .populate({
+        path: 'categories', // Población del campo `categories`
+        model: 'Category',
+        select: '-createdAt -updatedAt -__v -numberOfArticles' // Excluye estos campos de `Category`
+      })
+      .select('-sceneSettings -models')
+      .exec()
+
+    const total = await this.model.countDocuments(filterQuery)
+
+    return {
+      items: articles,
+      total,
+      page,
+      limit
+    }
   }
 
   async findOne(id: string): Promise<Article> {
