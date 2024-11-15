@@ -61,6 +61,16 @@ export class ArticleResourceService {
     const article = await this.model
       .findById(id)
       .populate('sceneSettings')
+      .populate({
+        path: 'users', // Nombre del campo que quieres popular
+        model: User.name, // Modelo que quieres popular
+        select: '-password  -createdAt -updatedAt -email -__v ' // Campos que quieres excluir
+      })
+      .populate({
+        path: 'categories', // Población del campo `categories`
+        model: 'Category',
+        select: '-createdAt -updatedAt -__v -numberOfArticles' // Excluye estos campos de `Category`
+      })
       .exec()
 
     if (!article) {
